@@ -1,10 +1,10 @@
 /* --- 0. 기본 & 글꼴 설정 --- */
 :root {
     --font-main: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-    --color-bg: #f0f2f5; /* 밝은 회색 배경 */
+    --color-bg: #f0f2f5;
     --color-card: #ffffff;
-    --color-primary: #004a9e; /* 우리은행 신뢰의 딥블루 */
-    --color-accent: #00c73c; /* '힙'한 포인트 그린 */
+    --color-primary: #004a9e;
+    --color-accent: #00c73c;
     --color-text: #212529;
     --color-text-muted: #6c757d;
     --color-error: #d93025;
@@ -23,86 +23,30 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow-x: hidden; /* 가로 스크롤 방지 */
-    overflow-y: auto; /* 세로 스크롤 허용 */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-/* --- 1. 배경 애니메이션 (Wow Point) --- */
-.blob-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-}
-.blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.3;
-}
-.blob1 {
-    width: 400px;
-    height: 400px;
-    background: var(--color-primary);
-    top: -100px;
-    left: -100px;
-    animation: move 20s infinite alternate;
-}
-.blob2 {
-    width: 300px;
-    height: 300px;
-    background: var(--color-accent);
-    bottom: -50px;
-    right: -50px;
-    animation: move 25s infinite alternate-reverse;
-}
+/* --- 1. 배경 애니메이션 --- */
+.blob-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+.blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
+.blob1 { width: 400px; height: 400px; background: var(--color-primary); top: -100px; left: -100px; animation: move 20s infinite alternate; }
+.blob2 { width: 300px; height: 300px; background: var(--color-accent); bottom: -50px; right: -50px; animation: move 25s infinite alternate-reverse; }
 @keyframes move {
     from { transform: translate(0, 0) rotate(0deg); }
     to { transform: translate(200px, 100px) rotate(180deg); }
 }
 
 /* --- 2. 카드 & 컨테이너 공통 --- */
-.container {
-    max-width: 600px;
-    width: 100%;
-    display: none; /* 기본 숨김 */
-    animation: fadeIn 0.5s ease-out forwards; /* 등장 애니메이션 */
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-.container.active {
-    display: block;
-}
-.card-content {
-    background-color: var(--color-card);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-medium);
-    padding: 30px 35px;
-    z-index: 10;
-    position: relative;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
+.container { max-width: 600px; width: 100%; display: none; animation: fadeIn 0.5s ease-out forwards; margin-top: 20px; margin-bottom: 20px; }
+.container.active { display: block; }
+.card-content { background-color: var(--color-card); border-radius: var(--border-radius); box-shadow: var(--shadow-medium); padding: 30px 35px; z-index: 10; position: relative; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.card {
-    background-color: #fcfcfc;
-    border: 1px solid #eee;
-    border-radius: var(--border-radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-light);
-}
+.card { background-color: #fcfcfc; border: 1px solid #eee; border-radius: var(--border-radius); padding: 20px; margin-bottom: 20px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow-light); }
 
 /* --- 3. 로그인 화면 --- */
 .login-header { text-align: center; margin-bottom: 30px; }
@@ -114,8 +58,15 @@ body {
 #login-container h1 { color: var(--color-primary); margin: 10px 0 5px 0; }
 #login-container p { font-size: 1.1em; color: var(--color-text-muted); margin: 0; }
 .form-group { margin-bottom: 18px; position: relative; }
-.form-group label { display: flex; align-items: center; font-weight: 600; margin-bottom: 8px; color: var(--color-text); }
-.form-group label i { width: 16px; height: 16px; margin-right: 8px; color: var(--color-text-muted); }
+.form-group label {
+    /* (v18) 이모지 정렬 */
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-text);
+}
 .form-group input { width: 100%; padding: 14px 14px 14px 16px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1em; transition: border-color 0.2s, box-shadow 0.2s; }
 .form-group input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 74, 158, 0.1); }
 #login-btn { width: 100%; padding: 15px; font-size: 1.1em; font-weight: 700; color: #fff; background: linear-gradient(90deg, var(--color-accent), #00e065); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
@@ -138,22 +89,48 @@ body {
 .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
 .header h2 { display: none; }
 .data-notice { display: flex; justify-content: space-between; align-items: center; font-size: 0.95em; font-weight: 500; color: var(--color-text-muted); background-color: #f8f9fa; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; }
-.data-notice span { display: flex; align-items: center; }
-.data-notice i { width: 14px; height: 14px; margin-right: 6px; }
+.data-notice span {
+    /* (v18) 이모지 정렬 */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 1em; margin-bottom: 25px; animation: fadeIn 0.5s 0.2s backwards; }
 .status-badge.completed { background: linear-gradient(90deg, #e6f7ec, #d1f7e0); color: #008a38; box-shadow: 0 2px 8px rgba(0, 138, 56, 0.2); }
 .status-badge.in-progress { background: linear-gradient(90deg, #fff8e1, #fff0c2); color: #e6a000; box-shadow: 0 2px 8px rgba(230, 160, 0, 0.2); }
 .progress-section { margin-bottom: 20px; }
-.progress-section h4 { margin: 0 0 10px 0; font-weight: 600; display: flex; align-items: center; }
-.progress-section h4 i { width: 16px; height: 16px; margin-right: 8px; }
+.progress-section h4 {
+    /* (v18) 이모지 정렬 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
 .progress-bar-container { width: 100%; height: 20px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; }
 .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-accent), #00e065); border-radius: 10px; transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 0 10px rgba(0, 199, 60, 0.5); }
 .progress-bar.exam { background: linear-gradient(90deg, var(--color-primary), #006aff); box-shadow: 0 0 10px rgba(0, 74, 158, 0.5); }
 .progress-label { display: block; text-align: right; font-weight: 600; font-size: 1.1em; margin-top: 8px; color: var(--color-primary); }
 .progress-section.metric-item { display: block; }
 .progress-section.metric-item.hidden { display: none; }
-.time-card h4, .faq-card h4 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; align-items: center; }
-.time-card h4 i, .faq-card h4 i { width: 18px; height: 18px; margin-right: 8px; color: var(--color-primary); }
+
+/* 카드 제목 (h3, h4) 공통 (v18) */
+.card h3,
+.card h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 이모지와 텍스트 간격 */
+}
+
+.time-card h4, .faq-card h4, .overview-card h4, .contact-card h4 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    color: var(--color-primary);
+}
+.main-card h3 {
+    margin-top: 0;
+}
 .time-card ul { list-style: none; padding-left: 0; margin-bottom: 15px; }
 .time-card li { font-size: 1.1em; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
 .time-card li strong { font-size: 1.1em; }
@@ -165,19 +142,30 @@ summary:hover { color: var(--color-primary); }
 details[open] summary { color: var(--color-primary); }
 details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--color-primary); font-size: 0.95em; line-height: 1.6; }
 
-/* --- 5. 과정 선택 드롭다운 --- */
+/* --- 5. 과정 선택 드롭다운 (v18) --- */
 .course-switcher-wrapper { position: relative; display: flex; align-items: center; background-color: #f8f9fa; border-radius: var(--border-radius); padding: 0 10px; flex-grow: 1; margin-right: 15px; border: 1px solid #eee; }
-.course-switcher-wrapper i { color: var(--color-primary); }
-.course-switcher-wrapper i:first-child { width: 20px; height: 20px; margin-right: 8px; }
-.course-switcher-wrapper .chevron-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--color-text-muted); pointer-events: none; }
-#course-switcher { width: 100%; padding: 12px 30px 12px 5px; font-size: 1.15em; font-weight: 700; color: var(--color-primary); border: none; background-color: transparent; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+.course-switcher-wrapper .header-emoji { font-size: 1.2em; margin-left: 5px; } /* (v18) 이모지 스타일 */
+.course-switcher-wrapper .chevron-icon { display: none; } /* (v18) 제거 */
+#course-switcher { width: 100%; padding: 12px 10px 12px 10px; font-size: 1.15em; font-weight: 700; color: var(--color-primary); border: none; background-color: transparent; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 #course-switcher:focus { outline: none; }
-#logout-btn { width: 44px; height: 44px; padding: 0; font-size: 0.9em; background-color: #f0f0f0; color: var(--color-text-muted); border-radius: var(--border-radius); display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+#logout-btn {
+    /* (v18) 이모지 버튼 스타일 */
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 1.5em; /* 이모지 크기 */
+    line-height: 44px;
+    text-align: center;
+    background-color: #f0f0f0;
+    color: var(--color-text-muted);
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+}
 #logout-btn:hover { background-color: #e0e0e0; color: var(--color-text); }
 
-/* --- 6. (v7) 개요 카드 및 테이블 --- */
-.overview-card h4 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; color: var(--color-primary); }
-.overview-card h4 i { width: 18px; height: 18px; margin-right: 8px; }
+/* --- 6. 개요 카드 및 테이블 --- */
 .overview-table { width: 100%; border-collapse: collapse; font-size: 1.05em; }
 .overview-table th,
 .overview-table td { padding: 14px 10px; text-align: left; border-bottom: 1px solid #f0f0f0; }
@@ -191,13 +179,44 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
 .status-cell.in-progress { color: #e6a000; }
 .hidden-row { display: none; }
 
-/* --- 7. (v8) 업그레이드 --- */
-.course-switcher-wrapper.disabled {
-    background-color: #f0f2f5;
-    cursor: not-allowed;
-    opacity: 0.8;
+/* --- 7. 비활성 드롭다운 --- */
+.course-switcher-wrapper.disabled { background-color: #f0f2f5; cursor: not-allowed; opacity: 0.8; }
+.course-switcher-wrapper.disabled select { cursor: not-allowed; pointer-events: none; }
+
+/* --- 8. 문의하기 카드 (v17) --- */
+.contact-card p { font-size: 1.05em; line-height: 1.6; color: var(--color-text-muted; }
+.contact-btn {
+    /* (v18) 이모지 정렬 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(90deg, var(--color-primary), #006aff);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
 }
-.course-switcher-wrapper.disabled select {
-    cursor: not-allowed;
-    pointer-events: none;
+.contact-btn:hover { box-shadow: 0 5px 15px rgba(0, 74, 158, 0.4); transform: translateY(-2px); }
+
+/* --- 9. (NEW) v18: 애니메이션 --- */
+
+/* '달리는 이모지' 애니메이션 */
+@keyframes running-man {
+  0% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  100% { transform: translateX(-3px); }
+}
+
+/* '학습 중' 배지에 애니메이션 적용 */
+.status-cell.in-progress,
+.status-badge.in-progress {
+    display: inline-block; /* transform을 적용하기 위해 */
+    animation: running-man 1.2s infinite ease-in-out;
 }
