@@ -11,7 +11,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 </head>
 <body>
@@ -30,11 +30,11 @@
             </div>
             
             <div class="form-group">
-                <label for="name"><i data-feather="user"></i> 이름</label>
+                <label for="name">👤 이름</label>
                 <input type="text" id="name" placeholder="이름 (e.g., 홍길동)">
             </div>
             <div class="form-group">
-                <label for="email"><i data-feather="mail"></i> 이메일</label>
+                <label for="email">📧 이메일</label>
                 <input type="email" id="email" placeholder="이메일 (e.g., test@woori.com)">
             </div>
             <button id="login-btn">
@@ -47,119 +47,57 @@
 
     <div id="dashboard-container" class="container">
         <div class="card-content">
+
+            <div class="dashboard-title-header">
+                <span class="header-woori-logo">우리은행</span>
+                <span class="header-divider">X</span>
+                <img src="udemy-logo-purple.png" alt="Udemy Logo" class="header-udemy-logo">
+            </div>
+            <h1 class="dashboard-title">사이버연수 학습 현황</h1>
             <div class="header">
                 <div id="course-switcher-wrapper" class="course-switcher-wrapper">
-                    <i data-feather="book-open"></i>
+                    <span class="header-emoji">📚</span>
                     <select id="course-switcher">
                         <option>과정 로딩 중...</option>
                     </select>
-                    <i data-feather="chevron-down" class="chevron-icon"></i>
                 </div>
-                <button id="logout-btn" title="로그아웃"><i data-feather="log-out"></i></button>
+                <button id="logout-btn" title="로그아웃">🚪</button>
             </div>
             
             <p class="data-notice">
-                <span id="course-count-notice"><i data-feather="layers"></i> 총 ...개 과정</span>
-                <span id="data-date-notice"><i data-feather="clock"></i> 최신 데이터 기준</span>
+                <span id="course-count-notice">📚 총 ...개 과정</span>
+                <span id="data-date-notice">🗓️ ... 기준</span>
             </p>
 
             <div class="card overview-card">
-                <h4><i data-feather="user-check"></i> 나의 학습 개요</h4>
+                <h4>🧐 나의 학습 개요</h4>
                 <table class="overview-table">
-                    <tbody>
-                        <tr>
-                            <th>학습자명</th>
-                            <td id="overview-name">...</td>
-                        </tr>
-                        <tr>
-                            <th>소속</th>
-                            <td id="overview-dept">...</td>
-                        </tr>
-                        <tr>
-                            <th>신청 과정</th>
-                            <td id="overview-course">...</td>
-                        </tr>
-                        
-                        <tr class="divider">
-                            <th>이수 기준 (시간)</th>
-                            <td id="overview-goal-time">... H</td>
-                        </tr>
-                        <tr id="overview-goal-score-row"> <th>이수 기준 (시험)</th>
-                            <td id="overview-goal-score">... 점</td>
-                        </tr>
-
-                        <tr class="divider">
-                            <th>나의 인정 시간</th>
-                            <td id="overview-my-time" class="metric-value-small">... H</td>
-                        </tr>
-                        <tr id="overview-my-score-row"> <th>나의 시험 점수</th>
-                            <td id="overview-my-score" class="metric-value-small">... 점</td>
-                        </tr>
-
-                        <tr class="divider">
-                            <th>최종 이수 여부</th>
-                            <td id="overview-status" class="status-cell">...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    </table>
             </div>
 
             <div class="card main-card">
-                <h3><i data-feather="bookmark"></i> 과정 상세: <span id="course-name">...</span></h3>
-                <div class="status-badge" id="status-badge">...</div>
-                
-                <div class="progress-section">
-                    <h4>✅ 인정 시간 (16H 목표)</h4>
-                    <div class="progress-bar-container">
-                        <div id="time-progress-bar" class="progress-bar"></div>
-                    </div>
-                    <span id="recognized-time" class="progress-label">... / 16.0 H</span>
+                <h3>📚 과정 상세: <span id="course-name">...</span></h3>
                 </div>
-                
-                <div id="exam-metric" class="progress-section metric-item">
-                    <h4>✍️ 시험 점수 (60점 목표)</h4>
-                    <div class="progress-bar-container">
-                        <div id="exam-progress-bar" class="progress-bar exam"></div>
-                    </div>
-                    <span id="exam-score" class="progress-label">... / 60 점</span>
-                </div>
-            </div>
 
             <div class="card time-card">
-                <h4><i data-feather="pie-chart"></i> 📊 시간 비교</h4>
-                <ul>
-                    <li>
-                        <span>Udemy 총 학습 시간</span>
-                        <strong id="total-time">... H</strong>
-                    </li>
-                    <li>
-                        <span>✅ 인정 시간 (이 과정)</span>
-                        <strong id="recognized-time-detail">... H</strong>
-                    </li>
-                    <li class="warning">
-                        <span>⚠️ 불인정 시간</span>
-                        <strong id="unrecognized-time">... H</strong>
-                    </li>
-                </ul>
-                <p class="note">
-                    '불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다.
-                </p>
-            </div>
+                <h4>📊 시간 비교</h4>
+                </div>
 
             <div class="card faq-card">
-                <h4><i data-feather="help-circle"></i> ❓ 자주 묻는 질문 (FAQ)</h4>
-                <details>
-                    <summary>Q. 왜 Udemy 시간과 인정 시간이 다른가요?</summary>
-                    <p>A. '총 학습 시간'은 Udemy에서 들은 모든 시간이며, '인정 시간'은 신청하신 이 과정에 해당하는 강의만 집계된 시간입니다.</p>
-                </details>
-                <details>
-                    <summary>Q. 어제 공부했는데 왜 시간이 안 올랐죠?</summary>
-                    <p>A. 이 데이터는 실시간이 아닙니다. 관리자가 데이터를 업데이트(Push)하는 주기에 따라 반영됩니다.</p>
-                </details>
-            </div>
+                <h4>❓ 자주 묻는 질문 (FAQ)</h4>
+                </div>
+
+            <div class="card contact-card">
+                <h4>🙋‍♀️ 문의하기</h4>
+                </div>
+
         </div>
     </div>
     
+    <a href="https://wooribank.udemy.com/" target="_blank" class="floating-action-button" title="학습하러 가기">
+        🎓 학습하러 가기
+    </a>
+
     <script src="app.js"></script>
 
 </body>
