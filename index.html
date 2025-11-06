@@ -54,6 +54,7 @@
                 <img src="udemy-logo-purple.png" alt="Udemy Logo" class="header-udemy-logo">
             </div>
             <h1 class="dashboard-title">사이버연수 학습 현황</h1>
+            
             <div class="header">
                 <div id="course-switcher-wrapper" class="course-switcher-wrapper">
                     <span class="header-emoji">📚</span>
@@ -72,24 +73,132 @@
             <div class="card overview-card">
                 <h4>🧐 나의 학습 개요</h4>
                 <table class="overview-table">
-                    </table>
+                    <tbody>
+                        <tr>
+                            <th>학습자명</th>
+                            <td id="overview-name">...</td>
+                        </tr>
+                        <tr>
+                            <th>소속</th>
+                            <td id="overview-dept">...</td>
+                        </tr>
+                        <tr>
+                            <th>신청 과정</th>
+                            <td id="overview-course">...</td>
+                        </tr>
+                        <tr class="divider">
+                            <th>이수 기준 (시간)</th>
+                            <td id="overview-goal-time">... H</td>
+                        </tr>
+                        <tr id="overview-goal-score-row">
+                            <th>이수 기준 (시험)</th>
+                            <td id="overview-goal-score">... 점</td>
+                        </tr>
+                        <tr class="divider">
+                            <th>나의 인정 시간</th>
+                            <td id="overview-my-time" class="metric-value-small">... H</td>
+                        </tr>
+                        <tr id="overview-my-score-row">
+                            <th>나의 시험 점수</th>
+                            <td id="overview-my-score" class="metric-value-small">... 점</td>
+                        </tr>
+                        <tr class="divider">
+                            <th>최종 이수 여부</th>
+                            <td id="overview-status" class="status-cell">...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="card main-card">
                 <h3>📚 과정 상세: <span id="course-name">...</span></h3>
+                <div class="status-badge" id="status-badge">...</div>
+                
+                <div class="progress-section">
+                    <h4>✅ 인정 시간 (16H 목표)</h4>
+                    <div class="progress-bar-container">
+                        <div id="time-progress-bar" class="progress-bar"></div>
+                    </div>
+                    <span id="recognized-time" class="progress-label">... / 16.0 H</span>
                 </div>
+                
+                <div id="exam-metric" class="progress-section metric-item">
+                    <h4>✍️ 시험 점수 (60점 목표)</h4>
+                    <div class="progress-bar-container">
+                        <div id="exam-progress-bar" class="progress-bar exam"></div>
+                    </div>
+                    <span id="exam-score" class="progress-label">... / 60 점</span>
+                </div>
+            </div>
 
             <div class="card time-card">
                 <h4>📊 시간 비교</h4>
-                </div>
+                <ul>
+                    <li>
+                        <span>Udemy 총 학습 시간</span>
+                        <strong id="total-time">... H</strong>
+                    </li>
+                    <li>
+                        <span>✅ 인정 시간 (이 과정)</span>
+                        <strong id="recognized-time-detail">... H</strong>
+                    </li>
+                    <li class="warning">
+                        <span>⚠️ 불인정 시간</span>
+                        <strong id="unrecognized-time">... H</strong>
+                    </li>
+                </ul>
+                <p class="note">
+                    '불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다.
+                </p>
+            </div>
 
             <div class="card faq-card">
                 <h4>❓ 자주 묻는 질문 (FAQ)</h4>
-                </div>
+                
+                <details>
+                    <summary>Q. Udemy 사이트 시간과 인정 시간이 달라요!</summary>
+                    <p>
+                        <strong>가장 많이 하시는 질문입니다!</strong><br>
+                        인정 시간은 신청하신 과정에 **'포함된'** 강의만 집계됩니다.<br>
+                        예를 들어 '스킬셋' 과정을 신청하셨다면, Udemy에서 다른 강의를 10시간 들어도 인정 시간은 0시간일 수 있습니다.<br>
+                        <strong>[해결책]</strong> 본인의 '신청 과정'이 무엇인지 정확히 확인하시고, 해당 과정에 맞는 강의를 수강하셔야 합니다.
+                    </p>
+                </details>
+                <details>
+                    <summary>Q. '스킬셋' 과정은 무엇인가요? (시간이 0으로 나와요)</summary>
+                    <p>
+                        '스킬셋' 과정은 학습자님의 **'소속 부서'**에 맞춰 특별히 큐레이션된 강의 목록입니다.<br>
+                        Udemy 사이트 상단의 <strong>[둘러보기] > [카테고리]</strong>에서 본인의 '소속 부서명' (e.g., MyData플랫폼부)이 적힌 카테고리를 찾아, 그 안에 있는 강의만 수강하셔야 인정됩니다.<br>
+                        (다른 부서의 스킬셋 강의나 일반 강의는 인정되지 않습니다.)
+                    </p>
+                </details>
+                <details>
+                    <summary>Q. 어제 공부했는데 왜 시간이 안 올랐죠?</summary>
+                    <p>
+                        데이터가 실시간으로 반영되지 않습니다.<br>
+                        대시보드 상단의 <strong>🗓️ (날짜) 기준</strong>을 확인해주세요.<br> 
+                        (데이터 집계에 약 1~2일이 소요될 수 있습니다.)
+                    </p>
+                </details>
+                <details>
+                    <summary>Q. 제 이름/이메일/소속이 변경되었습니다.</summary>
+                    <p>
+                        로그인이 안 되거나 데이터가 잘못 보이는 경우, 개인정보 변경으로 인한 확인이 필요할 수 있습니다.<br>
+                        아래 '문의하기'의 이메일로 연락주시면 바로 처리해 드리겠습니다.
+                    </p>
+                </details>
+            </div>
 
             <div class="card contact-card">
                 <h4>🙋‍♀️ 문의하기</h4>
-                </div>
+                <p>
+                    FAQ로 해결되지 않는 문제나 학습 데이터 관련 문의는
+                    아래 이메일로 연락주시면 담당자가 확인 후 답변드립니다.
+                </p>
+                <a href="mailto:jhj11@wjthinkbig.com" class="contact-btn">
+                    ✉️ jhj11@wjthinkbig.com (담당자에게 메일 보내기)
+                </a>
+            </div>
 
         </div>
     </div>
