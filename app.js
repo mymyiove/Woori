@@ -1,4 +1,4 @@
-// --- [A] DOM 요소 선택 (v9와 동일) ---
+// --- [A] DOM 요소 선택 ---
 const loginContainer = document.getElementById('login-container');
 const dashboardContainer = document.getElementById('dashboard-container');
 const loginBtn = document.getElementById('login-btn');
@@ -16,12 +16,15 @@ const timeProgressBar = document.getElementById('time-progress-bar');
 const examProgressBar = document.getElementById('exam-progress-bar');
 const examMetric = document.getElementById('exam-metric');
 
-// --- [B] 데이터 파일 경로 설정 (v9와 동일) ---
-const DATA_PATH = './data/';
+// --- [B] 데이터 파일 경로 설정 ---
+const DATA_PATH = './data/'; // (중요) /data/ 폴더 안에 CSV가 있어야 함
 const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
-// --- [C] 이벤트 리스너 (v9와 동일) ---
+// --- [C] 이벤트 리스너 ---
 document.addEventListener('DOMContentLoaded', () => {
+    // [중요] feather.replace()를 DOM 로드 후 바로 호출
+    feather.replace();
+
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
@@ -64,6 +67,12 @@ async function fetchCSV(fileName) {
     const cleanedCsvText = dataLines.join('\n');
 
     return new Promise((resolve, reject) => {
+        // Papa가 정의되었는지 확인 (안전장치)
+        if (typeof Papa === 'undefined') {
+            reject(new Error("PapaParse 라이브러리가 로드되지 않았습니다."));
+            return;
+        }
+
         Papa.parse(cleanedCsvText, { 
             header: true, 
             skipEmptyLines: true,
@@ -82,7 +91,7 @@ async function fetchCSV(fileName) {
 }
 
 /**
- * (MODIFIED) v10.1: '과정명.1' (V열)을 읽도록 수정
+ * (v10.1) '과정명.1' (V열)을 읽도록 수정
  */
 function buildFullUserData(userRow) {
     const GOAL_TIME = 16.0;
@@ -112,7 +121,7 @@ function buildFullUserData(userRow) {
 }
 
 /**
- * 1. 로그인 처리 함수 (v9.3과 동일)
+ * 1. 로그인 처리 함수
  */
 async function handleLogin() {
     const name = nameInput.value.trim();
@@ -141,7 +150,7 @@ async function handleLogin() {
         
         const firstCourseRow = userRows[0];
         const firstCourseIndex = 0;
-        const firstCourseUserData = buildFullUserData(firstCourseRow); // (v10.1 함수 호출)
+        const firstCourseUserData = buildFullUserData(firstCourseRow);
 
         localStorage.setItem('loggedInUser', JSON.stringify(firstCourseUserData));
         localStorage.setItem('selectedCourseIndex', firstCourseIndex);
@@ -158,7 +167,7 @@ async function handleLogin() {
 }
 
 /**
- * 2. 과정 선택 드롭다운 설정 함수 (MODIFIED) v10.1
+ * 2. 과정 선택 드롭다운 설정 함수
  */
 function setupCourseSwitcher(userRows, selectedIndex = 0) {
     if (!userRows || userRows.length === 0) {
@@ -189,8 +198,7 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
 
 
 /**
- * 4. 대시보드 UI 업데이트 함수 (v9.3과 동일)
- * (buildFullUserData가 정확한 값을 주므로, 이 함수는 수정할 필요가 없음)
+ * 4. 대시보드 UI 업데이트 함수
  */
 function showDashboard(user) {
     const detail = user.courseDetail;
@@ -208,7 +216,7 @@ function showDashboard(user) {
 
     document.getElementById('overview-name').textContent = user.name;
     document.getElementById('overview-dept').textContent = user.department;
-    document.getElementById('overview-course').textContent = user.course; // [수정됨]
+    document.getElementById('overview-course').textContent = user.course; 
     document.getElementById('overview-goal-time').textContent = `${detail.goalTime.toFixed(1)} H`;
     document.getElementById('overview-my-time').textContent = `${detail.recognizedTime.toFixed(1)} H`;
     
@@ -232,7 +240,7 @@ function showDashboard(user) {
         myScoreRow.classList.add('hidden-row');
     }
 
-    document.getElementById('course-name').textContent = user.course; // [수정됨]
+    document.getElementById('course-name').textContent = user.course;
     if (detail.isCompleted) {
         badge.textContent = '이수 완료! 🎉';
         badge.className = 'status-badge completed';
@@ -268,11 +276,12 @@ function showDashboard(user) {
     loginContainer.classList.remove('active');
     dashboardContainer.classList.add('active');
     
+    // [중요] feather.replace()는 UI가 변경될 때마다 호출되어야 함
     feather.replace(); 
 }
 
 /**
- * 5. 로그아웃 처리 (v9.3과 동일)
+ * 5. 로그아웃 처리
  */
 function handleLogout() {
     localStorage.removeItem('loggedInUser');
@@ -281,13 +290,14 @@ function handleLogout() {
     showLogin();
 }
 
-// --- [E] UI 헬퍼 함수 (v9.3과 동일) ---
+// --- [E] UI 헬퍼 함수 ---
 function showLogin() {
     loginContainer.classList.add('active');
     dashboardContainer.classList.remove('active');
     nameInput.value = '';
     emailInput.value = '';
     loginError.style.display = 'none';
+    // [중요] 로그인 화면에서도 아이콘 렌더링
     feather.replace();
 }
 function showError(message) {
