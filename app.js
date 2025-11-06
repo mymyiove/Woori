@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const courseSwitcherWrapper = document.getElementById('course-switcher-wrapper');
     const courseSwitcher = document.getElementById('course-switcher');
     const courseCountNotice = document.getElementById('course-count-notice');
-    // const dataDateNotice = document.getElementById('data-date-notice'); // [!!!] (DELETED) v22: 삭제
+    // const dataDateNotice = document.getElementById('data-date-notice'); // [!!!] (DELETED) v22
     const timeProgressBar = document.getElementById('time-progress-bar');
     const examProgressBar = document.getElementById('exam-progress-bar');
     const examMetric = document.getElementById('exam-metric');
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
     // --- [C] 이벤트 리스너 ---
-    // (v21) feather.replace() 호출 제거
+    // (v21) DOMContentLoaded가 이미 발생했으므로, feather.replace() 호출 제거
 
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -60,23 +60,19 @@ document.addEventListener('DOMContentLoaded', () => {
         copyEmailBtn.addEventListener('click', () => {
             const email = 'jhj11@wjthinkbig.com';
             
-            // 클립보드에 복사
             navigator.clipboard.writeText(email).then(() => {
-                // 성공 시
                 const originalTextEl = copyEmailBtn.querySelector('.btn-text');
                 if (originalTextEl) {
                     const originalText = originalTextEl.innerHTML;
                     originalTextEl.innerHTML = '✅ 이메일 주소 복사됨!';
                     copyEmailBtn.disabled = true;
                     
-                    // 2초 후에 원래 텍스트로 복원
                     setTimeout(() => {
                         originalTextEl.innerHTML = originalText;
                         copyEmailBtn.disabled = false;
                     }, 2000);
                 }
             }).catch(err => {
-                // 실패 시 (e.g., http 환경)
                 console.error('Email copy failed', err);
                 alert('이메일 복사에 실패했습니다. 직접 복사해주세요: ' + email);
             });
