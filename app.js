@@ -1,4 +1,4 @@
-// --- [A] DOM 요소 선택 (v8/v9와 동일) ---
+// --- [A] DOM 요소 선택 (v9와 동일) ---
 const loginContainer = document.getElementById('login-container');
 const dashboardContainer = document.getElementById('dashboard-container');
 const loginBtn = document.getElementById('login-btn');
@@ -16,11 +16,11 @@ const timeProgressBar = document.getElementById('time-progress-bar');
 const examProgressBar = document.getElementById('exam-progress-bar');
 const examMetric = document.getElementById('exam-metric');
 
-// --- [B] 데이터 파일 경로 설정 (v8/v9와 동일) ---
+// --- [B] 데이터 파일 경로 설정 (v9와 동일) ---
 const DATA_PATH = './data/';
 const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
-// --- [C] 이벤트 리스너 (v8/v9와 동일) ---
+// --- [C] 이벤트 리스너 (v9와 동일) ---
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -51,8 +51,7 @@ courseSwitcher.addEventListener('change', async (event) => {
 // --- [D] 핵심 함수 ---
 
 /**
- * (MODIFIED) v9.3: CSV 파일 fetch (상위 3줄 자동 삭제 코드 '복원')
- * 'woori_data.csv' 원본 파일을 그대로 사용하세요.
+ * (v9.3) CSV 파일 fetch (상위 3줄 자동 삭제 'slice(3)' 포함)
  */
 async function fetchCSV(fileName) {
     const response = await fetch(DATA_PATH + fileName);
@@ -60,16 +59,13 @@ async function fetchCSV(fileName) {
     
     const csvText = await response.text();
     
-    // (NEW) v9.3: 'slice(3)' 코드 복원
-    // CSV 파일의 상위 3줄 (인덱스 0, 1, 2)을 무시합니다.
     const lines = csvText.split('\n');
     const dataLines = lines.slice(3); // 4번째 줄(인덱스 3)부터 헤더로 사용
     const cleanedCsvText = dataLines.join('\n');
 
     return new Promise((resolve, reject) => {
-        // (v9.3) 정리된 텍스트를 파싱
         Papa.parse(cleanedCsvText, { 
-            header: true, // 이제 이 첫 줄이 '성명', '이메일' 헤더가 맞음
+            header: true, 
             skipEmptyLines: true,
             complete: (results) => {
                 if (results.errors.length) {
@@ -86,7 +82,7 @@ async function fetchCSV(fileName) {
 }
 
 /**
- * (v9.1과 동일) CSV 행(Row)에서 대시보드용 데이터 객체를 생성
+ * (MODIFIED) v10.1: '과정명.1' (V열)을 읽도록 수정
  */
 function buildFullUserData(userRow) {
     const GOAL_TIME = 16.0;
@@ -95,11 +91,14 @@ function buildFullUserData(userRow) {
     const examScore = parseInt(userRow['시험점수'] || -1);
     const isCompleted = (userRow['이수여부'] === '이수');
 
+    // [!!!] H열('과정명') 대신 V열('과정명.1')을 읽도록 수정
+    const courseName = userRow['과정명.1'] || userRow['과정명'] || '과정명 없음';
+
     const fullUserData = {
         name: userRow['성명'],
         email: userRow['이메일'],
         department: userRow['소속'],
-        course: userRow['과정명'],
+        course: courseName, // [수정됨]
         totalLearningTime: parseFloat(userRow['전체학습시간'] || 0),
         courseDetail: {
             recognizedTime: parseFloat(userRow['인정시간'] || 0),
@@ -113,7 +112,7 @@ function buildFullUserData(userRow) {
 }
 
 /**
- * 1. 로그인 처리 함수 (v9.1과 동일)
+ * 1. 로그인 처리 함수 (v9.3과 동일)
  */
 async function handleLogin() {
     const name = nameInput.value.trim();
@@ -127,14 +126,12 @@ async function handleLogin() {
     try {
         const mainListData = await fetchCSV(FILE_ALL_IN_ONE);
         
-        // (v9.1) trim() 적용된 비교
         const userRows = mainListData.filter(row => 
             row['성명'] && row['성명'].trim() === name && 
             row['이메일'] && row['이메일'].trim().toLowerCase() === email
         );
 
         if (userRows.length === 0) {
-            // (MODIFIED) v9.3: 에러 메시지 원복
             showError('일치하는 사용자가 없습니다. (이름/이메일 확인)');
             showButtonLoader(false);
             return;
@@ -144,7 +141,7 @@ async function handleLogin() {
         
         const firstCourseRow = userRows[0];
         const firstCourseIndex = 0;
-        const firstCourseUserData = buildFullUserData(firstCourseRow);
+        const firstCourseUserData = buildFullUserData(firstCourseRow); // (v10.1 함수 호출)
 
         localStorage.setItem('loggedInUser', JSON.stringify(firstCourseUserData));
         localStorage.setItem('selectedCourseIndex', firstCourseIndex);
@@ -161,7 +158,7 @@ async function handleLogin() {
 }
 
 /**
- * 2. 과정 선택 드롭다운 설정 함수 (v8/v9와 동일)
+ * 2. 과정 선택 드롭다운 설정 함수 (MODIFIED) v10.1
  */
 function setupCourseSwitcher(userRows, selectedIndex = 0) {
     if (!userRows || userRows.length === 0) {
@@ -180,7 +177,8 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
     }
     courseSwitcher.innerHTML = '';
     userRows.forEach((row, index) => {
-        const courseName = row['과정명']; 
+        // [!!!] H열('과정명') 대신 V열('과정명.1')을 읽도록 수정
+        const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
         const option = document.createElement('option');
         option.value = index;
         option.textContent = courseName;
@@ -191,7 +189,8 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
 
 
 /**
- * 4. 대시보드 UI 업데이트 함수 (v8/v9와 동일)
+ * 4. 대시보드 UI 업데이트 함수 (v9.3과 동일)
+ * (buildFullUserData가 정확한 값을 주므로, 이 함수는 수정할 필요가 없음)
  */
 function showDashboard(user) {
     const detail = user.courseDetail;
@@ -209,7 +208,7 @@ function showDashboard(user) {
 
     document.getElementById('overview-name').textContent = user.name;
     document.getElementById('overview-dept').textContent = user.department;
-    document.getElementById('overview-course').textContent = user.course;
+    document.getElementById('overview-course').textContent = user.course; // [수정됨]
     document.getElementById('overview-goal-time').textContent = `${detail.goalTime.toFixed(1)} H`;
     document.getElementById('overview-my-time').textContent = `${detail.recognizedTime.toFixed(1)} H`;
     
@@ -233,7 +232,7 @@ function showDashboard(user) {
         myScoreRow.classList.add('hidden-row');
     }
 
-    document.getElementById('course-name').textContent = user.course; 
+    document.getElementById('course-name').textContent = user.course; // [수정됨]
     if (detail.isCompleted) {
         badge.textContent = '이수 완료! 🎉';
         badge.className = 'status-badge completed';
@@ -273,7 +272,7 @@ function showDashboard(user) {
 }
 
 /**
- * 5. 로그아웃 처리 (v8/v9와 동일)
+ * 5. 로그아웃 처리 (v9.3과 동일)
  */
 function handleLogout() {
     localStorage.removeItem('loggedInUser');
@@ -282,7 +281,7 @@ function handleLogout() {
     showLogin();
 }
 
-// --- [E] UI 헬퍼 함수 (v8/v9와 동일) ---
+// --- [E] UI 헬퍼 함수 (v9.3과 동일) ---
 function showLogin() {
     loginContainer.classList.add('active');
     dashboardContainer.classList.remove('active');
