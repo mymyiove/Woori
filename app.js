@@ -273,4 +273,56 @@ function showDashboard(user) {
     
     if (detail.examScore > -1) {
         examMetric.style.display = 'block';
-        const scorePercent = Math.min((detail.examScore / detail.goalScore) *
+        const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
+        document.getElementById('exam-score').textContent = `${detail.examScore} / ${detail.goalScore} 점`;
+        examProgressBar.style.width = '0%';
+        setTimeout(() => { examProgressBar.style.width = `${scorePercent}%`; }, 100);
+    } else {
+        examMetric.style.display = 'none';
+    }
+
+    timeProgressBar.style.width = '0%';
+    setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
+
+    // 화면 전환
+    loginContainer.classList.remove('active');
+    dashboardContainer.classList.add('active');
+    
+    feather.replace(); // 아이콘 렌더링
+}
+
+/**
+ * 5. 로그아웃 처리 (v8과 동일)
+ */
+function handleLogout() {
+    localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('userCourseList');
+    localStorage.removeItem('selectedCourseIndex');
+    showLogin();
+}
+
+// --- [E] UI 헬퍼 함수 (v8과 동일) ---
+function showLogin() {
+    loginContainer.classList.add('active');
+    dashboardContainer.classList.remove('active');
+    nameInput.value = '';
+    emailInput.value = '';
+    loginError.style.display = 'none';
+    feather.replace();
+}
+function showError(message) {
+    loginError.textContent = message;
+    loginError.style.display = 'block';
+    loginError.classList.remove('shake');
+    void loginError.offsetWidth;
+    loginError.classList.add('shake');
+}
+function showButtonLoader(isLoading) {
+    if (isLoading) {
+        loginBtn.classList.add('loading');
+        loginBtn.disabled = true;
+    } else {
+        loginBtn.classList.remove('loading');
+        loginBtn.disabled = false;
+    }
+}
