@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Woori-Learn | 학습 현황 대시보드</title>
     
-    https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
-    <tyle.css
+    <link rel="stylesheet" href="style.css">
     
-    <!-- ✅ 변경: PapaParse CDN 교체 -->
-    https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-    https://unpkg.com/feather-icons
+    <script src="https://unpkg.com/feather-icons"></script>
+
 </head>
 <body>
 
@@ -67,17 +67,39 @@
                 <h4><i data-feather="user-check"></i> 나의 학습 개요</h4>
                 <table class="overview-table">
                     <tbody>
-                        <tr><th>학습자명</th><td id="overview-name">...</td></tr>
-                        <tr><th>소속</th><td id="overview-dept">...</td></tr>
-                        <tr><th>신청 과정</th><td id="overview-course">...</td></tr>
+                        <tr>
+                            <th>학습자명</th>
+                            <td id="overview-name">...</td>
+                        </tr>
+                        <tr>
+                            <th>소속</th>
+                            <td id="overview-dept">...</td>
+                        </tr>
+                        <tr>
+                            <th>신청 과정</th>
+                            <td id="overview-course">...</td>
+                        </tr>
                         
-                        <tr class="divider"><th>이수 기준 (시간)</th><td id="overview-goal-time">... H</td></tr>
-                        <tr id="overview-goal-score-row"><th>이수 기준 (시험)</th><td id="overview-goal-score">... 점</td></tr>
+                        <tr class="divider">
+                            <th>이수 기준 (시간)</th>
+                            <td id="overview-goal-time">... H</td>
+                        </tr>
+                        <tr id="overview-goal-score-row"> <th>이수 기준 (시험)</th>
+                            <td id="overview-goal-score">... 점</td>
+                        </tr>
 
-                        <tr class="divider"><th>나의 인정 시간</th><td id="overview-my-time" class="metric-value-small">... H</td></tr>
-                        <tr id="overview-my-score-row"><th>나의 시험 점수</th><td id="overview-my-score" class="metric-value-small">... 점</td></tr>
+                        <tr class="divider">
+                            <th>나의 인정 시간</th>
+                            <td id="overview-my-time" class="metric-value-small">... H</td>
+                        </tr>
+                        <tr id="overview-my-score-row"> <th>나의 시험 점수</th>
+                            <td id="overview-my-score" class="metric-value-small">... 점</td>
+                        </tr>
 
-                        <tr class="divider"><th>최종 이수 여부</th><td id="overview-status" class="status-cell">...</td></tr>
+                        <tr class="divider">
+                            <th>최종 이수 여부</th>
+                            <td id="overview-status" class="status-cell">...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -106,11 +128,22 @@
             <div class="card time-card">
                 <h4><i data-feather="pie-chart"></i> 📊 시간 비교</h4>
                 <ul>
-                    <li><span>Udemy 총 학습 시간</span><strong id="total-time">... H</strong></li>
-                    <li><span>✅ 인정 시간 (이 과정)</span><strong id="recognized-time-detail">... H</strong></li>
-                    <li class="warning"><span>⚠️ 불인정 시간</span><strong id="unrecognized-time">... H</strong></li>
+                    <li>
+                        <span>Udemy 총 학습 시간</span>
+                        <strong id="total-time">... H</strong>
+                    </li>
+                    <li>
+                        <span>✅ 인정 시간 (이 과정)</span>
+                        <strong id="recognized-time-detail">... H</strong>
+                    </li>
+                    <li class="warning">
+                        <span>⚠️ 불인정 시간</span>
+                        <strong id="unrecognized-time">... H</strong>
+                    </li>
                 </ul>
-                <p class="note">'불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다.</p>
+                <p class="note">
+                    '불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다.
+                </p>
             </div>
 
             <div class="card faq-card">
@@ -127,6 +160,7 @@
         </div>
     </div>
     
-    app.js</script>
+    <script src="app.js"></script>
+
 </body>
 </html>
