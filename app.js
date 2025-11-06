@@ -1,4 +1,4 @@
-// --- [A] DOM 요소 선택 ---
+// --- [A] DOM 요소 선택 (v13과 동일) ---
 const loginContainer = document.getElementById('login-container');
 const dashboardContainer = document.getElementById('dashboard-container');
 const loginBtn = document.getElementById('login-btn');
@@ -16,13 +16,12 @@ const timeProgressBar = document.getElementById('time-progress-bar');
 const examProgressBar = document.getElementById('exam-progress-bar');
 const examMetric = document.getElementById('exam-metric');
 
-// --- [B] 데이터 파일 경로 설정 ---
-const DATA_PATH = './data/'; // (중요) /data/ 폴더 안에 CSV가 있어야 함
+// --- [B] 데이터 파일 경로 설정 (v13과 동일) ---
+const DATA_PATH = './data/';
 const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
-// --- [C] 이벤트 리스너 ---
+// --- [C] 이벤트 리스너 (v13과 동일) ---
 document.addEventListener('DOMContentLoaded', () => {
-    // [중요] feather.replace()를 DOM 로드 후 바로 호출
     feather.replace();
 
     if (localStorage.getItem('loggedInUser')) {
@@ -54,7 +53,7 @@ courseSwitcher.addEventListener('change', async (event) => {
 // --- [D] 핵심 함수 ---
 
 /**
- * (v9.3) CSV 파일 fetch (상위 3줄 자동 삭제 'slice(3)' 포함)
+ * (v13) CSV 파일 fetch (상위 3줄 자동 삭제 'slice(3)' 포함)
  */
 async function fetchCSV(fileName) {
     const response = await fetch(DATA_PATH + fileName);
@@ -67,7 +66,6 @@ async function fetchCSV(fileName) {
     const cleanedCsvText = dataLines.join('\n');
 
     return new Promise((resolve, reject) => {
-        // Papa가 정의되었는지 확인 (안전장치)
         if (typeof Papa === 'undefined') {
             reject(new Error("PapaParse 라이브러리가 로드되지 않았습니다."));
             return;
@@ -91,28 +89,30 @@ async function fetchCSV(fileName) {
 }
 
 /**
- * (v10.1) '과정명.1' (V열)을 읽도록 수정
+ * (MODIFIED) v14: '이수여부' 칼럼이 "충족"인지 확인
  */
 function buildFullUserData(userRow) {
     const GOAL_TIME = 16.0;
     const GOAL_SCORE = 60; 
 
     const examScore = parseInt(userRow['시험점수'] || -1);
-    const isCompleted = (userRow['이수여부'] === '이수');
 
-    // [!!!] H열('과정명') 대신 V열('과정명.1')을 읽도록 수정
+    // [!!!] (v14) '이수여부' 값이 "충족"인지 확인
+    const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
+
+    // (v11) V열('과정명.1')을 읽는 것이 정답
     const courseName = userRow['과정명.1'] || userRow['과정명'] || '과정명 없음';
 
     const fullUserData = {
         name: userRow['성명'],
         email: userRow['이메일'],
         department: userRow['소속'],
-        course: courseName, // [수정됨]
+        course: courseName,
         totalLearningTime: parseFloat(userRow['전체학습시간'] || 0),
         courseDetail: {
             recognizedTime: parseFloat(userRow['인정시간'] || 0),
             examScore: examScore,
-            isCompleted: isCompleted,
+            isCompleted: isCompleted, // [수정됨]
             goalTime: GOAL_TIME,
             goalScore: GOAL_SCORE
         }
@@ -121,7 +121,7 @@ function buildFullUserData(userRow) {
 }
 
 /**
- * 1. 로그인 처리 함수
+ * 1. 로그인 처리 함수 (v13과 동일)
  */
 async function handleLogin() {
     const name = nameInput.value.trim();
@@ -150,7 +150,7 @@ async function handleLogin() {
         
         const firstCourseRow = userRows[0];
         const firstCourseIndex = 0;
-        const firstCourseUserData = buildFullUserData(firstCourseRow);
+        const firstCourseUserData = buildFullUserData(firstCourseRow); // (v14 함수 호출)
 
         localStorage.setItem('loggedInUser', JSON.stringify(firstCourseUserData));
         localStorage.setItem('selectedCourseIndex', firstCourseIndex);
@@ -167,7 +167,7 @@ async function handleLogin() {
 }
 
 /**
- * 2. 과정 선택 드롭다운 설정 함수
+ * 2. 과정 선택 드롭다운 설정 함수 (v13과 동일)
  */
 function setupCourseSwitcher(userRows, selectedIndex = 0) {
     if (!userRows || userRows.length === 0) {
@@ -186,7 +186,7 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
     }
     courseSwitcher.innerHTML = '';
     userRows.forEach((row, index) => {
-        // [!!!] H열('과정명') 대신 V열('과정명.1')을 읽도록 수정
+        // (v11) V열('과정명.1')을 읽는 것이 정답
         const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
         const option = document.createElement('option');
         option.value = index;
@@ -198,7 +198,8 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
 
 
 /**
- * 4. 대시보드 UI 업데이트 함수
+ * 4. 대시보드 UI 업데이트 함수 (v13과 동일)
+ * (buildFullUserData가 정확한 값을 주므로, 이 함수는 수정할 필요가 없음)
  */
 function showDashboard(user) {
     const detail = user.courseDetail;
@@ -221,7 +222,7 @@ function showDashboard(user) {
     document.getElementById('overview-my-time').textContent = `${detail.recognizedTime.toFixed(1)} H`;
     
     const statusCell = document.getElementById('overview-status');
-    if (detail.isCompleted) {
+    if (detail.isCompleted) { // (v14) 이 값이 이제 "충족"을 기준으로 정확해짐
         statusCell.textContent = '이수 완료 🎉';
         statusCell.className = 'status-cell completed';
     } else {
@@ -241,7 +242,7 @@ function showDashboard(user) {
     }
 
     document.getElementById('course-name').textContent = user.course;
-    if (detail.isCompleted) {
+    if (detail.isCompleted) { // (v14) 이 값이 이제 "충족"을 기준으로 정확해짐
         badge.textContent = '이수 완료! 🎉';
         badge.className = 'status-badge completed';
     } else {
@@ -276,12 +277,11 @@ function showDashboard(user) {
     loginContainer.classList.remove('active');
     dashboardContainer.classList.add('active');
     
-    // [중요] feather.replace()는 UI가 변경될 때마다 호출되어야 함
     feather.replace(); 
 }
 
 /**
- * 5. 로그아웃 처리
+ * 5. 로그아웃 처리 (v13과 동일)
  */
 function handleLogout() {
     localStorage.removeItem('loggedInUser');
@@ -290,14 +290,13 @@ function handleLogout() {
     showLogin();
 }
 
-// --- [E] UI 헬퍼 함수 ---
+// --- [E] UI 헬퍼 함수 (v13과 동일) ---
 function showLogin() {
     loginContainer.classList.add('active');
     dashboardContainer.classList.remove('active');
     nameInput.value = '';
     emailInput.value = '';
     loginError.style.display = 'none';
-    // [중요] 로그인 화면에서도 아이콘 렌더링
     feather.replace();
 }
 function showError(message) {
