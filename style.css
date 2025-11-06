@@ -4,7 +4,7 @@
     --color-bg: #f0f2f5;
     --color-card: #ffffff;
     --color-primary: #004a9e;
-    --color-woori-blue: #0099FF; /* [!!!] (NEW) v22: 우리은행 스카이블루 */
+    --color-woori-blue: #0099FF; /* 우리은행 스카이블루 */
     --color-accent: #00c73c;
     --color-text: #212529;
     --color-text-muted: #6c757d;
@@ -51,31 +51,33 @@ body {
 
 /* --- 3. 로그인 화면 --- */
 .login-header { text-align: center; margin-bottom: 30px; }
-.logo-icon { font-size: 3rem; display: block; animation: bounce 1s infinite alternate; }
+/* [!!!] (NEW) v23: 로켓 아이콘 애니메이션 복원 */
+.logo-icon { 
+    font-size: 3rem; 
+    display: block; 
+    animation: bounce 1s infinite alternate; 
+}
 @keyframes bounce {
     from { transform: translateY(0); }
     to { transform: translateY(-10px); }
 }
-/* [!!!] (MODIFIED) v22: 폰트 크기 조정 */
 .login-title { 
     color: var(--color-primary);
     margin: 10px 0 5px 0;
-    font-size: 1.9rem; /* 텍스트가 길어져서 폰트 크기 조정 */
+    font-size: 1.9rem;
 }
 #login-container p { font-size: 1.1em; color: var(--color-text-muted); margin: 0; }
 .form-group { margin-bottom: 18px; position: relative; }
 .form-group label { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 8px; color: var(--color-text); }
 .form-group input { width: 100%; padding: 14px 14px 14px 16px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1em; transition: border-color 0.2s, box-shadow 0.2s; }
 .form-group input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 74, 158, 0.1); }
-
-/* [!!!] (MODIFIED) v22: 로그인 버튼 (우리은행 스카이블루) */
 #login-btn { 
     width: 100%; 
     padding: 15px; 
     font-size: 1.1em; 
     font-weight: 700; 
     color: #fff; 
-    background: var(--color-woori-blue); /* (v22) 색상 변경 */
+    background: var(--color-woori-blue); /* (v22) 우리은행 파란색 */
     border: none; 
     border-radius: 8px; 
     cursor: pointer; 
@@ -87,8 +89,8 @@ body {
     overflow: hidden; 
 }
 #login-btn:hover { 
-    background: #008ae6; /* (v22) 호버 색상 변경 */
-    box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4); /* (v22) 그림자 변경 */
+    background: #008ae6; /* (v22) 호버 색상 */
+    box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
     transform: translateY(-2px); 
 }
 #login-btn.loading #login-btn-text { display: none; }
@@ -108,22 +110,8 @@ body {
 /* --- 4. 대시보드 공통 --- */
 .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
 .header h2 { display: none; }
-
-/* [!!!] (MODIFIED) v22: 날짜가 빠지고 중앙 정렬 */
-.data-notice { 
-    display: flex; 
-    justify-content: center; /* (v22) 중앙 정렬 */
-    align-items: center; 
-    font-size: 0.95em; 
-    font-weight: 500; 
-    color: var(--color-text-muted); 
-    background-color: #f8f9fa; 
-    padding: 12px 15px; 
-    border-radius: 8px; 
-    margin-bottom: 20px; 
-}
+.data-notice { display: flex; justify-content: center; align-items: center; font-size: 0.95em; font-weight: 500; color: var(--color-text-muted); background-color: #f8f9fa; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; }
 .data-notice span { display: flex; align-items: center; gap: 6px; }
-
 .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 1em; margin-bottom: 25px; animation: fadeIn 0.5s 0.2s backwards; }
 .status-badge.completed { background: linear-gradient(90deg, #e6f7ec, #d1f7e0); color: #008a38; box-shadow: 0 2px 8px rgba(0, 138, 56, 0.2); }
 .status-badge.in-progress { background: linear-gradient(90deg, #fff8e1, #fff0c2); color: #e6a000; box-shadow: 0 2px 8px rgba(230, 160, 0, 0.2); }
@@ -135,8 +123,6 @@ body {
 .progress-label { display: block; text-align: right; font-weight: 600; font-size: 1.1em; margin-top: 8px; color: var(--color-primary); }
 .progress-section.metric-item { display: block; }
 .progress-section.metric-item.hidden { display: none; }
-
-/* 카드 제목 (h3, h4) 공통 (v18) */
 .card h3,
 .card h4 { display: flex; align-items: center; gap: 10px; }
 .time-card h4, .faq-card h4, .overview-card h4, .contact-card h4 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--color-primary); }
@@ -152,38 +138,20 @@ summary:hover { color: var(--color-primary); }
 details[open] summary { color: var(--color-primary); }
 details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--color-primary); font-size: 0.95em; line-height: 1.6; }
 
-/* --- 5. 과정 선택 드롭다운 (v18) --- */
+/* --- 5. 과정 선택 드롭다운 (v21) --- */
 .course-switcher-wrapper { position: relative; display: flex; align-items: center; background-color: #f8f9fa; border-radius: var(--border-radius); padding: 0 10px; flex-grow: 1; margin-right: 15px; border: 1px solid #eee; }
 .course-switcher-wrapper .header-emoji { font-size: 1.2em; margin-left: 5px; }
 .course-switcher-wrapper .chevron-icon { display: none; }
 #course-switcher { width: 100%; padding: 12px 10px 12px 10px; font-size: 1.15em; font-weight: 700; color: var(--color-primary); border: none; background-color: transparent; cursor: pointer; -webkit-appearance: menulist; -moz-appearance: menulist; appearance: menulist; }
 #course-switcher:focus { outline: none; }
-
-/* [!!!] (MODIFIED) v21: 로그아웃 텍스트 버튼 스타일 */
 #logout-btn {
-    width: auto;
-    height: 44px;
-    padding: 0 15px;
-    font-size: 0.95em;
-    font-weight: 600;
-    line-height: 44px;
-    text-align: center;
-    background-color: #f0f0f0;
-    color: var(--color-text-muted);
-    border-radius: var(--border-radius);
-    flex-shrink: 0;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    width: auto; height: 44px; padding: 0 15px; font-size: 0.95em; font-weight: 600; line-height: 44px; text-align: center; background-color: #f0f0f0; color: var(--color-text-muted); border-radius: var(--border-radius); flex-shrink: 0; border: none; cursor: pointer; transition: all 0.2s ease;
 }
 #logout-btn:hover {
-    background-color: #fbebee;
-    color: var(--color-error);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-light);
+    background-color: #fbebee; color: var(--color-error); transform: translateY(-2px); box-shadow: var(--shadow-light);
 }
 
-/* --- 6. 개요 카드 및 테이블 (v17) --- */
+/* --- 6. 개요 카드 및 테이블 (v21) --- */
 .overview-card h4 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; color: var(--color-primary); }
 .overview-table { width: 100%; border-collapse: collapse; font-size: 1.05em; }
 .overview-table th,
@@ -198,93 +166,115 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
 .status-cell.in-progress { color: #e6a000; }
 .hidden-row { display: none; }
 
-/* --- 7. 비활성 드롭다운 (v18) --- */
+/* --- 7. 비활성 드롭다운 (v21) --- */
 .course-switcher-wrapper.disabled { background-color: #f0f2f5; cursor: not-allowed; opacity: 0.8; }
 .course-switcher-wrapper.disabled select { cursor: not-allowed; pointer-events: none; }
 
-/* --- 8. 문의하기 카드 (v18) --- */
+/* --- 8. 문의하기 카드 (v22) --- */
 .contact-card p { font-size: 1.05em; line-height: 1.6; color: var(--color-text-muted); }
 .contact-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; font-size: 1.1em; font-weight: 700; color: #fff; background: linear-gradient(90deg, var(--color-primary), #006aff); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; }
 .contact-btn:hover { box-shadow: 0 5px 15px rgba(0, 74, 158, 0.4); transform: translateY(-2px); }
-/* [!!!] (NEW) v22: 복사하기 버튼 비활성화 스타일 */
-.contact-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
+.contact-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
 
 
-/* --- 9. 애니메이션 (v18) --- */
+/* --- 9. 애니메이션 (v21) --- */
 @keyframes running-man {
   0% { transform: translateX(-3px); }
   50% { transform: translateX(3px); }
   100% { transform: translateX(-3px); }
 }
-/* [!!!] (MODIFIED) v21: 'status-cell' (표)에서 애니메이션 제거 */
+/* (v21) 배지에만 애니메이션 적용 */
 .status-badge.in-progress { 
     display: inline-block; 
     animation: running-man 1.2s infinite ease-in-out; 
 }
 
-/* --- 10. (v21) 로고 헤더 (재구성) --- */
+/* --- 10. (v23) 로고 헤더 (재구성) --- */
 .dashboard-title-header {
     display: flex;
-    flex-direction: column; /* 세로 정렬 */
-    align-items: center; /* 가운데 정렬 */
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     margin-bottom: 25px;
     border-bottom: 1px solid #eee;
     padding-bottom: 20px;
 }
-.header-udemy-logo {
-    height: 36px; 
-    width: auto;
+/* (v23) 로고 2개 수평 정렬 */
+.logo-lockup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     margin-bottom: 15px; /* 로고와 부제목 사이 간격 */
 }
+/* [!!!] (NEW) v23: 우리은행 로고 (애니메이션) */
+.header-woori-logo-img {
+    height: 36px;
+    width: auto;
+    animation: logo-pulse 3s infinite ease-in-out; /* (v23) 애니메이션 */
+}
+.header-udemy-logo {
+    height: 28px; 
+    width: auto;
+}
+.header-divider {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #aaa;
+}
 .dashboard-subtitle {
-    font-size: 1.5em; /* h1 태그 */
+    font-size: 1.5em;
     font-weight: 600;
-    color: var(--color-primary); /* 우리은행 메인 컬러 */
+    color: var(--color-primary);
     text-align: center;
     margin: 0;
 }
+/* [!!!] (NEW) v23: 우리은행 로고 애니메이션 */
+@keyframes logo-pulse {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.05); opacity: 0.95; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
-/* --- 11. (v19) 플로팅 버튼 --- */
+
+/* --- 11. (v23) 플로팅 버튼 (파란색) --- */
 .floating-action-button {
-    position: fixed; /* 화면에 고정 */
+    position: fixed;
     bottom: 20px;
     right: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
-    background: linear-gradient(90deg, var(--color-accent), #00e065);
+    /* [!!!] (MODIFIED) v23: 파란색으로 변경 */
+    background: var(--color-woori-blue);
     color: white;
     font-size: 1.1em;
     font-weight: 700;
     padding: 14px 20px;
-    border-radius: 30px; /* 둥글게 */
+    border-radius: 30px;
     text-decoration: none;
-    box-shadow: 0 6px 20px rgba(0, 199, 60, 0.4);
+    /* [!!!] (MODIFIED) v23: 파란색 그림자 */
+    box-shadow: 0 6px 20px rgba(0, 153, 255, 0.4);
     z-index: 1000;
     transition: all 0.3s ease;
     animation: bounce-slow 2s infinite ease-in-out;
 }
 .floating-action-button:hover {
-    transform: translateY(-5px) scale(1.05); /* 살짝 커짐 */
-    box-shadow: 0 8px 25px rgba(0, 199, 60, 0.6);
-    animation-play-state: paused; /* 호버 시 애니메이션 멈춤 */
+    transform: translateY(-5px) scale(1.05);
+    /* [!!!] (MODIFIED) v23: 파란색 그림자 */
+    box-shadow: 0 8px 25px rgba(0, 153, 255, 0.6);
+    animation-play-state: paused;
 }
 @keyframes bounce-slow {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
 }
 
-/* --- 12. (NEW) v22: 최상단 경고 배너 --- */
+/* --- 12. (v22) 최상단 경고 배너 --- */
 #global-warning-banner {
-    background-color: #f8f9fa; /* (v22) 기존 알림창과 통일 */
-    border: 1px solid #e0e0e0;
-    color: var(--color-text-muted);
+    background-color: #fff8e1; /* (v23) 눈에 띄게 노란색으로 변경 */
+    border: 1px solid #e6a000;
+    color: #e6a000; /* (v23) 글자색 변경 */
     padding: 12px 15px;
     border-radius: var(--border-radius);
     font-weight: 600;
