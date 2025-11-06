@@ -23,7 +23,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden; /* 배경 애니메이션을 위해 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    overflow-y: auto; /* 세로 스크롤 허용 */
 }
 
 /* --- 1. 배경 애니메이션 (Wow Point) --- */
