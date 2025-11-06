@@ -1,4 +1,4 @@
-// --- [A] DOM 요소 선택 (v8과 동일) ---
+// --- [A] DOM 요소 선택 (v8/v9와 동일) ---
 const loginContainer = document.getElementById('login-container');
 const dashboardContainer = document.getElementById('dashboard-container');
 const loginBtn = document.getElementById('login-btn');
@@ -16,15 +16,13 @@ const timeProgressBar = document.getElementById('time-progress-bar');
 const examProgressBar = document.getElementById('exam-progress-bar');
 const examMetric = document.getElementById('exam-metric');
 
-// --- [B] 데이터 파일 경로 설정 (v8과 동일) ---
+// --- [B] 데이터 파일 경로 설정 (v8/v9와 동일) ---
 const DATA_PATH = './data/';
 const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
-// --- [C] 이벤트 리스너 (v8과 동일) ---
+// --- [C] 이벤트 리스너 (v8/v9와 동일) ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 페이지 로드 시 로그인 상태 확인 (간편 로그인을 위해)
     if (localStorage.getItem('loggedInUser')) {
-        // 이전에 로그인한 정보가 있으면 바로 대시보드 표시
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
         const selectedIndex = localStorage.getItem('selectedCourseIndex') || 0;
@@ -32,31 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setupCourseSwitcher(userRows, selectedIndex);
         showDashboard(user);
     } else {
-        // 로그인 정보 없으면 로그인 화면 표시
         showLogin();
     }
 });
-
-// 로그인 버튼 클릭
 loginBtn.addEventListener('click', handleLogin);
-
-// 로그아웃 버튼 클릭
 logoutBtn.addEventListener('click', handleLogout);
-
-// (NEW) 과정 선택 드롭다운 변경 시
 courseSwitcher.addEventListener('change', async (event) => {
     const selectedIndex = event.target.value;
     const userRows = JSON.parse(localStorage.getItem('userCourseList'));
     const selectedCourseRow = userRows[selectedIndex];
     
-    // (v9) 선택된 행(Row)으로 사용자 데이터 객체를 '즉시' 생성
     const selectedCourseUserData = buildFullUserData(selectedCourseRow);
-
-    // (v9) 새 데이터를 로컬 스토리지에 저장
     localStorage.setItem('loggedInUser', JSON.stringify(selectedCourseUserData));
     localStorage.setItem('selectedCourseIndex', selectedIndex);
     
-    // (v9) UI 갱신
     showDashboard(selectedCourseUserData);
 });
 
@@ -64,22 +51,25 @@ courseSwitcher.addEventListener('change', async (event) => {
 // --- [D] 핵심 함수 ---
 
 /**
- * (v8과 동일) CSV 파일 fetch 및 자동 파싱 (상위 3줄 자동 삭제)
+ * (MODIFIED) v9.3: CSV 파일 fetch (상위 3줄 자동 삭제 코드 '복원')
+ * 'woori_data.csv' 원본 파일을 그대로 사용하세요.
  */
 async function fetchCSV(fileName) {
     const response = await fetch(DATA_PATH + fileName);
     if (!response.ok) { throw new Error(`${fileName} 파일을 불러올 수 없습니다.`); }
     
     const csvText = await response.text();
-    const lines = csvText.split('\n');
     
-    // 3번째 줄(인덱스 3)부터가 헤더이므로, 그 줄부터 끝까지 사용
-    const dataLines = lines.slice(3); 
+    // (NEW) v9.3: 'slice(3)' 코드 복원
+    // CSV 파일의 상위 3줄 (인덱스 0, 1, 2)을 무시합니다.
+    const lines = csvText.split('\n');
+    const dataLines = lines.slice(3); // 4번째 줄(인덱스 3)부터 헤더로 사용
     const cleanedCsvText = dataLines.join('\n');
 
     return new Promise((resolve, reject) => {
-        Papa.parse(cleanedCsvText, { // 정리된 텍스트를 파싱
-            header: true, // 이제 첫 줄(원본의 4번째 줄)이 헤더
+        // (v9.3) 정리된 텍스트를 파싱
+        Papa.parse(cleanedCsvText, { 
+            header: true, // 이제 이 첫 줄이 '성명', '이메일' 헤더가 맞음
             skipEmptyLines: true,
             complete: (results) => {
                 if (results.errors.length) {
@@ -96,28 +86,25 @@ async function fetchCSV(fileName) {
 }
 
 /**
- * (MODIFIED) v9: CSV 행(Row)에서 '시험점수', '이수여부'를 정확히 읽어옴
+ * (v9.1과 동일) CSV 행(Row)에서 대시보드용 데이터 객체를 생성
  */
 function buildFullUserData(userRow) {
     const GOAL_TIME = 16.0;
     const GOAL_SCORE = 60; 
 
-    // (NEW) v9: '시험점수' 칼럼을 읽음. 비어있으면(NaN) -1로 설정
     const examScore = parseInt(userRow['시험점수'] || -1);
-    
-    // (NEW) v9: '이수여부' 칼럼을 읽음. "이수"인지 아닌지 (true/false)
     const isCompleted = (userRow['이수여부'] === '이수');
 
     const fullUserData = {
         name: userRow['성명'],
         email: userRow['이메일'],
-        department: userRow['소속'], // '소속' 칼럼
-        course: userRow['과정명'], // H열
-        totalLearningTime: parseFloat(userRow['전체학습시간'] || 0), // L열
+        department: userRow['소속'],
+        course: userRow['과정명'],
+        totalLearningTime: parseFloat(userRow['전체학습시간'] || 0),
         courseDetail: {
-            recognizedTime: parseFloat(userRow['인정시간'] || 0), // R열
-            examScore: examScore, // (v9) 실제 점수
-            isCompleted: isCompleted, // (v9) 실제 이수 여부
+            recognizedTime: parseFloat(userRow['인정시간'] || 0),
+            examScore: examScore,
+            isCompleted: isCompleted,
             goalTime: GOAL_TIME,
             goalScore: GOAL_SCORE
         }
@@ -126,11 +113,12 @@ function buildFullUserData(userRow) {
 }
 
 /**
- * 1. 로그인 처리 함수 (v8과 동일)
+ * 1. 로그인 처리 함수 (v9.1과 동일)
  */
 async function handleLogin() {
     const name = nameInput.value.trim();
     const email = emailInput.value.trim().toLowerCase();
+    
     if (!name || !email) { showError('이름과 이메일을 모두 입력하세요.'); return; }
     
     showButtonLoader(true);
@@ -138,13 +126,15 @@ async function handleLogin() {
 
     try {
         const mainListData = await fetchCSV(FILE_ALL_IN_ONE);
+        
+        // (v9.1) trim() 적용된 비교
         const userRows = mainListData.filter(row => 
-            row['성명'] === name && 
-            row['이메일'] &&
-            row['이메일'].toLowerCase() === email
+            row['성명'] && row['성명'].trim() === name && 
+            row['이메일'] && row['이메일'].trim().toLowerCase() === email
         );
 
         if (userRows.length === 0) {
+            // (MODIFIED) v9.3: 에러 메시지 원복
             showError('일치하는 사용자가 없습니다. (이름/이메일 확인)');
             showButtonLoader(false);
             return;
@@ -154,16 +144,15 @@ async function handleLogin() {
         
         const firstCourseRow = userRows[0];
         const firstCourseIndex = 0;
-        const firstCourseUserData = buildFullUserData(firstCourseRow); // (v9 함수 호출)
+        const firstCourseUserData = buildFullUserData(firstCourseRow);
 
         localStorage.setItem('loggedInUser', JSON.stringify(firstCourseUserData));
         localStorage.setItem('selectedCourseIndex', firstCourseIndex);
         
         setupCourseSwitcher(userRows, firstCourseIndex);
-        showDashboard(firstCourseUserData); // (v9 함수 호출)
+        showDashboard(firstCourseUserData);
         
-    } catch (error)
- {
+    } catch (error) {
         console.error(error);
         showError(`데이터 로드 오류: ${error.message}`);
     } finally {
@@ -172,7 +161,7 @@ async function handleLogin() {
 }
 
 /**
- * 2. 과정 선택 드롭다운 설정 함수 (v8과 동일)
+ * 2. 과정 선택 드롭다운 설정 함수 (v8/v9와 동일)
  */
 function setupCourseSwitcher(userRows, selectedIndex = 0) {
     if (!userRows || userRows.length === 0) {
@@ -181,7 +170,7 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
     if (userRows.length === 1) {
         courseSwitcherWrapper.style.display = 'flex';
         courseSwitcher.disabled = true;
-        courseSwitcherWrapper.classList.add('disabled'); // v8 스타일 적용
+        courseSwitcherWrapper.classList.add('disabled');
         courseSwitcherWrapper.querySelector('.chevron-icon').style.display = 'none';
     } else {
         courseSwitcherWrapper.style.display = 'flex';
@@ -202,14 +191,12 @@ function setupCourseSwitcher(userRows, selectedIndex = 0) {
 
 
 /**
- * 4. 대시보드 UI 업데이트 함수 (v8과 동일)
- * (v9에서 buildFullUserData가 정확한 값을 주므로, 이 함수는 수정할 필요가 없음)
+ * 4. 대시보드 UI 업데이트 함수 (v8/v9와 동일)
  */
 function showDashboard(user) {
     const detail = user.courseDetail;
     const badge = document.getElementById('status-badge');
     
-    // 알림 문구
     const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
     if (userRows.length > 0) {
         courseCountNotice.innerHTML = `<i data-feather="layers"></i> 총 ${userRows.length}개 과정 신청됨`;
@@ -217,10 +204,9 @@ function showDashboard(user) {
     } else {
         courseCountNotice.style.display = 'none';
     }
-    const today = new Date(); // 데이터 기준일 (임시)
+    const today = new Date();
     dataDateNotice.innerHTML = `<i data-feather="clock"></i> ${today.getMonth()+1}/${today.getDate()} 기준`;
 
-    // --- '개요' 카드 ---
     document.getElementById('overview-name').textContent = user.name;
     document.getElementById('overview-dept').textContent = user.department;
     document.getElementById('overview-course').textContent = user.course;
@@ -228,7 +214,6 @@ function showDashboard(user) {
     document.getElementById('overview-my-time').textContent = `${detail.recognizedTime.toFixed(1)} H`;
     
     const statusCell = document.getElementById('overview-status');
-    // (v9) 'isCompleted'는 이제 CSV의 '이수여부'를 정확히 반영
     if (detail.isCompleted) {
         statusCell.textContent = '이수 완료 🎉';
         statusCell.className = 'status-cell completed';
@@ -238,8 +223,6 @@ function showDashboard(user) {
     }
     const goalScoreRow = document.getElementById('overview-goal-score-row');
     const myScoreRow = document.getElementById('overview-my-score-row');
-    
-    // (v9) 'examScore'는 이제 CSV의 '시험점수'를 정확히 반영
     if (detail.examScore > -1) {
         document.getElementById('overview-goal-score').textContent = `${detail.goalScore} 점`;
         document.getElementById('overview-my-score').textContent = `${detail.examScore} 점`;
@@ -250,7 +233,6 @@ function showDashboard(user) {
         myScoreRow.classList.add('hidden-row');
     }
 
-    // --- '프로그레스 바' 카드 ---
     document.getElementById('course-name').textContent = user.course; 
     if (detail.isCompleted) {
         badge.textContent = '이수 완료! 🎉';
@@ -284,15 +266,14 @@ function showDashboard(user) {
     timeProgressBar.style.width = '0%';
     setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
-    // 화면 전환
     loginContainer.classList.remove('active');
     dashboardContainer.classList.add('active');
     
-    feather.replace(); // 아이콘 렌더링
+    feather.replace(); 
 }
 
 /**
- * 5. 로그아웃 처리 (v8과 동일)
+ * 5. 로그아웃 처리 (v8/v9와 동일)
  */
 function handleLogout() {
     localStorage.removeItem('loggedInUser');
@@ -301,7 +282,7 @@ function handleLogout() {
     showLogin();
 }
 
-// --- [E] UI 헬퍼 함수 (v8과 동일) ---
+// --- [E] UI 헬퍼 함수 (v8/v9와 동일) ---
 function showLogin() {
     loginContainer.classList.add('active');
     dashboardContainer.classList.remove('active');
