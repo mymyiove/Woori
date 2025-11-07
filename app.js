@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNavContent = document.getElementById('mobile-nav-content');
     const quickNavBar = document.getElementById('quick-nav-bar');
     const mainHeader = document.getElementById('main-header'); // (v30) 데스크톱 헤더
+    const mobileHeaderControls = document.getElementById('mobile-header-controls'); // (v30) 모바일 컨트롤 영역
 
     // --- [B] 데이터 파일 경로 설정 ---
     const DATA_PATH = './data/';
@@ -99,16 +100,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupMobileNav() {
         // (v30) 900px 미만일 때 모바일로 간주 (style.css와 동일)
         if (window.innerWidth < 900) {
-            // (v29) 데스크톱의 컨트롤 요소들을 모바일 오버레이로 '이동'
-            if (mobileNavContent) {
-                // (v30) 이미 이동했는지 확인 (로그아웃 후 다시 로그인 시)
-                if (courseSwitcherWrapper && courseSwitcherWrapper.parentElement !== mobileNavContent) {
-                    mobileNavContent.appendChild(courseSwitcherWrapper);
+            // [!!!] (MODIFIED) v30: (요청 3) 컨트롤을 '헤더'로 이동
+            if (mobileHeaderControls) { 
+                if (courseSwitcherWrapper && courseSwitcherWrapper.parentElement !== mobileHeaderControls) {
+                    mobileHeaderControls.appendChild(courseSwitcherWrapper);
                 }
-                if (courseCountNotice && courseCountNotice.parentElement !== mobileNavContent) {
-                    mobileNavContent.appendChild(courseCountNotice);
+                if (courseCountNotice && courseCountNotice.parentElement !== mobileHeaderControls) {
+                    mobileHeaderControls.appendChild(courseCountNotice);
                 }
-                if (quickNavBar && quickNavBar.parentElement !== mobileNavContent) {
+            }
+            // [!!!] (MODIFIED) v30: (요청 3) '빠른 메뉴'만 오버레이로 이동
+            if (mobileNavContent) { 
+                 if (quickNavBar && quickNavBar.parentElement !== mobileNavContent) {
                     mobileNavContent.appendChild(quickNavBar);
                 }
             }
