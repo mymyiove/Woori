@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * 4. 대시보드 UI 업데이트 함수 (v24)
+     * 4. 대시보드 UI 업데이트 함수 (v26)
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -242,8 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         if (userRows.length > 0) {
-            // [!!!] (MODIFIED) v24: 과정 수 텍스트 및 강조
-            courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이십니다.`;
+            // [!!!] (MODIFIED) v26: "중이에요"로 수정
+            courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
         } else {
             courseCountNotice.style.display = 'none';
         }
