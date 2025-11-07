@@ -157,6 +157,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- [D] 핵심 함수 ---
 
+    /**
+     * [!!!] (NEW) v0.37: 숫자 카운트업 애니메이션
+     */
+    function animateCountUpWithSuffix(el, end, decimals = 0, duration = 1000, prefix = '', suffix = '') {
+        if (!el) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const value = progress * end; // 0에서 end까지
+            el.textContent = prefix + value.toFixed(decimals) + suffix;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        el.textContent = prefix + (0).toFixed(decimals) + suffix; // 시작 값
+        window.requestAnimationFrame(step);
+    }
+
     async function fetchCSV(fileName) {
         const response = await fetch(DATA_PATH + fileName);
         if (!response.ok) { throw new Error(`${fileName} 파일을 불러올 수 없습니다.`); }
@@ -175,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const headerRow = Papa.parse(headerRowLine, { header: false }).data[0]; 
             
             if (headerRow && headerRow.length > 20) {
-                const dateValue = headerRow[20]; // 21번째 칸(U열) 값
+                const dateValue = headerRow[20];
                 if (dateValue && dateValue.trim() !== "") {
                     dataUpdatedDate = dateValue.trim().replace(/"/g, ''); 
                 }
@@ -313,9 +332,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function showDashboard(user) {
         const detail = user.courseDetail;
         const badge = document.getElementById('status-badge');
-        
-        // [!!!] (v0.35) Skill-Set 경고 문구 DOM
         const skillSetWarning = document.getElementById('skill-set-warning');
+        
+        // [!!!] (v0.37) 카운트업 대상 DOM
+        const timeMetricH4 = document.getElementById('time-metric-h4');
+        const examMetricH4 = document.getElementById('exam-metric-h4');
+        const recognizedTimeLabel = document.getElementById('recognized-time');
+        const examScoreLabel = document.getElementById('exam-score');
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         const countText = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
@@ -380,12 +403,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('unrecognized-time').textContent = `${unrecognizedTime} H`;
 
         const timePercent = Math.min((detail.recognizedTime / detail.goalTime) * 100, 100);
-        document.getElementById('recognized-time').textContent = `${courseRecognizedTime} / ${detail.goalTime.toFixed(1)} H`;
+        
+        // [!!!] (v0.37) 카운트업 애니메이션 적용
+        animateCountUpWithSuffix(timeMetricH4, detail.recognizedTime, 1, 1000, '', ' H');
+        animateCountUpWithSuffix(recognizedTimeLabel, detail.recognizedTime, 1, 1000, '', ` / ${detail.goalTime.toFixed(1)} H`);
+
         
         if (detail.examScore > -1) {
             examMetric.style.display = 'block';
             const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
-            document.getElementById('exam-score').textContent = `${detail.examScore} / ${detail.goalScore} 점`;
+            
+            // [!!!] (v0.37) 카운트업 애니메이션 적용
+            animateCountUpWithSuffix(examMetricH4, detail.examScore, 0, 1000, '', ' 점');
+            animateCountUpWithSuffix(examScoreLabel, detail.examScore, 0, 1000, '', ` / ${detail.goalScore} 점`);
+            
             examProgressBar.style.width = '0%';
             setTimeout(() => { examProgressBar.style.width = `${scorePercent}%`; }, 100);
         } else {
@@ -396,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
 
-        // [!!!] (MODIFIED) v0.35: '학습하러 가기' 버튼 + Skill-Set 경고 로직
         const courseName = user.course.trim();
         let link = '#';
         let display = 'none'; 
@@ -442,6 +472,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionStorage.setItem(congratulatedKey, 'true');
             }
         }
+
+        // [!!!] (NEW) v0.37: PC 우측 네비게이션 높이 동기화
+        // DOM이 렌더링될 시간을 주기 위해 setTimeout 0 사용
+        setTimeout(() => {
+            if (window.innerWidth >= 900) { // PC 뷰에서만 실행
+                const overviewCard = document.getElementById('overview');
+                const rightNav = document.getElementById('quick-nav-bar');
+                if (overviewCard && rightNav) {
+                    const overviewHeight = overviewCard.offsetHeight;
+                    rightNav.style.minHeight = `${overviewHeight}px`;
+                }
+            }
+        }, 0);
     }
 
     /**
