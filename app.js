@@ -16,11 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const courseSwitcherWrapper = document.getElementById('course-switcher-wrapper');
     const courseSwitcher = document.getElementById('course-switcher');
     const courseCountNotice = document.getElementById('course-count-notice');
-    // const dataDateNotice = document.getElementById('data-date-notice'); // (DELETED) v22
     const timeProgressBar = document.getElementById('time-progress-bar');
     const examProgressBar = document.getElementById('exam-progress-bar');
     const examMetric = document.getElementById('exam-metric');
     const copyEmailBtn = document.getElementById('copy-email-btn');
+    // [!!!] (NEW) v27: 학습하러 가기 버튼
+    const goToCourseBtn = document.getElementById('go-to-course-btn');
 
     // --- [B] 데이터 파일 경로 설정 ---
     const DATA_PATH = './data/';
@@ -234,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * 4. 대시보드 UI 업데이트 함수 (v26)
+     * 4. 대시보드 UI 업데이트 함수 (v27)
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -242,13 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         if (userRows.length > 0) {
-            // [!!!] (MODIFIED) v26: "중이에요"로 수정
             courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
         } else {
             courseCountNotice.style.display = 'none';
         }
 
-        // (v22) 새 배너의 날짜 업데이트
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
         const dataDateDynamic = document.getElementById('data-date-dynamic');
         if (dataDateDynamic) {
@@ -316,6 +315,30 @@ document.addEventListener('DOMContentLoaded', () => {
         timeProgressBar.style.width = '0%';
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
+
+        // [!!!] (NEW) v27: '학습하러 가기' 버튼 동적 제어
+        const courseName = user.course.trim();
+        let link = '#';
+        let display = 'none'; // 기본값 (Skill-set 등은 숨김)
+
+        if (courseName.includes('IT-정보 보호')) {
+            link = 'https://wooribank.udemy.com/learning-paths/10631499/';
+            display = 'flex';
+        } else if (courseName.includes('디지털 직무 기본')) {
+            link = 'https://wooribank.udemy.com/learning-paths/10631535/';
+            display = 'flex';
+        } else if (courseName.includes('디지털/IT 사이버')) {
+            link = 'https://wooribank.udemy.com/organization/home/category/it/';
+            display = 'flex';
+        }
+        
+        if (goToCourseBtn) {
+            goToCourseBtn.href = link;
+            goToCourseBtn.style.display = display;
+        }
+
+
+        // --- 화면 전환 ---
         loginContainer.classList.remove('active');
         dashboardContainer.classList.add('active');
         
