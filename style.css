@@ -13,11 +13,11 @@
     --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
     --border-radius: 12px;
     
-    /* [!!!] (MODIFIED) v31: 헤더 높이 변수 (앵커 링크용) */
-    --warning-banner-height-desktop: 44px; /* (v31) 경고 배너 높이 (데스크톱) */
-    --warning-banner-height-mobile: 60px; /* (v31) 경고 배너 높이 (모바일) */
-    --mobile-header-height: 120px; /* (v31) 모바일 헤더 높이 (2줄) */
-    --desktop-header-height: 275px; /* (v31) 데스크톱 헤더 높이 (실측) */
+    /* [!!!] (MODIFIED) v32: 헤더 높이 변수 (앵커 링크용) */
+    --warning-banner-height-desktop: 44px; 
+    --warning-banner-height-mobile: 60px; 
+    --mobile-header-height: 120px; 
+    --desktop-header-height: 275px; 
 }
 
 html {
