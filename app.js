@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
     const mobileNavContent = document.getElementById('mobile-nav-content');
     const quickNavBar = document.getElementById('quick-nav-bar');
+    const mainHeader = document.getElementById('main-header'); // (v30) 데스크톱 헤더
 
     // --- [B] 데이터 파일 경로 설정 ---
     const DATA_PATH = './data/';
@@ -44,12 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setupCourseSwitcher(userRows, selectedIndex);
         showDashboard(user);
+        setupMobileNav(); // (v30) 대시보드 로드 시 모바일 네비 설정
     } else {
         showLogin();
     }
 
     loginBtn.addEventListener('click', handleLogin);
-    logoutBtn.addEventListener('click', handleLogout);
+    
+    // [!!!] (MODIFIED) v30: 로그아웃 버튼 (모바일/데스크톱 2개)
+    // (v30) quickNavBar 안에 있는 로그아웃 버튼
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    // (v30) 모바일 메뉴 안으로 '이동될' 로그아웃 버튼
+    // 이벤트 리스너는 한 번만 등록하면 요소가 이동해도 유지됩니다.
+
     courseSwitcher.addEventListener('change', async (event) => {
         const selectedIndex = event.target.value;
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
@@ -88,14 +98,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // [!!!] (NEW) v29: 모바일 네비게이션 로직
     function setupMobileNav() {
-        // 900px 미만일 때 모바일로 간주
+        // 900px 미만일 때 모바일로 간주 (style.css와 동일)
         if (window.innerWidth < 900) {
             // (v29) 데스크톱의 컨트롤 요소들을 모바일 오버레이로 '이동'
             if (mobileNavContent) {
+                // (v30) 이미 이동했는지 확인 (로그아웃 후 다시 로그인 시)
                 if (courseSwitcherWrapper) mobileNavContent.appendChild(courseSwitcherWrapper);
                 if (courseCountNotice) mobileNavContent.appendChild(courseCountNotice);
                 if (quickNavBar) mobileNavContent.appendChild(quickNavBar);
-                // (v29) 로그아웃 버튼은 nav bar 안에 있으므로 quickNavBar와 함께 이동됨
             }
         }
         
@@ -110,10 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 mobileNavOverlay.classList.remove('visible');
             });
         }
-        // (v29) 오버레이 배경 클릭 시 닫기
         if(mobileNavOverlay) {
             mobileNavOverlay.addEventListener('click', (e) => {
-                if (e.target === mobileNavOverlay) { // 어두운 배경만 해당
+                if (e.target === mobileNavOverlay) {
                     mobileNavOverlay.classList.remove('visible');
                 }
             });
@@ -128,8 +137,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // (v29) 페이지 로드 시 모바일 설정 실행
-    setupMobileNav();
+    // (v30) 화면 크기 변경 시 모바일/데스크톱 요소 위치 재조정 (고급)
+    // (데스크톱 <-> 모바일 창 크기 조절 시)
+    let isMobile = window.innerWidth < 900;
+    window.addEventListener('resize', () => {
+        const currentlyMobile = window.innerWidth < 900;
+        if (currentlyMobile === isMobile) return; // 변경 없음
+
+        isMobile = currentlyMobile;
+        
+        if (isMobile) {
+            // 모바일로 전환: 컨트롤을 오버레이로 이동
+            if (mobileNavContent) {
+                if (courseSwitcherWrapper) mobileNavContent.appendChild(courseSwitcherWrapper);
+                if (courseCountNotice) mobileNavContent.appendChild(courseCountNotice);
+                if (quickNavBar) mobileNavContent.appendChild(quickNavBar);
+            }
+        } else {
+            // 데스크톱으로 전환: 컨트롤을 헤더로 '원위치'
+            if (mainHeader) {
+                const headerControls = mainHeader.querySelector('.header-controls');
+                if (headerControls) {
+                    if (courseSwitcherWrapper) headerControls.prepend(courseSwitcherWrapper);
+                    if (courseCountNotice) headerControls.appendChild(courseCountNotice);
+                }
+                if (quickNavBar) mainHeader.appendChild(quickNavBar);
+            }
+        }
+    });
 
 
     // --- [D] 핵심 함수 ---
@@ -249,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setupCourseSwitcher(userRows, firstCourseIndex);
             showDashboard(firstCourseUserData);
+            setupMobileNav(); // (v30) 로그인 성공 시 모바일 네비 재설정
             
         } catch (error) {
             console.error(error);
@@ -422,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('dataUpdatedDate');
         sessionStorage.clear();
         
-        // [!!!] (NEW) v29: 모바일 메뉴 닫기 및 컨트롤 원위치 (새로고침이 가장 안전)
+        // (v29) 컨트롤을 원래 헤더로 복원 (새로고침이 가장 안전)
         window.location.reload();
     }
 
