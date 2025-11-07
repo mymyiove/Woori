@@ -114,7 +114,6 @@ body {
 #login-btn { 
     width: 100%; padding: 15px; font-size: 1.1em; font-weight: 700; color: #fff; background: var(--color-woori-blue); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; 
 }
-/* [!!!] (v0.34) 호버 애니메이션 추가 */
 #login-btn:hover { 
     background: #008ae6; 
     box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
@@ -166,7 +165,7 @@ body {
     gap: 10px; 
     margin: 0 0 10px 0; 
     font-weight: 600; 
-    font-size: 1.1em; /* [!!!] (v0.34) 폰트 크기 키움 */
+    font-size: 1.1em;
 }
 .progress-bar-container { width: 100%; height: 20px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; }
 .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-accent), #00e065); border-radius: 10px; transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 0 10px rgba(0, 199, 60, 0.5); }
@@ -185,7 +184,6 @@ body {
     font-size: 1.35em;
 }
 
-/* [!!!] (NEW) v0.34: h4 이모지 애니메이션 */
 .h4-emoji {
     display: inline-block;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -206,7 +204,7 @@ summary {
     font-weight: 600; 
     padding: 5px 0; 
     transition: color 0.2s; 
-    font-size: 1.05em; /* [!!!] (v0.34) 폰트 크기 키움 */
+    font-size: 1.05em;
 }
 summary:hover { color: var(--color-primary); }
 details[open] summary { color: var(--color-primary); }
@@ -280,7 +278,7 @@ details p {
 
 /* --- 6. 개요 카드 및 테이블 (v21) --- */
 .overview-card h4 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; color: var(--color-primary); }
-.overview-table { width: 100%; border-collapse: collapse; font-size: 1.1em; /* [!!!] (v0.34) 폰트 크기 키움 */ }
+.overview-table { width: 100%; border-collapse: collapse; font-size: 1.1em; }
 .overview-table th,
 .overview-table td { padding: 14px 10px; text-align: left; border-bottom: 1px solid #f0f0f0; }
 .overview-table th { font-weight: 500; color: var(--color-text-muted); width: 40%; }
@@ -299,7 +297,6 @@ details p {
 
 /* --- 8. 문의하기 카드 (v22) --- */
 .contact-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; font-size: 1.1em; font-weight: 700; color: #fff; background: linear-gradient(90deg, var(--color-primary), #006aff); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; }
-/* [!!!] (v0.34) 호버 애니메이션 추가 */
 .contact-btn:hover { 
     box-shadow: 0 5px 15px rgba(0, 74, 158, 0.4); 
     transform: translateY(-2px) scale(1.03); 
@@ -328,7 +325,6 @@ details p {
 }
 
 /* --- 10. (v24) 로고 헤더 (재구성) --- */
-/* [!!!] (v0.34) 유데미 로고 삭제, 정렬 */
 .dashboard-title-header {
     display: flex;
     align-items: center;
@@ -424,7 +420,6 @@ details p {
 
 
 /* --- 13. (v25) 감사 문구 (카드 하단) --- */
-/* [!!!] (v0.34) 푸터로 이동됨 */
 .card-footer-thanks {
     display: none;
 }
@@ -481,7 +476,6 @@ details p {
 .action-btn-primary {
     flex: 1; min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; font-size: 1.05em; font-weight: 700; color: #fff; background: var(--color-woori-blue); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none;
 }
-/* [!!!] (v0.34) 호버 애니메이션 추가 */
 .action-btn-primary:hover {
     background: #008ae6;
     box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
@@ -490,7 +484,6 @@ details p {
 .action-btn-secondary {
     flex: 1; min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; font-size: 1.05em; font-weight: 600; color: var(--color-text-muted); background-color: #f0f2f5; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none;
 }
-/* [!!!] (v0.34) 호버 애니메이션 추가 */
 .action-btn-secondary:hover {
     background-color: #e0e5eb;
     color: var(--color-text);
@@ -499,11 +492,25 @@ details p {
 .action-btn-survey {
     flex: 1; min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; font-size: 1.05em; font-weight: 700; color: #fff; background: var(--color-woori-blue); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none;
 }
-/* [!!!] (v0.34) 호버 애니메이션 추가 */
 .action-btn-survey:hover {
     background: #008ae6;
     box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
     transform: translateY(-2px) scale(1.03);
+}
+
+/* [!!!] (NEW) v0.35: Skill-Set 경고 문구 스타일 */
+.card-warning-message {
+    display: none; /* JS로 제어 */
+    width: 100%;
+    background-color: #fff8e1;
+    border: 1px solid #e6a000;
+    color: #e6a000;
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .quick-nav-card {
@@ -545,16 +552,17 @@ details p {
     min-width: 0; 
     max-width: 500px;
     height: 44px;
+    padding: 0 10px; /* (v0.35) 정렬을 위해 패딩 고정 */
 }
-/* [!!!] (v0.34) PC 헤더 정렬 및 스타일 통일 */
+/* [!!!] (MODIFIED) v0.35: PC 헤더 정렬 및 스타일 통일 */
 .header-controls .data-notice {
     background-color: #f8f9fa;
     border: 1px solid #eee;
     border-radius: var(--border-radius);
     height: 44px; /* 스위처와 높이 통일 */
-    padding: 12px 15px;
-    margin-bottom: 0;
-    box-sizing: border-box; /* 높이 계산을 위해 필수 */
+    padding: 0 15px; /* (v0.35) 세로 패딩 0, 텍스트는 flex로 중앙 정렬 */
+    margin: 0; /* (v0.35) p 태그 기본 마진 제거 */
+    box-sizing: border-box;
     font-size: 1.05em;
     color: var(--color-text-muted);
     font-weight: 500;
@@ -564,6 +572,14 @@ details p {
     flex-shrink: 0; 
     white-space: nowrap; 
 }
+
+/* [!!!] (NEW) v0.35: 헤더 타이틀 링크 스타일 */
+.header-title-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
 
 /* (v33) PC 우측 세로 메뉴 */
 .quick-nav-bar-pc {
@@ -677,7 +693,7 @@ details p {
 }
 #main-header .course-switcher-wrapper,
 #main-header .data-notice {
-    display: none; /* 모바일에선 PC 컨트롤 숨김 */
+    display: none;
 }
 
 #mobile-header-controls .course-switcher-wrapper {
@@ -762,7 +778,6 @@ details p {
     padding: 12px;
     text-align: center;
 }
-/* (v33) 모바일 로그아웃 버튼 강조 */
 #mobile-nav-content #logout-btn-mobile {
     width: 100%;
     font-size: 1em;
@@ -779,16 +794,15 @@ details p {
     box-shadow: none;
 }
 
-/* [!!!] (NEW) v0.34: 카드 슬라이드업 애니메이션 */
+/* (v0.34) 카드 슬라이드업 애니메이션 */
 @keyframes slideInUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
 }
 .anim-slide-in-up {
     animation: slideInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    opacity: 0; /* 애니메이션 시작 전 숨김 */
+    opacity: 0;
 }
-/* 순차적 딜레이 */
 #main-content .anim-slide-in-up:nth-child(1) { animation-delay: 0.1s; }
 #main-content .anim-slide-in-up:nth-child(2) { animation-delay: 0.15s; }
 #main-content .anim-slide-in-up:nth-child(3) { animation-delay: 0.2s; }
@@ -828,7 +842,6 @@ details p {
         padding: 20px;
     }
 
-    /* (v0.34) 모바일에선 카드 애니메이션 비활성화 (성능 저하 방지) */
     .anim-slide-in-up {
         animation: none;
         opacity: 1;
@@ -885,17 +898,16 @@ details p {
         backdrop-filter: none;
     }
     
-    /* [!!!] (MODIFIED) v0.34: PC 우측 메뉴 (카드) */
+    /* (v0.34) PC 우측 메뉴 (카드) */
     .quick-nav-bar-pc {
         display: flex;
         flex-direction: column;
         gap: 10px;
-        width: 180px; /* (v0.34) 너비 확장 */
+        width: 180px;
         flex-shrink: 0;
         position: sticky;
         top: calc(var(--warning-banner-height-desktop) + var(--desktop-header-height) + 20px);
         height: fit-content;
-        /* (v0.34) 카드 스타일 적용 */
         background-color: var(--color-card);
         border: 1px solid #eee;
         border-radius: var(--border-radius);
@@ -906,8 +918,8 @@ details p {
         width: 100%;
         box-sizing: border-box;
         text-align: center;
-        padding: 10px 12px; /* (v0.34) 패딩 조정 */
-        font-size: 1em; /* [!!!] (v0.34) 폰트 크기 키움 */
+        padding: 10px 12px;
+        font-size: 1em;
     }
 
     .card:hover {
@@ -931,14 +943,14 @@ details p {
     }
 }
 
-/* [!!!] (MODIFIED) v0.34: Footer 개편 */
+/* (v0.34) Footer 개편 */
 #main-footer {
     width: 100%;
     padding: 25px 30px;
     text-align: center;
     box-sizing: border-box;
     margin-top: 40px;
-    background-color: var(--color-card); /* (v0.34) 하얀 배경 */
+    background-color: var(--color-card);
     border-top: 1px solid #eee;
     box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
 }
@@ -963,7 +975,6 @@ details p {
     font-size: 0.9em;
     color: var(--color-text-muted);
 }
-/* 모바일 푸터 정렬 */
 @media (max-width: 599px) {
     .footer-content-wrapper {
         flex-direction: column;
