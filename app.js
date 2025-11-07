@@ -1,11 +1,11 @@
-/* [!!!] (v0.38) 백엔드 API (Apps Script)를 사용하도록 수정한 app.js */
+/* [!!!] (v0.39) 백엔드 API (Apps Script)를 사용하도록 수정한 app.js */
 
 // (필수!) 3단계에서 배포하고 복사한 본인의 Apps Script 웹 앱 URL로 변경하세요.
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; // (v0.38에서 사용한 URL 그대로 사용)
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- [A] DOM 요소 선택 ---
+    // --- [A] DOM 요소 선택 --- (v0.37과 동일)
     const loginContainer = document.getElementById('login-container');
     const dashboardContainer = document.getElementById('dashboard-container');
     const loginBtn = document.getElementById('login-btn');
@@ -42,10 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainHeader = document.getElementById('main-header'); 
     const mobileHeaderControls = document.getElementById('mobile-header-controls'); 
 
-    // --- [B] 데이터 파일 경로 설정 ---
-    // (v0.38) CSV 경로는 더 이상 사용하지 않음.
-
-    // --- [C] 이벤트 리스너 ---
+    // --- [C] 이벤트 리스너 --- (v0.37과 동일)
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
@@ -156,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- [D] 핵심 함수 ---
+    // --- [D] 핵심 함수 --- (v0.37과 동일)
 
     function animateCountUpWithSuffix(el, end, decimals = 0, duration = 1000, prefix = '', suffix = '') {
         if (!el) return;
@@ -173,8 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         el.textContent = prefix + (0).toFixed(decimals) + suffix;
         window.requestAnimationFrame(step);
     }
-
-    // [!!!] (v0.38) fetchCSV 함수 삭제됨
 
     function buildFullUserData(userRow) {
         const GOAL_TIME = 16.0;
@@ -202,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.38: 로그인 처리 함수 (API 호출)
+     * [!!!] (MODIFIED) v0.39: Content-Type 변경
      */
     async function handleLogin() {
         const name = nameInput.value.trim();
@@ -214,14 +209,16 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.style.display = 'none';
 
         try {
-            // (v0.38) CSV fecth 대신 API 서버로 POST 요청
+            // (v0.39) fetch 요청
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
-                    'Content-Type': 'application/json',
+                    // [!!!] (v0.39) preflight를 우회하기 위해 text/plain으로 변경
+                    'Content-Type': 'text/plain', 
                 },
-                body: JSON.stringify({ name: name, email: email })
+                // body는 JSON 문자열이므로 text/plain으로 보내도 서버가 파싱 가능
+                body: JSON.stringify({ name: name, email: email }) 
             });
 
             if (!response.ok) {
@@ -234,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`API 오류: ${result.error}`);
             }
 
-            // (v0.38) 결과에서 userRows와 dataUpdatedDate 분리
             const userRows = result.userRows;
             const dataUpdatedDate = result.dataUpdatedDate;
 
@@ -244,10 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // (v0.38) 데이터 기준일 저장
             localStorage.setItem('dataUpdatedDate', dataUpdatedDate);
-
-            // (v0.38) 이후 로직은 v0.37과 동일
             localStorage.setItem('userCourseList', JSON.stringify(userRows));
             
             const firstCourseRow = userRows[0];
@@ -268,6 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
             showButtonLoader(false);
         }
     }
+
+    // --- 나머지 함수 (v0.37과 동일) ---
 
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
@@ -305,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     function showDashboard(user) {
         const detail = user.courseDetail;
         const badge = document.getElementById('status-badge');
@@ -327,14 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (courseCountNoticeMobile) courseCountNoticeMobile.style.display = 'none';
         }
 
-        // (v0.38) 이제 이 값은 handleLogin에서 저장합니다.
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
         const dataDateDynamic = document.getElementById('data-date-dynamic');
         if (dataDateDynamic) {
             dataDateDynamic.textContent = dataUpdatedDate;
         }
 
-        // --- 개요 카드 ---
         document.getElementById('overview-name').textContent = user.name;
         document.getElementById('overview-dept').textContent = user.department;
         document.getElementById('overview-course').textContent = user.course; 
@@ -361,7 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
             myScoreRow.classList.add('hidden-row');
         }
 
-        // --- 프로그레스 바 카드 ---
         document.getElementById('course-name').textContent = user.course;
         if (detail.isCompleted) {
             badge.textContent = '이수 완료! 🎉';
@@ -429,7 +420,6 @@ document.addEventListener('DOMContentLoaded', () => {
             skillSetWarning.style.display = showWarning ? 'block' : 'none';
         }
 
-        // --- 화면 전환 ---
         loginContainer.classList.remove('active');
         dashboardContainer.classList.add('active');
         
@@ -460,9 +450,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 0);
     }
 
-    /**
-     * 5. 로그아웃 처리
-     */
     function handleLogout() {
         localStorage.removeItem('loggedInUser');
         localStorage.removeItem('userCourseList');
@@ -473,7 +460,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     }
 
-    // --- [E] UI 헬퍼 함수 ---
     function showLogin() {
         loginContainer.classList.add('active');
         dashboardContainer.classList.remove('active');
@@ -498,4 +484,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-}); // [!!!] (v20) DOMContentLoaded 리스너 종료
+}); // DOMContentLoaded 리스너 종료
