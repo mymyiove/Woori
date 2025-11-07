@@ -13,8 +13,8 @@
     --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
     --border-radius: 12px;
     
-    /* [!!!] (NEW) v30: 헤더 높이 변수 (앵커 링크용) */
-    --warning-banner-height: 60px; /* 경고 배너 높이 */
+    /* [!!!] (MODIFIED) v30: 헤더 높이 변수 (앵커 링크용) */
+    --warning-banner-height: 60px; /* 경고 배너 높이 (근사치) */
     --mobile-header-height: 60px; /* 모바일 헤더 높이 */
     --desktop-header-height: 200px; /* 데스크톱 헤더 높이 (근사치) */
 }
@@ -342,12 +342,12 @@ details p {
     50% { transform: translateY(-6px); }
 }
 
-/* --- 12. (v22) 최상단 경고 배너 --- */
+/* --- 12. (MODIFIED) v30: 최상단 경고 배너 --- */
 #global-warning-banner {
     background-color: #fff8e1; 
     border: 1px solid #e6a000;
     color: #e6a000; 
-    padding: 12px 15px;
+    padding: 10px 15px; /* (v30) 세로 패딩 줄임 (요청 8) */
     font-weight: 600;
     text-align: center;
     margin-bottom: 0; 
@@ -367,10 +367,15 @@ details p {
     border-right: 0;
     
     /* [!!!] (MODIFIED) v30: 모바일 줄바꿈 수정 (요청 4) */
-    flex-wrap: wrap; 
-    height: auto; /* (v30) 자동 높이 */
-    min-height: var(--warning-banner-height);
+    flex-direction: column; /* 모바일에서 세로로 쌓기 */
+    height: auto; 
+    min-height: 0; /* (v30) 최소 높이 제거 (요청 8) */
 }
+/* (v30) 경고 배너 내부 텍스트 줄바꿈 방지 */
+#global-warning-banner span {
+    white-space: nowrap;
+}
+
 
 /* --- 13. (v25) 감사 문구 (카드 하단) --- */
 .card-footer-thanks {
@@ -458,20 +463,17 @@ details p {
     transform: translateY(-2px);
 }
 
-/* (v28) 빠른 메뉴 카드 */
-.quick-nav-card .card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-.quick-nav-card .action-btn-secondary {
-    min-width: auto; 
+/* [!!!] (MODIFIED) v30: '빠른 메뉴' 카드 숨김 */
+.quick-nav-card {
+    display: none;
 }
 
 
 /* [!!!] (NEW) v30: 데스크톱 고정 헤더 */
 #main-header {
     position: sticky;
-    top: var(--warning-banner-height); /* 경고 배너 아래에 고정 */
+    /* (v30) 경고 배너 '바로 아래'에 고정 */
+    top: 0; 
     z-index: 900;
     
     background: rgba(255, 255, 255, 0.9);
@@ -493,7 +495,7 @@ details p {
 /* (v30) 헤더 내부 컨트롤 (드롭다운 + 과정 수) */
 .header-controls {
     display: flex;
-    align-items: center;
+    align-items: center; /* [!!!] (v30) 수직 중앙 정렬 (요청 2) */
     gap: 15px;
     margin-bottom: 15px;
 }
@@ -504,15 +506,13 @@ details p {
 /* (v30) 빠른 메뉴 */
 #quick-nav-bar {
     display: flex;
-    flex-wrap: wrap; 
     gap: 10px;
     align-items: center;
+    /* [!!!] (MODIFIED) v30: 가운데 정렬 (요청 6) */
+    justify-content: center; 
 }
 .quick-nav-title {
-    font-size: 0.9em;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    margin-right: 5px;
+    display: none; /* (v30) '빠른 메뉴' 텍스트 삭제 (요청 1) */
 }
 .action-btn-quicknav {
     font-size: 0.9em;
@@ -529,7 +529,7 @@ details p {
     transform: translateY(-2px);
 }
 #quick-nav-bar #logout-btn {
-    margin-left: auto; 
+    margin-left: 20px; /* (v30) 왼쪽 자동 여백 -> 고정 여백 */
     height: 32px;
     line-height: 32px;
     padding: 0 12px;
@@ -542,12 +542,14 @@ details p {
     padding: 20px; /* (v30) 모바일 좌우 여백 */
     width: 100%;
     box-sizing: border-box;
+    z-index: 10; /* (v30) 배경보다 위에 있도록 */
+    position: relative; /* (v30) z-index 적용 */
 }
 
 /* [!!!] (NEW) v30: 모바일 햄버거 메뉴 */
 #mobile-header {
     position: sticky;
-    top: var(--warning-banner-height); /* 경고 배너 아래 */
+    top: 0; /* (v30) 경고 배너가 없으므로 0 */
     left: 0;
     width: 100%;
     height: var(--mobile-header-height);
@@ -566,9 +568,14 @@ details p {
     width: auto;
 }
 .mobile-title {
-    font-size: 1.1em;
+    font-size: 1.05em; /* (v30) 긴 텍스트를 위해 폰트 축소 */
     font-weight: 600;
     color: var(--color-primary);
+    /* (v30) 텍스트 잘림 방지 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 10px;
 }
 .hamburger-btn {
     width: 30px;
@@ -580,6 +587,7 @@ details p {
     flex-direction: column;
     justify-content: space-around;
     cursor: pointer;
+    flex-shrink: 0; /* (v30) 찌그러짐 방지 */
 }
 .hamburger-btn span {
     width: 100%;
@@ -601,7 +609,8 @@ details p {
     transform: translateX(100%); 
     transition: transform 0.3s ease-in-out;
     display: flex;
-    justify-content: flex-end; 
+    flex-direction: column; /* (v30) 닫기 버튼을 하단에 두기 위해 */
+    justify-content: flex-end; /* (v30) 메뉴를 오른쪽으로 */
 }
 #mobile-nav-overlay.visible {
     transform: translateX(0); 
@@ -615,28 +624,38 @@ details p {
     box-sizing: border-box;
     overflow-y: auto;
     box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    /* (v30) 오른쪽 정렬 */
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 .overlay-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 20px;
+    display: none; /* (v30) '전체 메뉴' 텍스트 삭제 */
 }
-.overlay-header h3 {
-    margin: 0;
-    color: var(--color-primary);
-    font-size: 1.3em;
+/* [!!!] (NEW) v30: 모바일 닫기 버튼 (요청 6) */
+#mobile-nav-footer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: var(--color-bg);
+    border-top: 1px solid #eee;
 }
 #menu-close-btn {
-    background: none;
+    background: var(--color-primary);
+    color: white;
     border: none;
-    font-size: 1.5em;
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1em;
     font-weight: 600;
-    color: var(--color-text-muted);
+    border-radius: var(--border-radius);
     cursor: pointer;
 }
+
 /* (v29) 모바일 메뉴 내부의 컨트롤 스타일 */
 #mobile-nav-content .course-switcher-wrapper {
     margin: 0 0 15px 0; 
@@ -678,8 +697,8 @@ details p {
         flex-direction: column;
         gap: 4px;
         padding: 10px 15px;
-        height: auto; /* (v30) 자동 높이 */
-        min-height: var(--warning-banner-height);
+        height: auto;
+        min-height: 0; /* (v30) 높이 강제 제거 */
     }
 }
 
@@ -695,6 +714,8 @@ details p {
     /* (v30) 데스크톱: 고정 헤더 보임 */
     #main-header {
         display: block;
+        /* (v30) 경고 배너 '바로 아래'에 고정 */
+        top: var(--warning-banner-height); 
     }
     
     /* (v30) 데스크톱: 경고 배너 텍스트 정렬 */
@@ -703,7 +724,21 @@ details p {
         justify-content: center;
         height: var(--warning-banner-height);
     }
-
+    
+    /* (v30) 데스크톱: 스크롤 영역 (카드 스타일 X) */
+    #main-content {
+        /* (v30) 헤더가 덮어쓰므로 메인 콘텐츠는 일반 카드 컨텐츠 스타일 사용 */
+        background-color: var(--color-card); 
+        border-radius: var(--border-radius); 
+        box-shadow: var(--shadow-medium); 
+        padding: 30px 35px; 
+        z-index: 10; 
+        position: relative; 
+        background: rgba(255, 255, 255, 0.85); 
+        backdrop-filter: blur(10px); 
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
     /* (v30) 데스크톱: 카드 호버 효과 복원 */
     .card:hover {
         transform: translateY(-5px);
