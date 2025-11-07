@@ -100,13 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupMobileNav() {
         // (v30) 900px 미만일 때 모바일로 간주 (style.css와 동일)
         if (window.innerWidth < 900) {
-            // [!!!] (MODIFIED) v30: (요청 3) 컨트롤을 '헤더'로 이동
+            // [!!!] (MODIFIED) v31: (요청 3) 컨트롤을 '헤더'로 이동
             if (mobileHeaderControls) { 
-                if (courseSwitcherWrapper && courseSwitcherWrapper.parentElement !== mobileHeaderControls) {
-                    mobileHeaderControls.appendChild(courseSwitcherWrapper);
-                }
+                // [!!!] (MODIFIED) v31: (요청 4) 순서 변경
                 if (courseCountNotice && courseCountNotice.parentElement !== mobileHeaderControls) {
                     mobileHeaderControls.appendChild(courseCountNotice);
+                }
+                if (courseSwitcherWrapper && courseSwitcherWrapper.parentElement !== mobileHeaderControls) {
+                    mobileHeaderControls.appendChild(courseSwitcherWrapper);
                 }
             }
             // [!!!] (MODIFIED) v30: (요청 3) '빠른 메뉴'만 오버레이로 이동
