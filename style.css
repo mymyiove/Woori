@@ -59,7 +59,7 @@ body {
 .login-title { 
     color: var(--color-primary);
     margin: 10px 0 5px 0;
-    font-size: 1.8rem; /* (v24) 텍스트가 길어져서 폰트 조정 */
+    font-size: 1.8rem; 
     line-height: 1.3;
 }
 #login-container p { font-size: 1.1em; color: var(--color-text-muted); margin: 0; }
@@ -108,9 +108,9 @@ body {
 .header h2 { display: none; }
 .data-notice { 
     display: flex; 
-    justify-content: center; /* (v22) 중앙 정렬 */
+    justify-content: center; 
     align-items: center; 
-    font-size: 1.05em; /* (v24) 폰트 키움 */
+    font-size: 1.05em; 
     font-weight: 500; 
     color: var(--color-text-muted); 
     background-color: #f8f9fa; 
@@ -198,7 +198,7 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     animation: running-man 1.2s infinite ease-in-out; 
 }
 
-/* --- 10. (MODIFIED) v24: 로고 헤더 (재구성) --- */
+/* --- 10. (v24) 로고 헤더 (재구성) --- */
 .dashboard-title-header {
     display: flex;
     flex-direction: column;
@@ -209,11 +209,10 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     padding-bottom: 20px;
 }
 .header-udemy-logo {
-    height: 40px; /* (v24) Udemy 로고 크게 */
+    height: 40px;
     width: auto;
-    margin-bottom: 15px; /* 로고와 다음 로고 묶음 사이 */
+    margin-bottom: 15px;
 }
-/* (v24) 우리은행 로고 + 텍스트 묶음 */
 .logo-lockup {
     display: flex;
     align-items: center;
@@ -221,12 +220,12 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     gap: 12px;
 }
 .header-woori-logo-img {
-    height: 32px; /* (v24) 우리은행 로고 */
+    height: 32px;
     width: auto;
     animation: logo-pulse 3s infinite ease-in-out;
 }
 .dashboard-subtitle {
-    font-size: 1.4em; /* (v24) 폰트 크기 조정 */
+    font-size: 1.4em;
     font-weight: 600;
     color: var(--color-primary);
     text-align: center;
@@ -239,7 +238,7 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
 }
 
 
-/* --- 11. (MODIFIED) v23: 플로팅 버튼 (우리은행 파란색) --- */
+/* --- 11. (v23) 플로팅 버튼 (우리은행 파란색) --- */
 .floating-action-button {
     position: fixed;
     bottom: 20px;
@@ -286,27 +285,44 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     gap: 8px; 
 }
 
-/* --- 13. (NEW) v24: 감사 문구 --- */
+/* --- 13. (v25) 감사 문구 (카드 하단) --- */
 .card-footer-thanks {
     font-size: 0.9em;
     color: var(--color-text-muted);
     text-align: center;
     margin-top: 30px;
-    margin-bottom: -10px; /* 카드 하단 여백 줄임 */
+    margin-bottom: -10px; 
     opacity: 0.8;
 }
 
-/* --- 14. (NEW) v24: 강조 숫자 애니메이션 --- */
+/* --- 14. (v24) 강조 숫자 애니메이션 --- */
 #course-count-number {
     font-size: 1.25em;
     font-weight: 700;
     color: var(--color-woori-blue);
-    display: inline-block; /* transform 적용 */
+    display: inline-block;
     animation: pulse-blue 1.5s infinite ease-in-out;
+    margin: 0 4px; /* (v26) 좌우 여백 */
 }
 
 @keyframes pulse-blue {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
+}
+
+/* --- 15. (NEW) v26: FAQ 내부 링크 스타일 --- */
+.faq-link {
+    display: inline-block;
+    background-color: #f0f2f5;
+    color: var(--color-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.faq-link:hover {
+    background-color: #e0e5eb;
+    transform: translateY(-2px);
 }
