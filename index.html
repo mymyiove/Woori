@@ -94,7 +94,18 @@
                 </table>
             </div>
 
-            <div class="card main-card">
+            <div class="card quick-nav-card">
+                <h4>👇 빠른 메뉴</h4>
+                <div class="card-actions">
+                    <a href="#course-details" class="action-btn-secondary">🎯 과정 상세</a>
+                    <a href="#resources" class="action-btn-secondary">📚 학습자료실</a>
+                    <a href="#course-info" class="action-btn-secondary">📖 과정 개요</a>
+                    <a href="#faq" class="action-btn-secondary">❓ FAQ</a>
+                    <a href="#contact" class="action-btn-secondary">🙋‍♀️ 문의하기</a>
+                </div>
+            </div>
+
+            <div class="card main-card" id="course-details">
                 <h3>🎯 과정 상세: <span id="course-name">...</span></h3>
                 <div class="status-badge" id="status-badge">...</div>
                 
@@ -110,9 +121,6 @@
                 </div>
 
                 <div class="card-actions">
-                    <a href="우리은행 안내포스터.webp" target="_blank" class="action-btn-secondary">
-                        🖼️ 과정안내 포스터 보기
-                    </a>
                     <a href="#" target="_blank" class="action-btn-primary" id="go-to-course-btn">
                         🚀 학습하러 가기
                     </a>
@@ -129,13 +137,32 @@
                 <p class="note">'불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다.</p>
             </div>
             
-            <div class="card course-info-card">
+            <div class="card resources-card" id="resources">
+                <h4>📚 학습자료실</h4>
+                <p>학습 방법이 헷갈리신다면 매뉴얼과 포스터를 확인하세요!</p>
+                <div class="card-actions">
+                    <a href="2025유데미학습자매뉴얼.pdf" target="_blank" class="action-btn-secondary">
+                        📄 학습 매뉴얼
+                    </a>
+                    <a href="UB_학습자메뉴얼(스킬셋)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
+                        📄 스킬셋 매뉴얼
+                    </a>
+                    <a href="UB_학습자메뉴얼(직무기본과정)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
+                        📄 직무기본 매뉴얼
+                    </a>
+                    <a href="우리은행 안내포스터.webp" target="_blank" class="action-btn-secondary">
+                        🖼️ 과정안내 포스터
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card course-info-card" id="course-info">
                 <h4>📖 과정 개요</h4>
                 
                 <details>
                     <summary>1. [Skill-Set] 2025 디지털/IT Skill-Set 과정</summary>
                     <p>
-                        3개월 단위로 진행되는 과정으로, 총 3,171개의 풀과 64,479시간의 교육 시간을 제공합니다.<br>
+                        3개월 단위로 진행되는 과정으로, 총 3,171개의 풀과 64,479시간의 교육 시간을 제공합니다.<br><br>
                         <strong>수료 기준:</strong> 16시간 이상 학습 + 설문 조사 참여 (소속 부서 과정만 인정)<br>
                         <strong>혜택:</strong> 의무 연수 시간 최대 8시간 인정<br>
                         <strong>평가:</strong> 없음
@@ -144,49 +171,41 @@
                 <details>
                     <summary>2. [직무 기본] IT-정보 보호 직무 기본 과정</summary>
                     <p>
-                        3개월 단위로 진행되며, 14개의 풀과 42.4시간의 교육 시간을 제공합니다.<br>
+                        3개월 단위로 진행되며, 14개의 풀과 42.4시간의 교육 시간을 제공합니다.<br><br>
                         <strong>수료 기준:</strong> 16시간 이상 학습 + 평가 60점 이상 + 설문 조사 참여<br>
                         <strong>혜택:</strong> 직군 전환 시 가점 부여, 의무 연수 시간 16시간 인정<br>
-                        <strong>평가:</strong> 추후 공지
+                        <strong>평가 상세:</strong><br>
+                        - 매 차수 마지막 달 업로드<br>
+                        - 기간 내 여러 번 응시 가능 (가장 높은 점수 인정)<br>
+                        - PC(외부망) 또는 모바일(어플)로 자율 진행<br>
+                        - 응시시간 40분, 객관식 20문항(4지선다형)
                     </p>
                 </details>
                 <details>
                     <summary>3. [직무 기본] 디지털 직무 기본 과정</summary>
                     <p>
-                        3개월 단위로 진행되며, 13개의 풀과 45.8시간의 교육 시간을 제공합니다.<br>
+                        3개월 단위로 진행되며, 13개의 풀과 45.8시간의 교육 시간을 제공합니다.<br><br>
                         <strong>수료 기준:</strong> 16시간 이상 학습 + 평가 60점 이상 + 설문 조사 참여<br>
                         <strong>혜택:</strong> 직군 전환 시 가점 부여, 의무 연수 시간 16시간 인정<br>
-                        <strong>평가:</strong> 추후 공지
+                        <strong>평가 상세:</strong><br>
+                        - 매 차수 마지막 달 업로드<br>
+                        - 기간 내 여러 번 응시 가능 (가장 높은 점수 인정)<br>
+                        - PC(외부망) 또는 모바일(어플)로 자율 진행<br>
+                        - 응시시간 40분, 객관식 20문항(4지선다형)
                     </p>
                 </details>
                 <details>
                     <summary>4. [디지털 상식] 디지털/IT 사이버 과정</summary>
                     <p>
-                        3개월 단위로 진행되며, 22개의 풀과 58.4시간의 교육 시간을 제공합니다.<br>
+                        3개월 단위로 진행되며, 22개의 풀과 58.4시간의 교육 시간을 제공합니다.<br><br>
                         <strong>수료 기준:</strong> 16시간 이상 학습 + 설문 조사 참여<br>
                         <strong>혜택:</strong> 의무 연수 시간 최대 8시간 인정<br>
                         <strong>평가:</strong> 없음
                     </p>
                 </details>
             </div>
-            
-            <div class="card resources-card">
-                <h4>📚 학습자료실</h4>
-                <p>학습 방법이 헷갈리신다면 매뉴얼을 확인하세요!</p>
-                <div class="card-actions">
-                    <a href="2025유데미학습자매뉴얼.pdf" target="_blank" class="action-btn-secondary">
-                        📄 전체 매뉴얼
-                    </a>
-                    <a href="UB_학습자메뉴얼(스킬셋)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
-                        📄 스킬셋 매뉴얼
-                    </a>
-                    <a href="UB_학습자메뉴얼(직무기본과정)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
-                        📄 직무기본 매뉴얼
-                    </a>
-                </div>
-            </div>
 
-            <div class="card faq-card">
+            <div class="card faq-card" id="faq">
                 <h4>❓ 자주 묻는 질문 (문제해결)</h4>
                 
                 <details>
@@ -211,7 +230,7 @@
                 <details>
                     <summary>Q. '직무기본' 과정 링크를 못찾겠어요.</summary>
                     <p>
-                        학습 경로는 아래 러닝패스 폴더에서 확인 가능합니다.<br>
+                        학습 경로는 위 **'📖 과정 개요'** 섹션의 [직무 기본] 항목을 참고하시거나, 아래 러닝패스 폴더에서 확인 가능합니다.<br>
                         <a href="https://wooribank.udemy.com/learning-paths/folder/76893" target="_blank" class="faq-link">
                             [필수] 직무기본 러닝패스 폴더 바로가기
                         </a><br>
@@ -239,13 +258,13 @@
 
             <div class="card survey-card">
                 <h4>✍️ 만족도 설문조사</h4>
-                <p>학습 경험 개선을 위해 소중한 의견을 남겨주세요!</p>
-                <a href="https://moaform.com/q/Nv2c1c" target="_blank" class="action-btn-primary survey-link">
+                <p>학습 경험 개선을 위해 소중한 의견을 남겨주세요!<br>(잘 써주실거죠? 😉)</p>
+                <a href="https://moaform.com/q/Nv2c1c" target="_blank" class="action-btn-survey">
                     📝 설문조사 참여하기
                 </a>
             </div>
 
-            <div class="card contact-card">
+            <div class="card contact-card" id="contact">
                 <h4>🙋‍♀️ 문의하기</h4>
                 <p>FAQ로 해결되지 않는 문제나 학습 데이터 관련 문의는 아래 이메일로 연락주시면 담당자가 확인 후 답변드립니다.</p>
                 <button id="copy-email-btn" class="contact-btn">
