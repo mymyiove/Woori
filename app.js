@@ -7,38 +7,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginContainer = document.getElementById('login-container');
     const dashboardContainer = document.getElementById('dashboard-container');
     const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
+    
+    // [!!!] (v0.33) PC/모바일 분리
+    const logoutBtnPC = document.getElementById('logout-btn');
+    const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+
     const nameInput = document.getElementById('name');
     const emailInput = document.getElementById('email');
     const loginError = document.getElementById('login-error');
     const loginBtnText = document.getElementById('login-btn-text');
     const loginLoader = document.getElementById('login-loader');
+    
+    // [!!!] (v0.33) PC/모바일 분리
     const courseSwitcherWrapper = document.getElementById('course-switcher-wrapper');
     const courseSwitcher = document.getElementById('course-switcher');
+    const courseSwitcherMobile = document.getElementById('course-switcher-mobile');
     const courseCountNotice = document.getElementById('course-count-notice');
+    const courseCountNoticeMobile = document.getElementById('course-count-notice-mobile');
+
     const timeProgressBar = document.getElementById('time-progress-bar');
     const examProgressBar = document.getElementById('exam-progress-bar');
     const examMetric = document.getElementById('exam-metric');
     const copyEmailBtn = document.getElementById('copy-email-btn');
     const goToCourseBtn = document.getElementById('go-to-course-btn');
     
-    // [!!!] (NEW) v29: 모바일 메뉴 요소
     const mobileHeader = document.getElementById('mobile-header');
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
     const menuCloseBtn = document.getElementById('menu-close-btn');
     const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
     const mobileNavContent = document.getElementById('mobile-nav-content');
-    const quickNavBar = document.getElementById('quick-nav-bar');
-    const mainHeader = document.getElementById('main-header'); // (v30) 데스크톱 헤더
-    const mobileHeaderControls = document.getElementById('mobile-header-controls'); // (v30) 모바일 컨트롤 영역
+    
+    // [!!!] (v0.33) PC/모바일 분리
+    const quickNavBarMobile = document.getElementById('quick-nav-bar-mobile'); 
+    
+    const mainHeader = document.getElementById('main-header'); 
+    const mobileHeaderControls = document.getElementById('mobile-header-controls'); 
 
     // --- [B] 데이터 파일 경로 설정 ---
     const DATA_PATH = './data/';
     const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
     // --- [C] 이벤트 리스너 ---
-    // (v21) feather.replace() 호출 제거
-
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
@@ -46,21 +55,23 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setupCourseSwitcher(userRows, selectedIndex);
         showDashboard(user);
-        setupMobileNav(); // (v30) 대시보드 로드 시 모바일 네비 설정
+        setupMobileNav();
     } else {
         showLogin();
     }
 
     loginBtn.addEventListener('click', handleLogin);
     
-    // [!!!] (MODIFIED) v30: 로그아웃 버튼 (모바일/데스크톱 2개)
-    if (logoutBtn) { // 데스크톱 버튼
-        logoutBtn.addEventListener('click', handleLogout);
+    // [!!!] (MODIFIED) v0.33: PC/모바일 로그아웃 버튼 2개 모두 감지
+    if (logoutBtnPC) {
+        logoutBtnPC.addEventListener('click', handleLogout);
     }
-    // (v30) 모바일 메뉴 안으로 '이동될' 로그아웃 버튼
-    // 이벤트 리스너는 한 번만 등록하면 요소가 이동해도 유지됩니다.
+    if (logoutBtnMobile) {
+        logoutBtnMobile.addEventListener('click', handleLogout);
+    }
 
-    courseSwitcher.addEventListener('change', async (event) => {
+    // [!!!] (MODIFIED) v0.33: PC/모바일 스위처 2개 모두 감지
+    const handleCourseChange = async (event) => {
         const selectedIndex = event.target.value;
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
         const selectedCourseRow = userRows[selectedIndex];
@@ -69,10 +80,20 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('loggedInUser', JSON.stringify(selectedCourseUserData));
         localStorage.setItem('selectedCourseIndex', selectedIndex);
         
+        // (v0.33) 다른 스위처 값도 동기화
+        if (event.target === courseSwitcher) {
+            courseSwitcherMobile.value = selectedIndex;
+        } else {
+            courseSwitcher.value = selectedIndex;
+        }
+        
         showDashboard(selectedCourseUserData);
-    });
+    };
 
-    // (v22) 이메일 복사 버튼 이벤트 리스너
+    courseSwitcher.addEventListener('change', handleCourseChange);
+    courseSwitcherMobile.addEventListener('change', handleCourseChange);
+
+
     if(copyEmailBtn) {
         copyEmailBtn.addEventListener('click', () => {
             const email = 'jhj11@wjthinkbig.com';
@@ -96,29 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // [!!!] (NEW) v29: 모바일 네비게이션 로직
+    // [!!!] (MODIFIED) v0.33: JS 레이아웃 조작(appendChild) 제거
     function setupMobileNav() {
-        // (v30) 900px 미만일 때 모바일로 간주 (style.css와 동일)
-        if (window.innerWidth < 900) {
-            // [!!!] (MODIFIED) v31: (요청 3) 컨트롤을 '헤더'로 이동
-            if (mobileHeaderControls) { 
-                // [!!!] (MODIFIED) v31: (요청 4) 순서 변경
-                if (courseCountNotice && courseCountNotice.parentElement !== mobileHeaderControls) {
-                    mobileHeaderControls.appendChild(courseCountNotice);
-                }
-                if (courseSwitcherWrapper && courseSwitcherWrapper.parentElement !== mobileHeaderControls) {
-                    mobileHeaderControls.appendChild(courseSwitcherWrapper);
-                }
-            }
-            // [!!!] (MODIFIED) v30: (요청 3) '빠른 메뉴'만 오버레이로 이동
-            if (mobileNavContent) { 
-                 if (quickNavBar && quickNavBar.parentElement !== mobileNavContent) {
-                    mobileNavContent.appendChild(quickNavBar);
-                }
-            }
-        }
-        
-        // (v29) 햄버거/닫기 버튼 이벤트
         if(menuToggleBtn) {
             menuToggleBtn.addEventListener('click', () => {
                 mobileNavOverlay.classList.add('visible');
@@ -129,17 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 mobileNavOverlay.classList.remove('visible');
             });
         }
-        // [!!!] (MODIFIED) v30: (요청 7) 오버레이 배경 클릭 시 닫기
         if(mobileNavOverlay) {
             mobileNavOverlay.addEventListener('click', (e) => {
-                if (e.target === mobileNavOverlay) { // 어두운 배경만 해당
+                if (e.target === mobileNavOverlay) { 
                     mobileNavOverlay.classList.remove('visible');
                 }
             });
         }
-        // (v29) 빠른 메뉴 링크 클릭 시 닫기
-        if(quickNavBar) {
-            quickNavBar.querySelectorAll('a').forEach(link => {
+        // (v0.33) 모바일 전용 메뉴 링크
+        if(quickNavBarMobile) {
+            quickNavBarMobile.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileNavOverlay.classList.remove('visible');
                 });
@@ -147,24 +146,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // (v30) 페이지 로드 시 모바일 설정 실행
-    // (v30) 로그인 성공 시에도 호출되므로, 여기서는 로그인 안 된 경우만 처리
     if (!localStorage.getItem('loggedInUser')) {
         setupMobileNav();
     }
     
-    // (v30) 화면 크기 변경 시 모바일/데스크톱 요소 위치 재조정
+    // (v0.33) 화면 크기 변경 시 레이아웃 재조정 (새로고침이 가장 안정적)
+    // [!!!] (v0.33) 이 로직은 유지합니다.
     let isMobile = window.innerWidth < 900;
     window.addEventListener('resize', () => {
-        // 로그인 상태일 때만 레이아웃 재조정
         if (!localStorage.getItem('loggedInUser')) return;
 
         const currentlyMobile = window.innerWidth < 900;
-        if (currentlyMobile === isMobile) return; // 변경 없음
+        if (currentlyMobile === isMobile) return; 
 
         isMobile = currentlyMobile;
         
-        // (v30) 데스크톱/모바일 전환 시 새로고침 (가장 안정적)
         window.location.reload();
     });
 
@@ -286,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setupCourseSwitcher(userRows, firstCourseIndex);
             showDashboard(firstCourseUserData);
-            setupMobileNav(); // (v30) 로그인 성공 시 모바일 네비 재설정
+            setupMobileNav();
             
         } catch (error) {
             console.error(error);
@@ -301,26 +297,39 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
-            courseSwitcherWrapper.style.display = 'none'; return;
+            courseSwitcherWrapper.style.display = 'none'; 
+            // (v0.33) 모바일도 숨김
+            document.getElementById('mobile-header-controls').querySelector('.course-switcher-wrapper').style.display = 'none';
+            return;
         }
-        if (userRows.length === 1) {
-            courseSwitcherWrapper.style.display = 'flex';
-            courseSwitcher.disabled = true;
-            courseSwitcherWrapper.classList.add('disabled');
-        } else {
-            courseSwitcherWrapper.style.display = 'flex';
-            courseSwitcher.disabled = false;
-            courseSwitcherWrapper.classList.remove('disabled');
-        }
-        courseSwitcher.innerHTML = '';
-        userRows.forEach((row, index) => {
-            const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = courseName;
-            courseSwitcher.appendChild(option);
+
+        const switchers = [courseSwitcher, courseSwitcherMobile];
+        
+        switchers.forEach(switcher => {
+            if (!switcher) return;
+            
+            const wrapper = switcher.parentElement;
+            
+            if (userRows.length === 1) {
+                wrapper.style.display = 'flex';
+                switcher.disabled = true;
+                wrapper.classList.add('disabled');
+            } else {
+                wrapper.style.display = 'flex';
+                switcher.disabled = false;
+                wrapper.classList.remove('disabled');
+            }
+            
+            switcher.innerHTML = '';
+            userRows.forEach((row, index) => {
+                const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = courseName;
+                switcher.appendChild(option);
+            });
+            switcher.value = selectedIndex;
         });
-        courseSwitcher.value = selectedIndex;
     }
 
 
@@ -331,11 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const detail = user.courseDetail;
         const badge = document.getElementById('status-badge');
         
+        // [!!!] (v0.33) PC/모바일 모두 업데이트
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
+        const countText = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
+        
         if (userRows.length > 0) {
-            courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
+            if (courseCountNotice) courseCountNotice.innerHTML = countText;
+            if (courseCountNoticeMobile) courseCountNoticeMobile.innerHTML = countText;
         } else {
-            courseCountNotice.style.display = 'none';
+            if (courseCountNotice) courseCountNotice.style.display = 'none';
+            if (courseCountNoticeMobile) courseCountNoticeMobile.style.display = 'none';
         }
 
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
@@ -433,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginContainer.classList.remove('active');
         dashboardContainer.classList.add('active');
         
-        // (v18) '이수 완료' 시 축하 폭죽 발사
         if (detail.isCompleted) {
             const congratulatedKey = `congrats_${user.email}_${courseName}`;
             if (!sessionStorage.getItem(congratulatedKey)) {
@@ -460,7 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('dataUpdatedDate');
         sessionStorage.clear();
         
-        // [!!!] (NEW) v29: 컨트롤을 원래 헤더로 복원 (새로고침이 가장 안전)
         window.location.reload();
     }
 
