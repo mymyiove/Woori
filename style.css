@@ -326,3 +326,11 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     background-color: #e0e5eb;
     transform: translateY(-2px);
 }
+
+/* [!!!] (NEW) v27: FAQ 내부 경고 텍스트 */
+.faq-warning {
+    color: var(--color-error);
+    font-weight: 600;
+    display: block; /* (v27) 링크와 줄바꿈 */
+    margin-top: 8px;
+}
