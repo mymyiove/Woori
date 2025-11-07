@@ -1,6 +1,8 @@
-// [!!!] (v20)
-// "Cannot set properties of null" 오류를 막기 위해
-// 모든 코드를 DOMContentLoaded 이벤트 리스너로 감쌉니다.
+/* [!!!] (v0.38) 백엔드 API (Apps Script)를 사용하도록 수정한 app.js */
+
+// (필수!) 3단계에서 배포하고 복사한 본인의 Apps Script 웹 앱 URL로 변경하세요.
+const WEB_APP_URL = 'YOUR_WEB_APP_URL_FROM_STEP_3_GOES_HERE';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- [A] DOM 요소 선택 ---
@@ -41,8 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileHeaderControls = document.getElementById('mobile-header-controls'); 
 
     // --- [B] 데이터 파일 경로 설정 ---
-    const DATA_PATH = './data/';
-    const FILE_ALL_IN_ONE = 'woori_data.csv'; 
+    // (v0.38) CSV 경로는 더 이상 사용하지 않음.
 
     // --- [C] 이벤트 리스너 ---
     if (localStorage.getItem('loggedInUser')) {
@@ -157,71 +158,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- [D] 핵심 함수 ---
 
-    /**
-     * [!!!] (NEW) v0.37: 숫자 카운트업 애니메이션
-     */
     function animateCountUpWithSuffix(el, end, decimals = 0, duration = 1000, prefix = '', suffix = '') {
         if (!el) return;
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            const value = progress * end; // 0에서 end까지
+            const value = progress * end;
             el.textContent = prefix + value.toFixed(decimals) + suffix;
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }
         };
-        el.textContent = prefix + (0).toFixed(decimals) + suffix; // 시작 값
+        el.textContent = prefix + (0).toFixed(decimals) + suffix;
         window.requestAnimationFrame(step);
     }
 
-    async function fetchCSV(fileName) {
-        const response = await fetch(DATA_PATH + fileName);
-        if (!response.ok) { throw new Error(`${fileName} 파일을 불러올 수 없습니다.`); }
-        
-        const csvText = await response.text();
-        const lines = csvText.split('\n');
-
-        let dataUpdatedDate = "날짜 정보 없음";
-        if (lines.length >= 4) {
-            const headerRowLine = lines[3];
-            
-            if (typeof Papa === 'undefined') {
-                 throw new Error("PapaParse 라이브러리가 로드되지 않았습니다.");
-            }
-            
-            const headerRow = Papa.parse(headerRowLine, { header: false }).data[0]; 
-            
-            if (headerRow && headerRow.length > 20) {
-                const dateValue = headerRow[20];
-                if (dateValue && dateValue.trim() !== "") {
-                    dataUpdatedDate = dateValue.trim().replace(/"/g, ''); 
-                }
-            }
-        }
-        localStorage.setItem('dataUpdatedDate', dataUpdatedDate);
-
-        const dataLines = lines.slice(3);
-        const cleanedCsvText = dataLines.join('\n');
-
-        return new Promise((resolve, reject) => {
-            Papa.parse(cleanedCsvText, { 
-                header: true, 
-                skipEmptyLines: true,
-                complete: (results) => {
-                    if (results.errors.length) {
-                        reject(new Error("CSV 파싱 오류: " + results.errors[0].message));
-                    } else {
-                        resolve(results.data);
-                    }
-                },
-                error: (err) => {
-                    reject(new Error("CSV 파싱 중 심각한 오류: " + err.message));
-                }
-            });
-        });
-    }
+    // [!!!] (v0.38) fetchCSV 함수 삭제됨
 
     function buildFullUserData(userRow) {
         const GOAL_TIME = 16.0;
@@ -248,6 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return fullUserData;
     }
 
+    /**
+     * [!!!] (MODIFIED) v0.38: 로그인 처리 함수 (API 호출)
+     */
     async function handleLogin() {
         const name = nameInput.value.trim();
         const email = emailInput.value.trim().toLowerCase();
@@ -258,19 +214,40 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.style.display = 'none';
 
         try {
-            const mainListData = await fetchCSV(FILE_ALL_IN_ONE); 
-            
-            const userRows = mainListData.filter(row => 
-                row['성명'] && row['성명'].trim() === name && 
-                row['이메일'] && row['이메일'].trim().toLowerCase() === email
-            );
+            // (v0.38) CSV fecth 대신 API 서버로 POST 요청
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, email: email })
+            });
 
-            if (userRows.length === 0) {
+            if (!response.ok) {
+                throw new Error(`서버 응답 오류: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+
+            if (result.error) {
+                throw new Error(`API 오류: ${result.error}`);
+            }
+
+            // (v0.38) 결과에서 userRows와 dataUpdatedDate 분리
+            const userRows = result.userRows;
+            const dataUpdatedDate = result.dataUpdatedDate;
+
+            if (!userRows || userRows.length === 0) {
                 showError('일치하는 사용자가 없습니다. (이름/이메일 확인)');
                 showButtonLoader(false);
                 return;
             }
 
+            // (v0.38) 데이터 기준일 저장
+            localStorage.setItem('dataUpdatedDate', dataUpdatedDate);
+
+            // (v0.38) 이후 로직은 v0.37과 동일
             localStorage.setItem('userCourseList', JSON.stringify(userRows));
             
             const firstCourseRow = userRows[0];
@@ -334,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = document.getElementById('status-badge');
         const skillSetWarning = document.getElementById('skill-set-warning');
         
-        // [!!!] (v0.37) 카운트업 대상 DOM
         const timeMetricH4 = document.getElementById('time-metric-h4');
         const examMetricH4 = document.getElementById('exam-metric-h4');
         const recognizedTimeLabel = document.getElementById('recognized-time');
@@ -351,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (courseCountNoticeMobile) courseCountNoticeMobile.style.display = 'none';
         }
 
+        // (v0.38) 이제 이 값은 handleLogin에서 저장합니다.
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
         const dataDateDynamic = document.getElementById('data-date-dynamic');
         if (dataDateDynamic) {
@@ -404,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const timePercent = Math.min((detail.recognizedTime / detail.goalTime) * 100, 100);
         
-        // [!!!] (v0.37) 카운트업 애니메이션 적용
         animateCountUpWithSuffix(timeMetricH4, detail.recognizedTime, 1, 1000, '', ' H');
         animateCountUpWithSuffix(recognizedTimeLabel, detail.recognizedTime, 1, 1000, '', ` / ${detail.goalTime.toFixed(1)} H`);
 
@@ -413,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
             examMetric.style.display = 'block';
             const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
             
-            // [!!!] (v0.37) 카운트업 애니메이션 적용
             animateCountUpWithSuffix(examMetricH4, detail.examScore, 0, 1000, '', ' 점');
             animateCountUpWithSuffix(examScoreLabel, detail.examScore, 0, 1000, '', ` / ${detail.goalScore} 점`);
             
@@ -473,10 +448,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // [!!!] (NEW) v0.37: PC 우측 네비게이션 높이 동기화
-        // DOM이 렌더링될 시간을 주기 위해 setTimeout 0 사용
         setTimeout(() => {
-            if (window.innerWidth >= 900) { // PC 뷰에서만 실행
+            if (window.innerWidth >= 900) {
                 const overviewCard = document.getElementById('overview');
                 const rightNav = document.getElementById('quick-nav-bar');
                 if (overviewCard && rightNav) {
