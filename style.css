@@ -12,6 +12,11 @@
     --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
     --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
     --border-radius: 12px;
+    
+    /* [!!!] (NEW) v30: 헤더 높이 변수 (앵커 링크용) */
+    --warning-banner-height: 60px; /* 경고 배너 높이 */
+    --mobile-header-height: 60px; /* 모바일 헤더 높이 */
+    --desktop-header-height: 200px; /* 데스크톱 헤더 높이 (근사치) */
 }
 
 html {
@@ -23,11 +28,7 @@ body {
     background-color: var(--color-bg);
     color: var(--color-text);
     margin: 0;
-    /* (v29) body에서 패딩 제거. 스크롤 영역에서 처리 */
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    /* (v29) align-items 제거 */
+    padding: 0; /* (v30) body 패딩 제거 */
     min-height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
@@ -46,24 +47,19 @@ body {
 
 /* --- 2. 카드 & 컨테이너 공통 --- */
 .container { 
-    max-width: 600px; 
+    max-width: 100%; /* (v30) 컨테이너는 100% 너비 */
     width: 100%; 
     display: none; 
     animation: fadeIn 0.5s ease-out forwards; 
-    /* (v29) margin 제거 */
 }
-/* (v29) 대시보드 컨테이너는 100% 너비 차지 */
-#dashboard-container.container {
-    max-width: 100%;
-}
-
 .container.active { display: block; }
-/* (v29) card-content 패딩 조정 (모바일) */
+
+/* (v30) card-content는 이제 로그인에서만 사용됨 */
 .card-content { 
     background-color: var(--color-card); 
     border-radius: var(--border-radius); 
     box-shadow: var(--shadow-medium); 
-    padding: 20px 25px; /* (v29) 패딩 축소 */
+    padding: 30px 35px; 
     z-index: 10; 
     position: relative; 
     background: rgba(255, 255, 255, 0.85); 
@@ -74,12 +70,18 @@ body {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.card { background-color: #fcfcfc; border: 1px solid #eee; border-radius: var(--border-radius); padding: 20px; margin-bottom: 20px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-/* (v29) 카드 호버 효과 제거 (모바일 우선) */
-/* .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-light); } */
+.card { 
+    background-color: #fcfcfc; 
+    border: 1px solid #eee; 
+    border-radius: var(--border-radius); 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease; 
+    /* [!!!] (MODIFIED) v30: 모바일용 앵커 마진 */
+    scroll-margin-top: 140px; /* (경고배너 60px + 모바일헤더 60px + 여백 20px) */
+}
 
 /* --- 3. 로그인 화면 --- */
-/* (v29) 로그인 컨테이너 (화면 중앙 정렬) */
 #login-container {
     display: flex;
     justify-content: center;
@@ -90,7 +92,7 @@ body {
 }
 #login-container .card-content {
     width: 100%;
-    max-width: 500px; /* 로그인 카드 최대 너비 */
+    max-width: 500px; 
 }
 
 .login-header { text-align: center; margin-bottom: 30px; }
@@ -150,7 +152,10 @@ body {
 .data-notice span { display: flex; align-items: center; gap: 6px; }
 
 .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 1em; margin-bottom: 25px; animation: fadeIn 0.5s 0.2s backwards; }
-.status-badge.completed { background: linear-gradient(90deg, #e6f7ec, #d1f7e0); color: #008a38; box-shadow: 0 2px 8px rgba(0, 138, 56, 0.2); }
+.status-badge.completed { background: linear-gradient(90deg, #e6f7ec, #d1f7e0); color: #008a38; box-shadow: 0 2px 8px rgba(0, 138, 56, 0.2);
+    /* [!!!] (NEW) v30: 이수 완료 애니메이션 */
+    animation: bobbing 1s infinite ease-in-out;
+}
 .status-badge.in-progress { background: linear-gradient(90deg, #fff8e1, #fff0c2); color: #e6a000; box-shadow: 0 2px 8px rgba(230, 160, 0, 0.2); }
 .progress-section { margin-bottom: 20px; }
 .progress-section h4 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px 0; font-weight: 600; }
@@ -161,16 +166,19 @@ body {
 .progress-section.metric-item { display: block; }
 .progress-section.metric-item.hidden { display: none; }
 
-.card h3,
-.card h4 { display: flex; align-items: center; gap: 10px; }
-.time-card h4, .faq-card h4, .overview-card h4, .contact-card h4,
-.resources-card h4, .course-info-card h4, .survey-card h4, .quick-nav-card h4 {
+/* [!!!] (MODIFIED) v30: 카드 제목 (h4) 스타일 통일 */
+.card h4 { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
     margin-top: 0; 
     border-bottom: 1px solid #eee; 
     padding-bottom: 10px; 
-    color: var(--color-primary); 
+    color: var(--color-primary);
+    font-size: 1.35em; /* (v30) 폰트 크기 키움 */
 }
-.main-card h3 { margin-top: 0; }
+/* (v30) .main-card h3 제거 */
+
 .time-card ul { list-style: none; padding-left: 0; margin-bottom: 15px; }
 .time-card li { font-size: 1.1em; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
 .time-card li strong { font-size: 1.1em; }
@@ -194,7 +202,8 @@ details p {
 }
 
 /* --- 5. 과정 선택 드롭다운 (v21) --- */
-.course-switcher-wrapper { position: relative; display: flex; align-items: center; background-color: #f8f9fa; border-radius: var(--border-radius); padding: 0 10px; flex-grow: 1; border: 1px solid #eee;
+.course-switcher-wrapper { 
+    position: relative; display: flex; align-items: center; background-color: #f8f9fa; border-radius: var(--border-radius); padding: 0 10px; flex-grow: 1; border: 1px solid #eee;
     flex-shrink: 1; min-width: 0; 
 }
 .course-switcher-wrapper .header-emoji { font-size: 1.2em; margin-left: 5px; }
@@ -242,9 +251,20 @@ details p {
   50% { transform: translateX(3px); }
   100% { transform: translateX(-3px); }
 }
+/* (v21) 배지에만 애니메이션 적용 */
 .status-badge.in-progress { 
     display: inline-block; 
     animation: running-man 1.2s infinite ease-in-out; 
+}
+/* [!!!] (NEW) v30: 이수 완료 배지 애니메이션 */
+@keyframes bobbing {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+.status-badge.completed {
+    display: inline-block; /* (v30) 애니메이션 적용 위해 */
+    animation: bobbing 1s infinite ease-in-out; 
 }
 
 /* --- 10. (v24) 로고 헤더 (재구성) --- */
@@ -317,23 +337,31 @@ details p {
     50% { transform: translateY(-6px); }
 }
 
-/* --- 12. (MODIFIED) v29: 최상단 경고 배너 (모바일 줄바꿈 수정) --- */
+/* --- 12. (v22) 최상단 경고 배너 --- */
 #global-warning-banner {
-    background-color: #fff8e1;
+    background-color: #fff8e1; 
     border: 1px solid #e6a000;
     color: #e6a000; 
     padding: 12px 15px;
     border-radius: var(--border-radius);
     font-weight: 600;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 0; /* (v30) 헤더와 붙임 */
     font-size: 0.95em;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px; 
-    /* (v29) 모바일에서 깔끔하게 줄바꿈 */
-    flex-wrap: wrap; 
+    
+    /* [!!!] (MODIFIED) v30: 고정 */
+    position: sticky;
+    top: 0;
+    z-index: 1001; /* 헤더보다 위 */
+    width: 100%;
+    box-sizing: border-box; /* 패딩 포함 100% */
+    border-radius: 0; /* (v30) 상단 모서리 제거 */
+    border-left: 0;
+    border-right: 0;
 }
 
 /* --- 13. (v25) 감사 문구 (카드 하단) --- */
@@ -413,7 +441,6 @@ details p {
     color: var(--color-text);
     transform: translateY(-2px);
 }
-/* (v28) 설문조사 버튼 (하늘색) */
 .action-btn-survey {
     flex: 1; min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; font-size: 1.05em; font-weight: 700; color: #fff; background: var(--color-woori-blue); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; text-decoration: none;
 }
@@ -423,27 +450,39 @@ details p {
     transform: translateY(-2px);
 }
 
-/* [!!!] (NEW) v29: 데스크톱 고정 헤더 */
+/* (v28) 빠른 메뉴 카드 */
+.quick-nav-card .card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.quick-nav-card .action-btn-secondary {
+    min-width: auto; 
+}
+
+
+/* [!!!] (NEW) v30: 데스크톱 고정 헤더 */
 #main-header {
     position: sticky;
-    top: 0;
+    top: var(--warning-banner-height); /* 경고 배너 아래에 고정 */
     z-index: 900;
-    /* (v29) card-content 스타일을 헤더에 직접 적용 */
+    
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid #eee;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    /* (v29) 패딩 재조정 */
+    
     padding: 20px 30px;
-    margin: 0 auto 20px auto; /* 중앙 정렬 */
-    max-width: 1000px;
     width: 100%;
-    box-sizing: border-box; /* 패딩 포함 너비 */
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-sizing: border-box; /* 패딩 포함 100% */
     
     display: none; /* 모바일에선 숨김 */
 }
-/* (v29) 헤더 내부 컨트롤 (드롭다운 + 과정 수) */
+/* (v30) 헤더 내부 콘텐츠 (너비 제한) */
+.header-content-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+/* (v30) 헤더 내부 컨트롤 (드롭다운 + 과정 수) */
 .header-controls {
     display: flex;
     align-items: center;
@@ -451,13 +490,13 @@ details p {
     margin-bottom: 15px;
 }
 .header-controls .data-notice {
-    margin-bottom: 0; /* 기존 여백 제거 */
-    flex-shrink: 0; /* 줄어들지 않게 */
+    margin-bottom: 0; 
+    flex-shrink: 0; 
 }
-/* (v29) 빠른 메뉴 */
+/* (v30) 빠른 메뉴 */
 #quick-nav-bar {
     display: flex;
-    flex-wrap: wrap; /* 모바일에서 줄바꿈 */
+    flex-wrap: wrap; 
     gap: 10px;
     align-items: center;
 }
@@ -482,46 +521,36 @@ details p {
     transform: translateY(-2px);
 }
 #quick-nav-bar #logout-btn {
-    margin-left: auto; /* 로그아웃 버튼을 오른쪽 끝으로 */
-    height: 32px; /* 작은 크기 */
+    margin-left: auto; 
+    height: 32px;
     line-height: 32px;
     padding: 0 12px;
 }
 
-/* [!!!] (NEW) v29: 메인 스크롤 콘텐츠 */
+/* [!!!] (NEW) v30: 메인 스크롤 콘텐츠 */
 #main-content {
-    /* (v29) 헤더가 덮어쓰므로 메인 콘텐츠는 일반 카드 컨텐츠 스타일 사용 */
-    background-color: var(--color-card); 
-    border-radius: var(--border-radius); 
-    box-shadow: var(--shadow-medium); 
-    padding: 30px 35px; 
-    z-index: 10; 
-    position: relative; 
-    background: rgba(255, 255, 255, 0.85); 
-    backdrop-filter: blur(10px); 
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 20px auto 0 auto; /* (v30) 헤더 아래 여백 */
+    padding: 0 20px; /* (v30) 모바일 좌우 여백 */
     width: 100%;
     box-sizing: border-box;
 }
-/* (v29) 스크롤 영역 내부 패딩 (모바일) */
+/* (v30) 스크롤 영역 내부 (카드 스타일 복원) */
 .card-content-scrollable {
-    padding: 0;
+    /* (v30) 이 영역은 모바일에서만 사용됨 */
 }
 
-/* [!!!] (NEW) v29: 모바일 햄버거 메뉴 */
+/* [!!!] (NEW) v30: 모바일 햄버거 메뉴 */
 #mobile-header {
     position: sticky;
-    top: 0;
+    top: var(--warning-banner-height); /* 경고 배너 아래 */
     left: 0;
     width: 100%;
-    height: 60px;
+    height: var(--mobile-header-height);
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    z-index: 1001; /* 플로팅 버튼보다 위 */
+    z-index: 1001; 
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -563,21 +592,21 @@ details p {
     right: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* 어두운 배경 */
+    background: rgba(0, 0, 0, 0.5); 
     z-index: 1002;
-    transform: translateX(100%); /* 오른쪽으로 숨김 */
+    transform: translateX(100%); 
     transition: transform 0.3s ease-in-out;
     display: flex;
-    justify-content: flex-end; /* 메뉴를 오른쪽에 */
+    justify-content: flex-end; 
 }
 #mobile-nav-overlay.visible {
-    transform: translateX(0); /* 보이기 */
+    transform: translateX(0); 
 }
 #mobile-nav-content {
     width: 80%;
     max-width: 400px;
     height: 100%;
-    background-color: var(--color-bg); /* body 배경색과 동일 */
+    background-color: var(--color-bg); 
     padding: 20px;
     box-sizing: border-box;
     overflow-y: auto;
@@ -606,16 +635,16 @@ details p {
 }
 /* (v29) 모바일 메뉴 내부의 컨트롤 스타일 */
 #mobile-nav-content .course-switcher-wrapper {
-    margin: 0 0 15px 0; /* 여백 수정 */
+    margin: 0 0 15px 0; 
 }
 #mobile-nav-content .data-notice {
     font-size: 1em;
 }
 #mobile-nav-content #quick-nav-bar {
     display: flex;
-    flex-direction: column; /* 세로로 쌓기 */
+    flex-direction: column; 
     gap: 10px;
-    align-items: stretch; /* 꽉 채우기 */
+    align-items: stretch; 
 }
 #mobile-nav-content .action-btn-quicknav {
     font-size: 1.1em;
@@ -629,28 +658,76 @@ details p {
 }
 
 
-/* [!!!] (NEW) v29: 미디어 쿼리 (데스크톱/모바일 전환) */
-@media (min-width: 900px) {
-    body {
-        /* (v29) 데스크톱에서는 패딩 복원 */
-        padding: 20px 20px 100px 20px;
+/* [!!!] (NEW) v30: 미디어 쿼리 (레이아웃 전환) */
+@media (max-width: 899px) {
+    /* (v30) 모바일: 데스크톱 헤더 숨김 */
+    #main-header {
+        display: none;
     }
     
-    /* 데스크톱: 모바일 헤더 숨김 */
+    /* (v30) 모바일: 경고 배너 줄바꿈 수정 (요청 4) */
+    #global-warning-banner {
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px 15px;
+        /* (v30) 모바일 헤더와 높이 맞춤 */
+        height: var(--warning-banner-height);
+        box-sizing: border-box;
+    }
+
+    /* (v30) 모바일: 빠른 메뉴 카드 숨김 (햄버거 메뉴로 이동) */
+    .quick-nav-card {
+        display: none;
+    }
+}
+
+@media (min-width: 900px) {
+    /* (v30) 데스크톱: 모바일 헤더/오버레이 숨김 */
     #mobile-header {
         display: none;
     }
-    /* 데스크톱: 고정 헤더 보임 */
+    #mobile-nav-overlay {
+        display: none;
+    }
+    
+    /* (v30) 데스크톱: 고정 헤더 보임 */
     #main-header {
         display: block;
     }
-    /* 데스크톱: 스크롤 영역 스타일 */
-    #main-content {
-        padding: 30px 35px;
+    
+    /* (v30) 데스크톱: 경고 배너 텍스트 정렬 */
+    #global-warning-banner {
+        flex-direction: row;
+        justify-content: center;
+        height: var(--warning-banner-height);
+        box-sizing: border-box;
     }
 
+    /* (v30) 데스크톱: 스크롤 영역 (카드 스타일 X) */
+    #main-content {
+        background: none;
+        border: none;
+        box-shadow: none;
+        padding: 0 20px; /* 좌우 여백만 줌 */
+        backdrop-filter: none;
+    }
+    
+    /* (v30) 데스크톱: 카드 호버 효과 복원 */
     .card:hover {
         transform: translateY(-5px);
         box-shadow: var(--shadow-light);
+    }
+    
+    /* [!!!] (v30) 앵커 링크 마진 (데스크톱) */
+    .card {
+        scroll-margin-top: 280px; /* 경고배너 60px + 데스크톱헤더 200px + 여백 20px */
+    }
+
+    /* (v28) 빠른 메뉴 카드 (그리드) */
+    .quick-nav-card .card-actions {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .quick-nav-card .action-btn-secondary {
+        min-width: auto;
     }
 }
