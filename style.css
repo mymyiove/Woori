@@ -159,14 +159,30 @@ body {
 }
 .status-badge.in-progress { background: linear-gradient(90deg, #fff8e1, #fff0c2); color: #e6a000; box-shadow: 0 2px 8px rgba(230, 160, 0, 0.2); }
 .progress-section { margin-bottom: 20px; }
+/* [!!!] (v0.37) h4 정렬 및 메트릭 스타일 */
 .progress-section h4 { 
     display: flex; 
+    justify-content: space-between; /* 좌우 정렬 */
     align-items: center; 
     gap: 10px; 
     margin: 0 0 10px 0; 
     font-weight: 600; 
     font-size: 1.1em;
 }
+.progress-section h4 > span:first-child { /* (v0.37) 이모지 + 텍스트 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.h4-metric {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+#exam-metric .h4-metric {
+    color: var(--color-primary); /* 시험 점수도 동일한 색상 */
+}
+
 .progress-bar-container { width: 100%; height: 20px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; }
 .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-accent), #00e065); border-radius: 10px; transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 0 10px rgba(0, 199, 60, 0.5); }
 .progress-bar.exam { background: linear-gradient(90deg, var(--color-primary), #006aff); box-shadow: 0 0 10px rgba(0, 74, 158, 0.5); }
@@ -198,7 +214,7 @@ body {
 .time-card li strong { font-size: 1.1em; }
 .warning strong { color: var(--color-error); }
 .note { font-size: 0.9em; color: var(--color-text-muted); background-color: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid var(--color-accent); }
-details { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+details { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; transition: background-color 0.2s ease; }
 summary { 
     cursor: pointer; 
     font-weight: 600; 
@@ -207,7 +223,17 @@ summary {
     font-size: 1.05em;
 }
 summary:hover { color: var(--color-primary); }
-details[open] summary { color: var(--color-primary); }
+/* [!!!] (v0.37) FAQ UI 개선 */
+details[open] { 
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 5px 10px 10px 10px;
+}
+details[open] summary { 
+    color: var(--color-primary); 
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ddd;
+}
 details p { 
     margin-top: 10px; 
     padding-left: 10px; 
@@ -498,9 +524,8 @@ details p {
     transform: translateY(-2px) scale(1.03);
 }
 
-/* [!!!] (NEW) v0.35: Skill-Set 경고 문구 스타일 */
 .card-warning-message {
-    display: none; /* JS로 제어 */
+    display: none;
     width: 100%;
     background-color: #fff8e1;
     border: 1px solid #e6a000;
@@ -552,16 +577,16 @@ details p {
     min-width: 0; 
     max-width: 500px;
     height: 44px;
-    padding: 0 10px; /* (v0.35) 정렬을 위해 패딩 고정 */
+    padding: 0 10px;
 }
-/* [!!!] (MODIFIED) v0.35: PC 헤더 정렬 및 스타일 통일 */
+/* [!!!] (v0.37) PC 헤더 정렬 및 스타일 통일 */
 .header-controls .data-notice {
     background-color: #f8f9fa;
     border: 1px solid #eee;
     border-radius: var(--border-radius);
-    height: 44px; /* 스위처와 높이 통일 */
-    padding: 0 15px; /* (v0.35) 세로 패딩 0, 텍스트는 flex로 중앙 정렬 */
-    margin: 0; /* (v0.35) p 태그 기본 마진 제거 */
+    height: 44px;
+    padding: 0 15px;
+    margin: 0;
     box-sizing: border-box;
     font-size: 1.05em;
     color: var(--color-text-muted);
@@ -573,7 +598,6 @@ details p {
     white-space: nowrap; 
 }
 
-/* [!!!] (NEW) v0.35: 헤더 타이틀 링크 스타일 */
 .header-title-link {
     text-decoration: none;
     color: inherit;
@@ -656,9 +680,10 @@ details p {
     height: 24px;
     width: auto;
 }
+/* [!!!] (v0.37) 모바일 타이틀 강조 */
 .mobile-title {
-    font-size: 1.05em;
-    font-weight: 600;
+    font-size: 1.15em;
+    font-weight: 700;
     color: var(--color-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -699,12 +724,20 @@ details p {
 #mobile-header-controls .course-switcher-wrapper {
     margin-right: 0;
     display: flex;
+    height: 44px; /* (v0.37) 높이 고정 */
 }
+/* [!!!] (v0.37) 모바일 컨트롤 스타일 통일 */
 #mobile-header-controls .data-notice {
-    margin-bottom: 0;
+    margin: 0;
     font-size: 0.95em;
-    padding: 10px 15px;
+    padding: 0 15px;
     display: flex;
+    /* 스타일 통일 */
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: var(--border-radius);
+    height: 44px;
+    box-sizing: border-box;
 }
 
 /* (v29) 모바일 오버레이 (숨겨진 메뉴) */
@@ -898,21 +931,26 @@ details p {
         backdrop-filter: none;
     }
     
-    /* (v0.34) PC 우측 메뉴 (카드) */
+    /* [!!!] (MODIFIED) v0.37: PC 우측 메뉴 (카드 높이 동기화) */
     .quick-nav-bar-pc {
         display: flex;
         flex-direction: column;
+        justify-content: space-between; /* 로그아웃 버튼 하단 고정 */
         gap: 10px;
         width: 180px;
         flex-shrink: 0;
         position: sticky;
         top: calc(var(--warning-banner-height-desktop) + var(--desktop-header-height) + 20px);
-        height: fit-content;
         background-color: var(--color-card);
         border: 1px solid #eee;
         border-radius: var(--border-radius);
         padding: 15px;
         box-shadow: var(--shadow-light);
+    }
+    .quick-nav-links-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
     .quick-nav-bar-pc .action-btn-quicknav {
         width: 100%;
@@ -966,18 +1004,27 @@ details p {
     align-items: center;
     gap: 15px;
 }
+/* [!!!] (v0.37) 로고 크기 조정 */
 .footer-udemy-logo {
-    height: 24px;
+    height: 28px;
     opacity: 0.7;
 }
+/* [!!!] (v0.37) 감사 문구 삭제 */
 .footer-thanks, .footer-right p {
     margin: 0;
     font-size: 0.9em;
     color: var(--color-text-muted);
 }
+.footer-thanks {
+    display: none;
+}
+
 @media (max-width: 599px) {
     .footer-content-wrapper {
         flex-direction: column;
+        gap: 10px;
+    }
+    .footer-left {
         gap: 10px;
     }
 }
