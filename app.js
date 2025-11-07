@@ -102,13 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // (v29) 데스크톱의 컨트롤 요소들을 모바일 오버레이로 '이동'
             if (mobileNavContent) {
                 // (v30) 이미 이동했는지 확인 (로그아웃 후 다시 로그인 시)
-                if (courseSwitcherWrapper.parentElement !== mobileNavContent) {
+                if (courseSwitcherWrapper && courseSwitcherWrapper.parentElement !== mobileNavContent) {
                     mobileNavContent.appendChild(courseSwitcherWrapper);
                 }
-                if (courseCountNotice.parentElement !== mobileNavContent) {
+                if (courseCountNotice && courseCountNotice.parentElement !== mobileNavContent) {
                     mobileNavContent.appendChild(courseCountNotice);
                 }
-                if (quickNavBar.parentElement !== mobileNavContent) {
+                if (quickNavBar && quickNavBar.parentElement !== mobileNavContent) {
                     mobileNavContent.appendChild(quickNavBar);
                 }
             }
@@ -160,24 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         isMobile = currentlyMobile;
         
-        if (isMobile) {
-            // 모바일로 전환: 컨트롤을 오버레이로 이동
-            if (mobileNavContent) {
-                if (courseSwitcherWrapper) mobileNavContent.appendChild(courseSwitcherWrapper);
-                if (courseCountNotice) mobileNavContent.appendChild(courseCountNotice);
-                if (quickNavBar) mobileNavContent.appendChild(quickNavBar);
-            }
-        } else {
-            // 데스크톱으로 전환: 컨트롤을 헤더로 '원위치'
-            if (mainHeader) {
-                const headerControls = mainHeader.querySelector('.header-controls');
-                if (headerControls) {
-                    if (courseSwitcherWrapper) headerControls.prepend(courseSwitcherWrapper);
-                    if (courseCountNotice) headerControls.appendChild(courseCountNotice);
-                }
-                if (quickNavBar) mainHeader.appendChild(quickNavBar);
-            }
-        }
+        // (v30) 데스크톱/모바일 전환 시 새로고침 (가장 안정적)
+        window.location.reload();
     });
 
 
