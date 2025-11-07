@@ -49,17 +49,22 @@
     <div id="dashboard-container" class="container">
         
         <div id="global-warning-banner">
-            ⚠️ 데이터는 실시간이 아니며 약 2일전의 현황 입니다. (기준일: <span id="data-date-dynamic">...</span>)
+            <span>⚠️ 데이터는 실시간이 아니며 약 2일전의 현황 입니다.</span>
+            <span>(기준일: <span id="data-date-dynamic">...</span>)</span>
         </div>
 
         <div id="mobile-header">
-            <img src="Woori-logo.png" alt="우리은행" class="mobile-logo">
-            <span class="mobile-title">우리은행 X 유데미 학습현황</span>
-            <button id="menu-toggle-btn" class="hamburger-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <div class="mobile-header-top">
+                <img src="Woori-logo.png" alt="우리은행" class="mobile-logo">
+                <span class="mobile-title">우리은행 X 유데미 학습현황</span>
+                <button id="menu-toggle-btn" class="hamburger-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div id="mobile-header-controls">
+                </div>
         </div>
 
         <header id="main-header">
@@ -297,6 +302,10 @@
     <a href="https://wooribank.udemy.com/" target="_blank" class="floating-action-button" title="학습하러 가기">
         🎓 학습하러 가기
     </a>
+    
+    <footer id="main-footer">
+        <p>© 2025 Jung Hojun. All Rights Reserved.</p>
+    </footer>
 
     <script src="app.js"></script>
 
