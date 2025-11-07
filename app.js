@@ -20,8 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const examProgressBar = document.getElementById('exam-progress-bar');
     const examMetric = document.getElementById('exam-metric');
     const copyEmailBtn = document.getElementById('copy-email-btn');
-    // [!!!] (v27) 학습하러 가기 버튼
     const goToCourseBtn = document.getElementById('go-to-course-btn');
+    
+    // [!!!] (NEW) v29: 모바일 메뉴 요소
+    const mobileHeader = document.getElementById('mobile-header');
+    const menuToggleBtn = document.getElementById('menu-toggle-btn');
+    const menuCloseBtn = document.getElementById('menu-close-btn');
+    const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+    const mobileNavContent = document.getElementById('mobile-nav-content');
+    const quickNavBar = document.getElementById('quick-nav-bar');
 
     // --- [B] 데이터 파일 경로 설정 ---
     const DATA_PATH = './data/';
@@ -78,6 +85,51 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    
+    // [!!!] (NEW) v29: 모바일 네비게이션 로직
+    function setupMobileNav() {
+        // 900px 미만일 때 모바일로 간주
+        if (window.innerWidth < 900) {
+            // (v29) 데스크톱의 컨트롤 요소들을 모바일 오버레이로 '이동'
+            if (mobileNavContent) {
+                if (courseSwitcherWrapper) mobileNavContent.appendChild(courseSwitcherWrapper);
+                if (courseCountNotice) mobileNavContent.appendChild(courseCountNotice);
+                if (quickNavBar) mobileNavContent.appendChild(quickNavBar);
+                // (v29) 로그아웃 버튼은 nav bar 안에 있으므로 quickNavBar와 함께 이동됨
+            }
+        }
+        
+        // (v29) 햄버거/닫기 버튼 이벤트
+        if(menuToggleBtn) {
+            menuToggleBtn.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('visible');
+            });
+        }
+        if(menuCloseBtn) {
+            menuCloseBtn.addEventListener('click', () => {
+                mobileNavOverlay.classList.remove('visible');
+            });
+        }
+        // (v29) 오버레이 배경 클릭 시 닫기
+        if(mobileNavOverlay) {
+            mobileNavOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileNavOverlay) { // 어두운 배경만 해당
+                    mobileNavOverlay.classList.remove('visible');
+                }
+            });
+        }
+        // (v29) 빠른 메뉴 링크 클릭 시 닫기
+        if(quickNavBar) {
+            quickNavBar.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileNavOverlay.classList.remove('visible');
+                });
+            });
+        }
+    }
+    
+    // (v29) 페이지 로드 시 모바일 설정 실행
+    setupMobileNav();
 
 
     // --- [D] 핵심 함수 ---
@@ -243,13 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         if (userRows.length > 0) {
-            // [!!!] (MODIFIED) v28: "중이에요"로 수정
             courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
         } else {
             courseCountNotice.style.display = 'none';
         }
 
-        // (v22) 새 배너의 날짜 업데이트
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
         const dataDateDynamic = document.getElementById('data-date-dynamic');
         if (dataDateDynamic) {
@@ -318,12 +368,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
 
-        // [!!!] (MODIFIED) v28: '학습하러 가기' 버튼 동적 제어 (Skill-Set 숨김)
+        // (v28) '학습하러 가기' 버튼 동적 제어
         const courseName = user.course.trim();
         let link = '#';
-        let display = 'none'; // 기본값 (Skill-set 등은 숨김)
+        let display = 'none'; 
 
-        if (courseName.includes('Skill-Set')) { // (v28) 스킬셋 숨김
+        if (courseName.includes('Skill-Set')) {
             display = 'none';
         } else if (courseName.includes('IT-정보 보호')) {
             link = 'https://wooribank.udemy.com/learning-paths/10631499/';
@@ -341,16 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
             goToCourseBtn.style.display = display;
         }
 
-
         // --- 화면 전환 ---
         loginContainer.classList.remove('active');
         dashboardContainer.classList.add('active');
         
-        // (v21) feather.replace() 호출 제거
-
-        // [v18] '이수 완료' 시 축하 폭죽 발사
+        // (v18) '이수 완료' 시 축하 폭죽 발사
         if (detail.isCompleted) {
-            // (v28) 이전에 축하를 받았는지 확인 (새로고침 시 매번 터지는 것 방지)
             const congratulatedKey = `congrats_${user.email}_${courseName}`;
             if (!sessionStorage.getItem(congratulatedKey)) {
                 if (typeof confetti === 'function') {
@@ -374,8 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('userCourseList');
         localStorage.removeItem('selectedCourseIndex');
         localStorage.removeItem('dataUpdatedDate');
-        sessionStorage.clear(); // (v28) 축하 기록 삭제
-        showLogin();
+        sessionStorage.clear();
+        
+        // [!!!] (NEW) v29: 모바일 메뉴 닫기 및 컨트롤 원위치 (새로고침이 가장 안전)
+        window.location.reload();
     }
 
     // --- [E] UI 헬퍼 함수 ---
