@@ -26,6 +26,8 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
+    /* [!!!] (NEW) v27: 한글 단어 잘림 방지 */
+    word-break: keep-all;
 }
 
 /* --- 1. 배경 애니메이션 --- */
@@ -135,7 +137,13 @@ body {
 /* 카드 제목 (h3, h4) 공통 (v18) */
 .card h3,
 .card h4 { display: flex; align-items: center; gap: 10px; }
-.time-card h4, .faq-card h4, .overview-card h4, .contact-card h4 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--color-primary); }
+.time-card h4, .faq-card h4, .overview-card h4, .contact-card h4,
+.resources-card h4, .course-info-card h4, .survey-card h4 { /* (v27) 새 카드 추가 */
+    margin-top: 0; 
+    border-bottom: 1px solid #eee; 
+    padding-bottom: 10px; 
+    color: var(--color-primary); 
+}
 .main-card h3 { margin-top: 0; }
 .time-card ul { list-style: none; padding-left: 0; margin-bottom: 15px; }
 .time-card li { font-size: 1.1em; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
@@ -146,7 +154,19 @@ details { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10
 summary { cursor: pointer; font-weight: 600; padding: 5px 0; transition: color 0.2s; }
 summary:hover { color: var(--color-primary); }
 details[open] summary { color: var(--color-primary); }
-details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--color-primary); font-size: 0.95em; line-height: 1.6; }
+details p { 
+    margin-top: 10px; 
+    padding-left: 10px; 
+    border-left: 3px solid var(--color-primary); 
+    font-size: 0.95em; 
+    line-height: 1.7; /* (v27) 줄간격 확보 */
+}
+/* (v27) 카드 하단 문구 (p) 스타일 */
+.resources-card p, .survey-card p {
+    font-size: 1.05em;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+}
 
 /* --- 5. 과정 선택 드롭다운 (v21) --- */
 .course-switcher-wrapper { position: relative; display: flex; align-items: center; background-color: #f8f9fa; border-radius: var(--border-radius); padding: 0 10px; flex-grow: 1; margin-right: 15px; border: 1px solid #eee; }
@@ -302,7 +322,7 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     color: var(--color-woori-blue);
     display: inline-block;
     animation: pulse-blue 1.5s infinite ease-in-out;
-    margin: 0 4px; /* (v26) 좌우 여백 */
+    margin: 0 4px;
 }
 
 @keyframes pulse-blue {
@@ -311,7 +331,7 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
     100% { transform: scale(1); }
 }
 
-/* --- 15. (NEW) v26: FAQ 내부 링크 스타일 --- */
+/* --- 15. (v26) FAQ 내부 링크 스타일 --- */
 .faq-link {
     display: inline-block;
     background-color: #f0f2f5;
@@ -331,6 +351,75 @@ details p { margin-top: 10px; padding-left: 10px; border-left: 3px solid var(--c
 .faq-warning {
     color: var(--color-error);
     font-weight: 600;
-    display: block; /* (v27) 링크와 줄바꿈 */
+    display: block; 
     margin-top: 8px;
+    background-color: rgba(217, 48, 37, 0.05);
+    padding: 8px;
+    border-radius: 6px;
+    border-left: 3px solid var(--color-error);
+}
+
+/* [!!!] (NEW) v27: 카드 액션 버튼 (flex) */
+.card-actions {
+    display: flex;
+    flex-wrap: wrap; /* 모바일에서 줄바꿈 */
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* (v27) 기본 버튼 (파란색) */
+.action-btn-primary {
+    flex: 1; /* 남는 공간 차지 */
+    min-width: 150px; /* 최소 너비 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    font-size: 1.05em;
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-woori-blue);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.action-btn-primary:hover {
+    background: #008ae6;
+    box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
+    transform: translateY(-2px);
+}
+/* (v27) 보조 버튼 (회색) */
+.action-btn-secondary {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background-color: #f0f2f5;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.action-btn-secondary:hover {
+    background-color: #e0e5eb;
+    color: var(--color-text);
+    transform: translateY(-2px);
+}
+
+/* (v27) 설문조사 버튼 (녹색) */
+.survey-link {
+    background: linear-gradient(90deg, var(--color-accent), #00e065);
+}
+.survey-link:hover {
+    box-shadow: 0 5px 15px rgba(0, 199, 60, 0.4);
 }
