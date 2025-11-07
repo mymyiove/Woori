@@ -1,7 +1,7 @@
 /* [!!!] (v0.38) 백엔드 API (Apps Script)를 사용하도록 수정한 app.js */
 
 // (필수!) 3단계에서 배포하고 복사한 본인의 Apps Script 웹 앱 URL로 변경하세요.
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw8xDUp5tbBXLyKOlh5NR8lkcbiIRuyxhGIwWUSsntGLsYloLrKaTBzaMqYg0KYrTH5/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
 
