@@ -36,7 +36,7 @@
             </div>
             <div class="form-group">
                 <label for="email">📧 이메일</label>
-                <input type="email" id="email" placeholder="이메일 (e.g., test@woori.com)">
+                <input type="email" id="email" placeholder="이메일 (e.g., test@wooribank.com)">
             </div>
             <button id="login-btn">
                 <span id="login-btn-text">내 현황 확인하기</span>
@@ -112,7 +112,7 @@
             
             <main id="main-content">
                 <div class="card overview-card anim-slide-in-up" id="overview">
-                    <h4><span class="h4-emoji">🧐</span> 나의 학습 개요</h4>
+                    <h4><span class="h4-emoji">🧐</span> 요약</h4>
                     <table class="overview-table">
                         <tbody>
                             <tr><th>학습자명</th><td id="overview-name">...</td></tr>
@@ -132,12 +132,18 @@
                     <div class="status-badge" id="status-badge">...</div>
                     
                     <div class="progress-section">
-                        <h4><span class="h4-emoji">✅</span> 인정 시간 (16H 목표)</h4>
+                        <h4>
+                            <span><span class="h4-emoji">✅</span> 인정 시간 (16H 목표)</span>
+                            <span class="h4-metric" id="time-metric-h4">... H</span>
+                        </h4>
                         <div class="progress-bar-container"><div id="time-progress-bar" class="progress-bar"></div></div>
                         <span id="recognized-time" class="progress-label">... / 16.0 H</span>
                     </div>
                     <div id="exam-metric" class="progress-section metric-item">
-                        <h4><span class="h4-emoji">✍️</span> 시험 점수 (60점 목표)</h4>
+                        <h4>
+                            <span><span class="h4-emoji">✍️</span> 시험 점수 (60점 목표)</span>
+                            <span class="h4-metric" id="exam-metric-h4">... 점</span>
+                        </h4>
                         <div class="progress-bar-container"><div id="exam-progress-bar" class="progress-bar exam"></div></div>
                         <span id="exam-score" class="progress-label">... / 60 점</span>
                     </div>
@@ -274,7 +280,7 @@
                     <h4><span class="h4-emoji">🙋‍♀️</span> 문의하기</h4>
                     <p>FAQ로 해결되지 않는 문제나 학습 데이터 관련 문의는 아래 이메일로 연락주시면 담당자가 확인 후 답변드립니다.</p>
                     <button id="copy-email-btn" class="contact-btn">
-                        <span class="btn-text">✉️ jhj11@wjthinkbig.com (클릭하여 복사)</span>
+                        <span class="btn-text">✉️ jhj11@wjthinkbig.com (주소복사)</span>
                     </button>
                 </div>
                 
@@ -300,13 +306,15 @@
             </main> 
 
             <nav id="quick-nav-bar" class="quick-nav-bar-pc">
-                <a href="#overview" class="action-btn-quicknav">🧐 개요</a>
-                <a href="#course-details" class="action-btn-quicknav">🎯 학습 현황</a>
-                <a href="#course-info" class="action-btn-quicknav">📖 과정 개요</a>
-                <a href="#faq" class="action-btn-quicknav">❓ FAQ</a>
-                <a href="#survey" class="action-btn-quicknav">✍️ 설문</a>
-                <a href="#contact" class="action-btn-quicknav">🙋‍♀️ 문의</a>
-                <a href="#resources" class="action-btn-quicknav">📚 자료실</a>
+                <div class="quick-nav-links-wrapper">
+                    <a href="#overview" class="action-btn-quicknav">🧐 요약</a>
+                    <a href="#course-details" class="action-btn-quicknav">🎯 학습 현황</a>
+                    <a href="#course-info" class="action-btn-quicknav">📖 과정 개요</a>
+                    <a href="#faq" class="action-btn-quicknav">❓ FAQ</a>
+                    <a href="#survey" class="action-btn-quicknav">✍️ 설문</a>
+                    <a href="#contact" class="action-btn-quicknav">🙋‍♀️ 문의</a>
+                    <a href="#resources" class="action-btn-quicknav">📚 자료실</a>
+                </div>
                 <button id="logout-btn" title="로그아웃">로그아웃</button>
             </nav>
 
@@ -317,7 +325,7 @@
     <div id="mobile-nav-overlay">
         <div id="mobile-nav-content">
             <nav id="quick-nav-bar-mobile">
-                <a href="#overview" class="action-btn-quicknav">🧐 개요</a>
+                <a href="#overview" class="action-btn-quicknav">🧐 요약</a>
                 <a href="#course-details" class="action-btn-quicknav">🎯 학습 현황</a>
                 <a href="#course-info" class="action-btn-quicknav">📖 과정 개요</a>
                 <a href="#faq" class="action-btn-quicknav">❓ FAQ</a>
@@ -340,10 +348,9 @@
         <div class="footer-content-wrapper">
             <div class="footer-left">
                 <img src="udemy-logo-purple.png" alt="Udemy" class="footer-udemy-logo">
-                <p class="footer-thanks">유데미 비즈니스와 함께 성장해주셔서 감사합니다!</p>
-            </div>
+                </div>
             <div class="footer-right">
-                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.35)</p>
+                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.37)</p>
             </div>
         </div>
     </footer>
