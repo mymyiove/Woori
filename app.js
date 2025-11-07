@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardContainer = document.getElementById('dashboard-container');
     const loginBtn = document.getElementById('login-btn');
     
-    // [!!!] (v0.33) PC/모바일 분리
     const logoutBtnPC = document.getElementById('logout-btn');
     const logoutBtnMobile = document.getElementById('logout-btn-mobile');
 
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginBtnText = document.getElementById('login-btn-text');
     const loginLoader = document.getElementById('login-loader');
     
-    // [!!!] (v0.33) PC/모바일 분리
     const courseSwitcherWrapper = document.getElementById('course-switcher-wrapper');
     const courseSwitcher = document.getElementById('course-switcher');
     const courseSwitcherMobile = document.getElementById('course-switcher-mobile');
@@ -37,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
     const mobileNavContent = document.getElementById('mobile-nav-content');
     
-    // [!!!] (v0.33) PC/모바일 분리
     const quickNavBarMobile = document.getElementById('quick-nav-bar-mobile'); 
     
     const mainHeader = document.getElementById('main-header'); 
@@ -62,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginBtn.addEventListener('click', handleLogin);
     
-    // [!!!] (MODIFIED) v0.33: PC/모바일 로그아웃 버튼 2개 모두 감지
     if (logoutBtnPC) {
         logoutBtnPC.addEventListener('click', handleLogout);
     }
@@ -70,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtnMobile.addEventListener('click', handleLogout);
     }
 
-    // [!!!] (MODIFIED) v0.33: PC/모바일 스위처 2개 모두 감지
     const handleCourseChange = async (event) => {
         const selectedIndex = event.target.value;
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
@@ -80,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('loggedInUser', JSON.stringify(selectedCourseUserData));
         localStorage.setItem('selectedCourseIndex', selectedIndex);
         
-        // (v0.33) 다른 스위처 값도 동기화
         if (event.target === courseSwitcher) {
             courseSwitcherMobile.value = selectedIndex;
         } else {
@@ -117,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // [!!!] (MODIFIED) v0.33: JS 레이아웃 조작(appendChild) 제거
     function setupMobileNav() {
         if(menuToggleBtn) {
             menuToggleBtn.addEventListener('click', () => {
@@ -136,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        // (v0.33) 모바일 전용 메뉴 링크
         if(quickNavBarMobile) {
             quickNavBarMobile.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
@@ -150,8 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupMobileNav();
     }
     
-    // (v0.33) 화면 크기 변경 시 레이아웃 재조정 (새로고침이 가장 안정적)
-    // [!!!] (v0.33) 이 로직은 유지합니다.
     let isMobile = window.innerWidth < 900;
     window.addEventListener('resize', () => {
         if (!localStorage.getItem('loggedInUser')) return;
@@ -167,9 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- [D] 핵심 함수 ---
 
-    /**
-     * (v18) CSV 파일 fetch (U4 날짜 감지)
-     */
     async function fetchCSV(fileName) {
         const response = await fetch(DATA_PATH + fileName);
         if (!response.ok) { throw new Error(`${fileName} 파일을 불러올 수 없습니다.`); }
@@ -217,9 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /**
-     * (v18) "충족", "V열"
-     */
     function buildFullUserData(userRow) {
         const GOAL_TIME = 16.0;
         const GOAL_SCORE = 60; 
@@ -245,9 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return fullUserData;
     }
 
-    /**
-     * 1. 로그인 처리 함수
-     */
     async function handleLogin() {
         const name = nameInput.value.trim();
         const email = emailInput.value.trim().toLowerCase();
@@ -292,13 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * 2. 과정 선택 드롭다운 설정 함수
-     */
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
             courseSwitcherWrapper.style.display = 'none'; 
-            // (v0.33) 모바일도 숨김
             document.getElementById('mobile-header-controls').querySelector('.course-switcher-wrapper').style.display = 'none';
             return;
         }
@@ -333,14 +310,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    /**
-     * 4. 대시보드 UI 업데이트 함수 (v28)
-     */
     function showDashboard(user) {
         const detail = user.courseDetail;
         const badge = document.getElementById('status-badge');
         
-        // [!!!] (v0.33) PC/모바일 모두 업데이트
+        // [!!!] (v0.35) Skill-Set 경고 문구 DOM
+        const skillSetWarning = document.getElementById('skill-set-warning');
+        
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         const countText = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
         
@@ -420,13 +396,15 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
 
-        // (v28) '학습하러 가기' 버튼 동적 제어
+        // [!!!] (MODIFIED) v0.35: '학습하러 가기' 버튼 + Skill-Set 경고 로직
         const courseName = user.course.trim();
         let link = '#';
         let display = 'none'; 
+        let showWarning = false;
 
         if (courseName.includes('Skill-Set')) {
             display = 'none';
+            showWarning = true;
         } else if (courseName.includes('IT-정보 보호')) {
             link = 'https://wooribank.udemy.com/learning-paths/10631499/';
             display = 'flex';
@@ -441,6 +419,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (goToCourseBtn) {
             goToCourseBtn.href = link;
             goToCourseBtn.style.display = display;
+        }
+        if (skillSetWarning) {
+            skillSetWarning.style.display = showWarning ? 'block' : 'none';
         }
 
         // --- 화면 전환 ---
