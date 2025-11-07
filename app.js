@@ -16,11 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const courseSwitcherWrapper = document.getElementById('course-switcher-wrapper');
     const courseSwitcher = document.getElementById('course-switcher');
     const courseCountNotice = document.getElementById('course-count-notice');
-    // const dataDateNotice = document.getElementById('data-date-notice'); // [!!!] (DELETED) v22
+    // const dataDateNotice = document.getElementById('data-date-notice'); // (DELETED) v22
     const timeProgressBar = document.getElementById('time-progress-bar');
     const examProgressBar = document.getElementById('exam-progress-bar');
     const examMetric = document.getElementById('exam-metric');
-    // [!!!] (NEW) v22: 이메일 복사 버튼
     const copyEmailBtn = document.getElementById('copy-email-btn');
 
     // --- [B] 데이터 파일 경로 설정 ---
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const FILE_ALL_IN_ONE = 'woori_data.csv'; 
 
     // --- [C] 이벤트 리스너 ---
-    // (v21) DOMContentLoaded가 이미 발생했으므로, feather.replace() 호출 제거
+    // (v21) feather.replace() 호출 제거
 
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showDashboard(selectedCourseUserData);
     });
 
-    // [!!!] (NEW) v22: 이메일 복사 버튼 이벤트 리스너
+    // (v22) 이메일 복사 버튼 이벤트 리스너
     if(copyEmailBtn) {
         copyEmailBtn.addEventListener('click', () => {
             const email = 'jhj11@wjthinkbig.com';
@@ -235,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * 4. 대시보드 UI 업데이트 함수 (v22)
+     * 4. 대시보드 UI 업데이트 함수 (v24)
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -243,12 +242,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         if (userRows.length > 0) {
-            courseCountNotice.textContent = `📊 총 ${userRows.length}개 과정`;
+            // [!!!] (MODIFIED) v24: 과정 수 텍스트 및 강조
+            courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이십니다.`;
         } else {
             courseCountNotice.style.display = 'none';
         }
 
-        // [!!!] (MODIFIED) v22: 새 배너의 날짜 업데이트
+        // (v22) 새 배너의 날짜 업데이트
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
         const dataDateDynamic = document.getElementById('data-date-dynamic');
         if (dataDateDynamic) {
@@ -319,6 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loginContainer.classList.remove('active');
         dashboardContainer.classList.add('active');
         
+        // (v21) feather.replace() 호출 제거
+
         // [v18] '이수 완료' 시 축하 폭죽 발사
         if (detail.isCompleted) {
             if (typeof confetti === 'function') {
