@@ -54,7 +54,7 @@
 
         <div id="mobile-header">
             <img src="Woori-logo.png" alt="우리은행" class="mobile-logo">
-            <span class="mobile-title">학습 현황</span>
+            <span class="mobile-title">우리은행 X 유데미 학습현황</span>
             <button id="menu-toggle-btn" class="hamburger-btn">
                 <span></span>
                 <span></span>
@@ -87,13 +87,13 @@
                 </div>
                 
                 <nav id="quick-nav-bar">
-                    <span class="quick-nav-title">👇 빠른 메뉴:</span>
                     <a href="#overview" class="action-btn-quicknav">🧐 개요</a>
                     <a href="#course-details" class="action-btn-quicknav">🎯 학습 현황</a>
-                    <a href="#resources" class="action-btn-quicknav">📚 학습자료실</a>
                     <a href="#course-info" class="action-btn-quicknav">📖 과정 개요</a>
                     <a href="#faq" class="action-btn-quicknav">❓ FAQ</a>
+                    <a href="#survey" class="action-btn-quicknav">✍️ 설문</a>
                     <a href="#contact" class="action-btn-quicknav">🙋‍♀️ 문의</a>
+                    <a href="#resources" class="action-btn-quicknav">📚 자료실</a>
                     <button id="logout-btn" title="로그아웃">로그아웃</button>
                 </nav>
             </div>
@@ -145,25 +145,6 @@
                     <li class="warning"><span>⚠️ 불인정 시간</span><strong id="unrecognized-time">... H</strong></li>
                 </ul>
                 <p class="note">'불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다.</p>
-            </div>
-            
-            <div class="card resources-card" id="resources">
-                <h4>📚 학습자료실</h4>
-                <p>학습 방법이 헷갈리신다면 매뉴얼과 포스터를 확인하세요!</p>
-                <div class="card-actions">
-                    <a href="2025유데미학습자매뉴얼.pdf" target="_blank" class="action-btn-secondary">
-                        📄 학습 매뉴얼
-                    </a>
-                    <a href="UB_학습자메뉴얼(스킬셋)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
-                        📄 스킬셋 매뉴얼
-                    </a>
-                    <a href="UB_학습자메뉴얼(직무기본과정)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
-                        📄 직무기본 매뉴얼
-                    </a>
-                    <a href="우리은행 안내포스터.webp" target="_blank" class="action-btn-secondary">
-                        🖼️ 과정안내 포스터
-                    </a>
-                </div>
             </div>
             
             <div class="card course-info-card" id="course-info">
@@ -265,8 +246,8 @@
                     </p>
                 </details>
             </div>
-
-            <div class="card survey-card">
+            
+            <div class="card survey-card" id="survey">
                 <h4>✍️ 만족도 설문조사</h4>
                 <p>학습 경험 개선을 위해 소중한 의견을 남겨주세요!<br>(잘 써주실거죠? 😉)</p>
                 <a href="https://moaform.com/q/Nv2c1c" target="_blank" class="action-btn-survey">
@@ -282,16 +263,35 @@
                 </button>
             </div>
             
+            <div class="card resources-card" id="resources">
+                <h4>📚 학습자료실</h4>
+                <p>학습 방법이 헷갈리신다면 매뉴얼과 포스터를 확인하세요!</p>
+                <div class="card-actions">
+                    <a href="2025유데미학습자매뉴얼.pdf" target="_blank" class="action-btn-secondary">
+                        📄 학습 매뉴얼
+                    </a>
+                    <a href="UB_학습자메뉴얼(스킬셋)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
+                        📄 스킬셋 매뉴얼
+                    </a>
+                    <a href="UB_학습자메뉴얼(직무기본과정)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
+                        📄 직무기본 매뉴얼
+                    </a>
+                    <a href="우리은행 안내포스터.webp" target="_blank" class="action-btn-secondary">
+                        🖼️ 과정안내 포스터
+                    </a>
+                </div>
+            </div>
+
             <p class="card-footer-thanks">유데미 비즈니스와 함께 성장해주셔서 감사합니다!</p>
 
         </main> </div>
     
     <div id="mobile-nav-overlay">
-        <div class="overlay-header">
-            <h3>전체 메뉴</h3>
-            <button id="menu-close-btn">X</button>
+        <div id="mobile-nav-content">
+            </div> 
+        <div id="mobile-nav-footer">
+            <button id="menu-close-btn">X 닫기</button>
         </div>
-        <div id="mobile-nav-content"></div> 
     </div>
 
     <a href="https://wooribank.udemy.com/" target="_blank" class="floating-action-button" title="학습하러 가기">
