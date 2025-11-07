@@ -53,8 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.addEventListener('click', handleLogin);
     
     // [!!!] (MODIFIED) v30: 로그아웃 버튼 (모바일/데스크톱 2개)
-    // (v30) quickNavBar 안에 있는 로그아웃 버튼
-    if (logoutBtn) {
+    if (logoutBtn) { // 데스크톱 버튼
         logoutBtn.addEventListener('click', handleLogout);
     }
     // (v30) 모바일 메뉴 안으로 '이동될' 로그아웃 버튼
@@ -98,14 +97,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // [!!!] (NEW) v29: 모바일 네비게이션 로직
     function setupMobileNav() {
-        // 900px 미만일 때 모바일로 간주 (style.css와 동일)
+        // (v30) 900px 미만일 때 모바일로 간주 (style.css와 동일)
         if (window.innerWidth < 900) {
             // (v29) 데스크톱의 컨트롤 요소들을 모바일 오버레이로 '이동'
             if (mobileNavContent) {
                 // (v30) 이미 이동했는지 확인 (로그아웃 후 다시 로그인 시)
-                if (courseSwitcherWrapper) mobileNavContent.appendChild(courseSwitcherWrapper);
-                if (courseCountNotice) mobileNavContent.appendChild(courseCountNotice);
-                if (quickNavBar) mobileNavContent.appendChild(quickNavBar);
+                if (courseSwitcherWrapper.parentElement !== mobileNavContent) {
+                    mobileNavContent.appendChild(courseSwitcherWrapper);
+                }
+                if (courseCountNotice.parentElement !== mobileNavContent) {
+                    mobileNavContent.appendChild(courseCountNotice);
+                }
+                if (quickNavBar.parentElement !== mobileNavContent) {
+                    mobileNavContent.appendChild(quickNavBar);
+                }
             }
         }
         
@@ -120,9 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 mobileNavOverlay.classList.remove('visible');
             });
         }
+        // [!!!] (MODIFIED) v30: (요청 7) 오버레이 배경 클릭 시 닫기
         if(mobileNavOverlay) {
             mobileNavOverlay.addEventListener('click', (e) => {
-                if (e.target === mobileNavOverlay) {
+                if (e.target === mobileNavOverlay) { // 어두운 배경만 해당
                     mobileNavOverlay.classList.remove('visible');
                 }
             });
@@ -137,10 +143,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // (v30) 화면 크기 변경 시 모바일/데스크톱 요소 위치 재조정 (고급)
-    // (데스크톱 <-> 모바일 창 크기 조절 시)
+    // (v30) 페이지 로드 시 모바일 설정 실행
+    // (v30) 로그인 성공 시에도 호출되므로, 여기서는 로그인 안 된 경우만 처리
+    if (!localStorage.getItem('loggedInUser')) {
+        setupMobileNav();
+    }
+    
+    // (v30) 화면 크기 변경 시 모바일/데스크톱 요소 위치 재조정
     let isMobile = window.innerWidth < 900;
     window.addEventListener('resize', () => {
+        // 로그인 상태일 때만 레이아웃 재조정
+        if (!localStorage.getItem('loggedInUser')) return;
+
         const currentlyMobile = window.innerWidth < 900;
         if (currentlyMobile === isMobile) return; // 변경 없음
 
@@ -458,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('dataUpdatedDate');
         sessionStorage.clear();
         
-        // (v29) 컨트롤을 원래 헤더로 복원 (새로고침이 가장 안전)
+        // [!!!] (NEW) v29: 컨트롤을 원래 헤더로 복원 (새로고침이 가장 안전)
         window.location.reload();
     }
 
