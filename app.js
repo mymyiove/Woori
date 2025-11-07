@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const examProgressBar = document.getElementById('exam-progress-bar');
     const examMetric = document.getElementById('exam-metric');
     const copyEmailBtn = document.getElementById('copy-email-btn');
-    // [!!!] (NEW) v27: 학습하러 가기 버튼
+    // [!!!] (v27) 학습하러 가기 버튼
     const goToCourseBtn = document.getElementById('go-to-course-btn');
 
     // --- [B] 데이터 파일 경로 설정 ---
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * 4. 대시보드 UI 업데이트 함수 (v27)
+     * 4. 대시보드 UI 업데이트 함수 (v28)
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -243,11 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         if (userRows.length > 0) {
+            // [!!!] (MODIFIED) v28: "중이에요"로 수정
             courseCountNotice.innerHTML = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
         } else {
             courseCountNotice.style.display = 'none';
         }
 
+        // (v22) 새 배너의 날짜 업데이트
         const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
         const dataDateDynamic = document.getElementById('data-date-dynamic');
         if (dataDateDynamic) {
@@ -316,12 +318,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
 
-        // [!!!] (NEW) v27: '학습하러 가기' 버튼 동적 제어
+        // [!!!] (MODIFIED) v28: '학습하러 가기' 버튼 동적 제어 (Skill-Set 숨김)
         const courseName = user.course.trim();
         let link = '#';
         let display = 'none'; // 기본값 (Skill-set 등은 숨김)
 
-        if (courseName.includes('IT-정보 보호')) {
+        if (courseName.includes('Skill-Set')) { // (v28) 스킬셋 숨김
+            display = 'none';
+        } else if (courseName.includes('IT-정보 보호')) {
             link = 'https://wooribank.udemy.com/learning-paths/10631499/';
             display = 'flex';
         } else if (courseName.includes('디지털 직무 기본')) {
@@ -346,13 +350,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // [v18] '이수 완료' 시 축하 폭죽 발사
         if (detail.isCompleted) {
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 150,
-                    spread: 100,
-                    origin: { y: 0.6 },
-                    zIndex: 9999
-                });
+            // (v28) 이전에 축하를 받았는지 확인 (새로고침 시 매번 터지는 것 방지)
+            const congratulatedKey = `congrats_${user.email}_${courseName}`;
+            if (!sessionStorage.getItem(congratulatedKey)) {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        zIndex: 9999
+                    });
+                }
+                sessionStorage.setItem(congratulatedKey, 'true');
             }
         }
     }
@@ -365,6 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('userCourseList');
         localStorage.removeItem('selectedCourseIndex');
         localStorage.removeItem('dataUpdatedDate');
+        sessionStorage.clear(); // (v28) 축하 기록 삭제
         showLogin();
     }
 
