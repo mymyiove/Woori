@@ -5,7 +5,7 @@
  */
 
 // [!!!] (필수!) 2단계에서 배포한 'Google Apps Script URL'을 여기에 붙여넣으세요.
-const GAS_URL = "https://script.google.com/macros/s/AKfyc.../exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec";
 
 // [!!!] (필수!) 님의 웹페이지 도메인으로 변경하세요.
 const MY_DOMAIN = "https://woori-1ua.pages.dev";
