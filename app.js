@@ -1,4 +1,4 @@
-/* [!!!] (v0.50) 모바일 헤더 텍스트 축약 */
+/* [!!!] (v0.51) 텍스트 괄호 제거 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
@@ -292,7 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
-                // [!!!] (v0.48) buildFullUserData 로직과 동일하게 수정
                 const courseName = row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
@@ -315,8 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         
-        // [!!!] (v0.50) 텍스트 축약
-        const countText = `[<strong id="course-count-number">${userRows.length}</strong>과정 학습 중]`;
+        // [!!!] (v0.51) 텍스트 괄호 [] 삭제
+        const countText = `<strong id="course-count-number">${userRows.length}</strong>과정 학습 중`;
         
         if (userRows.length > 0) {
             if (courseCountNotice) courseCountNotice.innerHTML = countText;
