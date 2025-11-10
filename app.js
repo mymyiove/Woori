@@ -1,361 +1,492 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* [!!!] (v0.45) '과정명.1'(V열)을 무시하고 '과정명'(H열)만 사용하도록 수정 */
+
+// (v0.39와 동일) API URL
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec';
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- [A] DOM 요소 선택 --- (v0.37과 동일)
+    const loginContainer = document.getElementById('login-container');
+    const dashboardContainer = document.getElementById('dashboard-container');
+    const loginBtn = document.getElementById('login-btn');
     
-    <title>우리은행 X 유데미 학습 현황</title>
+    const logoutBtnPC = document.getElementById('logout-btn');
+    const logoutBtnMobile = document.getElementById('logout-btn-mobile');
+
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const loginError = document.getElementById('login-error');
+    const loginBtnText = document.getElementById('login-btn-text');
+    const loginLoader = document.getElementById('login-loader');
     
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    const courseSwitcherWrapper = document.getElementById('course-switcher-wrapper');
+    const courseSwitcher = document.getElementById('course-switcher');
+    const courseSwitcherMobile = document.getElementById('course-switcher-mobile');
+    const courseCountNotice = document.getElementById('course-count-notice');
+    const courseCountNoticeMobile = document.getElementById('course-count-notice-mobile');
+
+    const timeProgressBar = document.getElementById('time-progress-bar');
+    const examProgressBar = document.getElementById('exam-progress-bar');
+    const examMetric = document.getElementById('exam-metric');
+    const copyEmailBtn = document.getElementById('copy-email-btn');
+    const goToCourseBtn = document.getElementById('go-to-course-btn');
     
-    <link rel="stylesheet" href="style.css">
+    const mobileHeader = document.getElementById('mobile-header');
+    const menuToggleBtn = document.getElementById('menu-toggle-btn');
+    const menuCloseBtn = document.getElementById('menu-close-btn');
+    const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+    const mobileNavContent = document.getElementById('mobile-nav-content');
     
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    const quickNavBarMobile = document.getElementById('quick-nav-bar-mobile'); 
+    
+    const mainHeader = document.getElementById('main-header'); 
+    const mobileHeaderControls = document.getElementById('mobile-header-controls'); 
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-</head>
-<body>
-
-    <div class="blob-container">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-    </div>
-
-    <div id="login-container" class="container active">
-        <div class="card-content">
-            <div class="login-header">
-                <span class="logo-icon">🚀</span>
-                <h1 class="login-title">우리은행 X 유데미 사이버연수</h1>
-                <p>학습 현황 대시보드</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="name">👤 이름</label>
-                <input type="text" id="name" placeholder="이름 (e.g., 홍길동)">
-            </div>
-            <div class="form-group">
-                <label for="email">📧 이메일</label>
-                <input type="email" id="email" placeholder="이메일 (e.g., test@wooribank.com)">
-            </div>
-            <button id="login-btn">
-                <span id="login-btn-text">내 현황 확인하기</span>
-                <div id="login-loader" class="loader-small"></div>
-            </button>
-            <p id="login-error" class="error-msg"></p>
-        </div>
-    </div>
-
-    <div id="dashboard-container" class="container">
+    // --- [C] 이벤트 리스너 --- (v0.37과 동일)
+    if (localStorage.getItem('loggedInUser')) {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        const userRows = JSON.parse(localStorage.getItem('userCourseList'));
+        const selectedIndex = localStorage.getItem('selectedCourseIndex') || 0;
         
-        <div id="global-warning-banner">
-            <span>⚠️ 데이터는 실시간이 아니며 약 2일전의 현황 입니다.</span>
-            <span>(기준일: <span id="data-date-dynamic">...</span>)</span>
-        </div>
+        setupCourseSwitcher(userRows, selectedIndex);
+        showDashboard(user);
+        setupMobileNav();
+    } else {
+        showLogin();
+    }
 
-        <div id="mobile-header">
-            <div class="mobile-header-top">
-                <img src="Woori-logo.png" alt="우리은행" class="mobile-logo">
-                <a href="#" class="header-title-link">
-                    <span class="mobile-title">우리은행 X 유데미 학습현황</span>
-                </a>
-                <button id="menu-toggle-btn" class="hamburger-btn" aria-label="메뉴 열기">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-            <div id="mobile-header-controls">
-                <div class="course-switcher-wrapper">
-                    <span class="header-emoji">📖</span>
-                    <select id="course-switcher-mobile">
-                        <option>과정 로딩 중...</option>
-                    </select>
-                </div>
-                <p class="data-notice">
-                    <span id="course-count-notice-mobile">
-                        현재 차수 총 <strong id="course-count-number-mobile">...</strong>개 과정 학습 중이에요.
-                    </span>
-                </p>
-            </div>
-        </div>
+    loginBtn.addEventListener('click', handleLogin);
+    
+    if (logoutBtnPC) {
+        logoutBtnPC.addEventListener('click', handleLogout);
+    }
+    if (logoutBtnMobile) {
+        logoutBtnMobile.addEventListener('click', handleLogout);
+    }
 
-        <header id="main-header">
-            <div class="header-content-wrapper">
-                <div class="dashboard-title-header">
-                    <div class="logo-lockup">
-                        <img src="Woori-logo.png" alt="우리은행" class="header-woori-logo-img">
-                        <a href="#" class="header-title-link">
-                            <h1 class="dashboard-subtitle">우리은행 사이버연수 현황</h1>
-                        </a>
-                    </div>
-                </div>
+    const handleCourseChange = async (event) => {
+        const selectedIndex = event.target.value;
+        const userRows = JSON.parse(localStorage.getItem('userCourseList'));
+        const selectedCourseRow = userRows[selectedIndex];
+        
+        const selectedCourseUserData = buildFullUserData(selectedCourseRow);
+        localStorage.setItem('loggedInUser', JSON.stringify(selectedCourseUserData));
+        localStorage.setItem('selectedCourseIndex', selectedIndex);
+        
+        if (event.target === courseSwitcher) {
+            courseSwitcherMobile.value = selectedIndex;
+        } else {
+            courseSwitcher.value = selectedIndex;
+        }
+        
+        showDashboard(selectedCourseUserData);
+    };
 
-                <div class="header-controls">
-                    <p class="data-notice">
-                        <span id="course-count-notice">
-                            현재 차수 총 <strong id="course-count-number">...</strong>개 과정 학습 중이에요.
-                        </span>
-                    </p>
-                    <div class="course-switcher-wrapper">
-                        <span class="header-emoji">📖</span>
-                        <select id="course-switcher">
-                            <option>과정 로딩 중...</option>
-                        </select>
-                    </div>
-                </div>
-                
-            </div>
-        </header>
+    courseSwitcher.addEventListener('change', handleCourseChange);
+    courseSwitcherMobile.addEventListener('change', handleCourseChange);
 
-        <div class="dashboard-body-wrapper">
+
+    if(copyEmailBtn) {
+        copyEmailBtn.addEventListener('click', () => {
+            const email = 'jhj11@wjthinkbig.com';
             
-            <main id="main-content">
-                <div class="card overview-card anim-slide-in-up" id="overview">
-                    <h4><span class="h4-emoji">🧐</span> 요약</h4>
-                    <table class="overview-table">
-                        <tbody>
-                            <tr><th>학습자명</th><td id="overview-name">...</td></tr>
-                            <tr><th>소속</th><td id="overview-dept">...</td></tr>
-                            <tr><th>신청 과정</th><td id="overview-course">...</td></tr>
-                            <tr class="divider"><th>이수 기준 (시간)</th><td id="overview-goal-time">... H</td></tr>
-                            <tr id="overview-goal-score-row"><th>이수 기준 (시험)</th><td id="overview-goal-score">... 점</td></tr>
-                            <tr class="divider"><th>나의 인정 시간</th><td id="overview-my-time" class="metric-value-small">... H</td></tr>
-                            <tr id="overview-my-score-row"><th>나의 시험 점수</th><td id="overview-my-score" class="metric-value-small">... 점</td></tr>
-                            <tr class="divider"><th>최종 이수 여부</th><td id="overview-status" class="status-cell">...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="card main-card anim-slide-in-up" id="course-details">
-                    <h4><span class="h4-emoji">🎯</span> 학습 현황: <span id="course-name">...</span></h4>
-                    <div class="status-badge" id="status-badge">...</div>
+            navigator.clipboard.writeText(email).then(() => {
+                const originalTextEl = copyEmailBtn.querySelector('.btn-text');
+                if (originalTextEl) {
+                    const originalText = originalTextEl.innerHTML;
+                    originalTextEl.innerHTML = '✅ 이메일 주소 복사됨!';
+                    copyEmailBtn.disabled = true;
                     
-                    <div class="progress-section">
-                        <h4>
-                            <span><span class="h4-emoji">✅</span> 인정 시간 (16H 목표)</span>
-                            <span class="h4-metric" id="time-metric-h4">... H</span>
-                        </h4>
-                        <div class="progress-bar-container"><div id="time-progress-bar" class="progress-bar"></div></div>
-                        <span id="recognized-time" class="progress-label">... / 16.0 H</span>
-                    </div>
-                    <div id="exam-metric" class="progress-section metric-item">
-                        <h4>
-                            <span><span class="h4-emoji">✍️</span> 시험 점수 (60점 목표)</span>
-                            <span class="h4-metric" id="exam-metric-h4">... 점</span>
-                        </h4>
-                        <div class="progress-bar-container"><div id="exam-progress-bar" class="progress-bar exam"></div></div>
-                        <span id="exam-score" class="progress-label">... / 60 점</span>
-                    </div>
-
-                    <div class="card-actions">
-                        <a href="#" target="_blank" class="action-btn-primary" id="go-to-course-btn">
-                            🚀 학습하러 가기
-                        </a>
-                        <p id="skill-set-warning" class="card-warning-message">
-                            ⚠️ 꼭! [카테고리 &gt; 소속조직]의 강의를 들어주세요!
-                        </p>
-                    </div>
-                </div>
-
-                <div class="card time-card anim-slide-in-up" id="comparison"> 
-                    <h4><span class="h4-emoji">📊</span> 시간 비교</h4>
-                    <ul>
-                        <li><span>Udemy 총 학습 시간</span><strong id="total-time">... H</strong></li>
-                        <li><span>✅ 인정 시간 (이 과정)</span><strong id="recognized-time-detail">... H</strong></li>
-                        <li class="warning"><span>⚠️ 불인정 시간</span><strong id="unrecognized-time">... H</strong></li>
-                    </ul>
-                    <p class="note">'불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다. 너무 차이가 크다면 다른 과장을 학습하고 있는 것은 아닌지 확인해보세요.</p>
-                </div>
-                
-                <div class="card course-info-card anim-slide-in-up" id="course-info">
-                    <h4><span class="h4-emoji">📖</span> 과정 개요</h4>
-                    
-                    <details>
-                        <summary>1. [Skill-Set] 2025 디지털/IT Skill-Set 과정</summary>
-                        <p>
-                            3개월 단위로 진행되는 과정으로, 총 3,171개의 풀과 64,479시간의 교육 시간을 제공합니다.<br><br>
-                            <strong>수료 기준:</strong> 16시간 이상 학습 + 설문 조사 참여(선택)<br>
-                            <strong>혜택:</strong> 의무 연수 시간 최대 8시간 인정<br>
-                            <strong>평가:</strong> 없음
-                        </p>
-                    </details>
-                    <details>
-                        <summary>2. [직무 기본] IT-정보 보호 직무 기본 과정</summary>
-                        <p>
-                            3개월 단위로 진행되며, 14개의 풀과 42.4시간의 교육 시간을 제공합니다.<br><br>
-                            <strong>수료 기준:</strong> 16시간 이상 학습 + 평가 60점 이상 + 설문 조사 참여(선택)<br>
-                            <strong>혜택:</strong> 직군 전환 시 가점 부여, 의무 연수 시간 16시간 인정<br>
-                            <strong>평가 상세:</strong><br>
-                            - 매 차수 마지막 달 업로드<br>
-                            - 기간 내 여러 번 응시 가능 (가장 높은 점수 인정)<br>
-                            - PC(외부망) 또는 모바일(어플)로 자율 진행<br>
-                            - 응시시간 40분, 객관식 20문항(4지선다형)
-                        </p>
-                    </details>
-                    <details>
-                        <summary>3. [직무 기본] 디지털 직무 기본 과정</summary>
-                        <p>
-                            3개월 단위로 진행되며, 13개의 풀과 45.8시간의 교육 시간을 제공합니다.<br><br>
-                            <strong>수료 기준:</strong> 16시간 이상 학습 + 평가 60점 이상 + 설문 조사 참여(선택)<br>
-                            <strong>혜택:</strong> 직군 전환 시 가점 부여, 의무 연수 시간 16시간 인정<br>
-                            <strong>평가 상세:</strong><br>
-                            - 매 차수 마지막 달 업로드<br>
-                            - 기간 내 여러 번 응시 가능 (가장 높은 점수 인정)<br>
-                            - PC(외부망) 또는 모바일(어플)로 자율 진행<br>
-                            - 응시시간 40분, 객관식 20문항(4지선다형)
-                        </p>
-                    </details>
-                    <details>
-                        <summary>4. [디지털 상식] 디지털/IT 사이버 과정</summary>
-                        <p>
-                            3개월 단위로 진행되며, 22개의 풀과 58.4시간의 교육 시간을 제공합니다.<br><br>
-                            <strong>수료 기준:</strong> 16시간 이상 학습 + 설문 조사 참여(선택)<br>
-                            <strong>혜택:</strong> 의무 연수 시간 최대 8시간 인정<br>
-                            <strong>평가:</strong> 없음
-                        </p>
-                    </details>
-                </div>
-
-                <div class="card faq-card anim-slide-in-up" id="faq">
-                    <h4><span class="h4-emoji">❓</span> 자주 묻는 질문 (문제해결)</h4>
-                    
-                    <details>
-                        <summary>Q. '스킬셋' 과정은 시간이 0으로 나옵니다.</summary>
-                        <p>
-                            '스킬셋' 과정은 학습자님의 **'소속 부서'**에 맞춰 특별히 큐레이션된 강의 목록입니다.<br>
-                            Udemy 사이트 상단의 <strong>[둘러보기] > [카테고리]</strong>에서 본인의 '소속 부서명' (e.g., MyData플랫폼부)이 적힌 카테고리를 찾아, 그 안에 있는 강의만 수강하셔야 인정됩니다.<br><br>
-                            <strong>※ 부서 이동:</strong> 최근 부서를 옮기셨다면 스킬셋 목록이 잘못 지정되었을 수 있습니다. 아래 '문의하기'로 꼭 연락주세요.
-                        </p>
-                    </details>
-
-                    <details>
-                        <summary>Q. '디지털/IT 사이버 과정' 링크를 못찾겠어요.</summary>
-                        <p>
-                            이 과정은 **반드시 아래 링크에 포함된 강의 중에서만** 16시간을 수강하셔야 인정됩니다.<br><br>
-                            <a href="https://wooribank.udemy.com/organization/home/category/it/" target="_blank" class="faq-link">
-                                [필수] 디지털/IT 사이버 과정 링크 바로가기
-                            </a>
-                        </p>
-                    </details>
-
-                    <details>
-                        <summary>Q. '직무기본' 과정 링크를 못찾겠어요.</summary>
-                        <p>
-                            학습 경로는 위 **'📖 과정 개요'** 섹션의 [직무 기본] 항목을 참고하시거나, 아래 러닝패스 폴더에서 확인 가능합니다.<br>
-                            <a href="https://wooribank.udemy.com/learning-paths/folder/76893" target="_blank" class="faq-link">
-                                [필수] 직무기본 러닝패스 폴더 바로가기
-                            </a><br>
-                            <strong class="faq-warning">⚠️ 단! 본인의 과정이 'IT-정보 보호'인지 '디지털'인지 꼭 확인하고 수강하셔야 합니다.</strong>
-                        </p>
-                    </details>
-
-                    <details>
-                        <summary>Q. 어제 공부했는데 왜 시간이 안 올랐죠?</summary>
-                        <p>
-                            데이터가 실시간으로 반영되지 않습니다.<br>
-                            대시보드 상단의 <strong>⚠️ 경고 배너</strong>의 기준일을 확인해주세요.<br> 
-                            (데이터 집계에 약 1~2일이 소요될 수 있습니다.)
-                        </p>
-                    </details>
-
-                    <details>
-                        <summary>Q. 제 이름/소속/이메일이 변경되었습니다.</summary>
-                        <p>
-                            로그인이 안 되거나 데이터가 잘못 보이는 경우, 개인정보 변경으로 인한 확인이 필요할 수 있습니다.<br>
-                            아래 '문의하기'의 이메일로 연락주시면 바로 처리해 드리겠습니다.
-                        </p>
-                    </details>
-                </div>
-                
-                <div class="card survey-card anim-slide-in-up" id="survey">
-                    <h4><span class="h4-emoji">✍️</span> 만족도 설문조사</h4>
-                    <p>학습 경험 개선을 위해 소중한 의견을 남겨주세요!<br>(잘 써주실거죠? 😉)</p>
-                    <a href="https://moaform.com/q/Nv2c1c" target="_blank" class="action-btn-survey">
-                        📝 설문조사 참여하기
-                    </a>
-                </div>
-
-                <div class="card contact-card anim-slide-in-up" id="contact">
-                    <h4><span class="h4-emoji">🙋‍♀️</span> 문의하기</h4>
-                    <p>FAQ로 해결되지 않는 문제나 학습 데이터 관련 문의는 아래 이메일로 연락주시면 담당자가 확인 후 답변드립니다.</p>
-                    <button id="copy-email-btn" class="contact-btn">
-                        <span class="btn-text">✉️ jhj11@wjthinkbig.com (주소복사)</span>
-                    </button>
-                </div>
-                
-                <div class="card resources-card anim-slide-in-up" id="resources">
-                    <h4><span class="h4-emoji">📚</span> 학습자료실</h4>
-                    <p>학습 방법이 헷갈리신다면 매뉴얼과 포스터를 확인하세요!</p>
-                    <div class="card-actions">
-                        <a href="2025유데미학습자매뉴얼.pdf" target="_blank" class="action-btn-secondary">
-                            📄 학습 매뉴얼
-                        </a>
-                        <a href="UB_학습자메뉴얼(스킬셋)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
-                            📄 스킬셋 매뉴얼
-                        </a>
-                        <a href="UB_학습자메뉴얼(직무기본과정)_우리은행_250220.pdf" target="_blank" class="action-btn-secondary">
-                            📄 직무기본 매뉴얼
-                        </a>
-                        <a href="우리은행 안내포스터.webp" target="_blank" class="action-btn-secondary">
-                            🖼️ 과정안내 포스터
-                        </a>
-                    </div>
-                </div>
-
-            </main> 
-
-            <nav id="quick-nav-bar" class="quick-nav-bar-pc">
-                <div class="quick-nav-links-wrapper">
-                    <a href="#overview" class="action-btn-quicknav">🧐 요약</a>
-                    <a href="#course-details" class="action-btn-quicknav">🎯 학습 현황</a>
-                    <a href="#course-info" class="action-btn-quicknav">📖 과정 개요</a>
-                    <a href="#faq" class="action-btn-quicknav">❓ FAQ</a>
-                    <a href="#survey" class="action-btn-quicknav">✍️ 설문</a>
-                    <a href="#contact" class="action-btn-quicknav">🙋‍♀️ 문의</a>
-                    <a href="#resources" class="action-btn-quicknav">📚 자료실</a>
-                </div>
-                <button id="logout-btn" title="로그아웃">로그아웃</button>
-            </nav>
-
-        </div> 
-
-    </div> 
+                    setTimeout(() => {
+                        originalTextEl.innerHTML = originalText;
+                        copyEmailBtn.disabled = false;
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Email copy failed', err);
+                alert('이메일 복사에 실패했습니다. 직접 복사해주세요: ' + email);
+            });
+        });
+    }
     
-    <div id="mobile-nav-overlay">
-        <div id="mobile-nav-content">
-            <nav id="quick-nav-bar-mobile">
-                <a href="#overview" class="action-btn-quicknav">🧐 요약</a>
-                <a href="#course-details" class="action-btn-quicknav">🎯 학습 현황</a>
-                <a href="#course-info" class="action-btn-quicknav">📖 과정 개요</a>
-                <a href="#faq" class="action-btn-quicknav">❓ FAQ</a>
-                <a href="#survey" class="action-btn-quicknav">✍️ 설문</a>
-                <a href="#contact" class="action-btn-quicknav">🙋‍♀️ 문의</a>
-                <a href="#resources" class="action-btn-quicknav">📚 자료실</a>
-                <button id="logout-btn-mobile" title="로그아웃">로그아웃</button>
-            </nav>
-        </div> 
-        <div id="mobile-nav-footer">
-            <button id="menu-close-btn" aria-label="메뉴 닫기">X 닫기</button>
-        </div>
-    </div>
-
-    <a href="https://wooribank.udemy.com/" target="_blank" class="floating-action-button" title="학습하러 가기">
-        🎓 학습하러 가기
-    </a>
+    function setupMobileNav() {
+        if(menuToggleBtn) {
+            menuToggleBtn.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('visible');
+            });
+        }
+        if(menuCloseBtn) {
+            menuCloseBtn.addEventListener('click', () => {
+                mobileNavOverlay.classList.remove('visible');
+            });
+        }
+        if(mobileNavOverlay) {
+            mobileNavOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileNavOverlay) { 
+                    mobileNavOverlay.classList.remove('visible');
+                }
+            });
+        }
+        if(quickNavBarMobile) {
+            quickNavBarMobile.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileNavOverlay.classList.remove('visible');
+                });
+            });
+        }
+    }
     
-    <footer id="main-footer">
-        <div class="footer-content-wrapper">
-            <div class="footer-left">
-                <img src="udemy-logo-purple.png" alt="Udemy" class="footer-udemy-logo">
-            </div>
-            <div class="footer-right">
-                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.45)</p>
-            </div>
-        </div>
-    </footer>
+    if (!localStorage.getItem('loggedInUser')) {
+        setupMobileNav();
+    }
+    
+    let isMobile = window.innerWidth < 900;
+    window.addEventListener('resize', () => {
+        if (!localStorage.getItem('loggedInUser')) return;
 
-    <script src="app.js"></script>
+        const currentlyMobile = window.innerWidth < 900;
+        if (currentlyMobile === isMobile) return; 
 
-</body>
-</html>
+        isMobile = currentlyMobile;
+        
+        window.location.reload();
+    });
+
+
+    // --- [D] 핵심 함수 ---
+
+    function animateCountUpWithSuffix(el, end, decimals = 0, duration = 1000, prefix = '', suffix = '') {
+        if (!el) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const value = progress * end;
+            el.textContent = prefix + value.toFixed(decimals) + suffix;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        el.textContent = prefix + (0).toFixed(decimals) + suffix;
+        window.requestAnimationFrame(step);
+    }
+
+    /**
+     * [!!!] (MODIFIED) v0.45: '과정명.1' 무시
+     */
+    function buildFullUserData(userRow) {
+        const GOAL_TIME = 16.0;
+        const GOAL_SCORE = 60; 
+
+        const examScore = parseInt(userRow['시험점수'] || -1);
+        const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
+        
+        // [!!!] (v0.45) H열('과정명')만 사용하도록 수정
+        const courseName = userRow['과정명'] || '과정명 없음';
+
+        const fullUserData = {
+            name: userRow['성명'],
+            email: userRow['이메일'],
+            department: userRow['소속'],
+            course: courseName,
+            totalLearningTime: parseFloat(userRow['전체학습시간'] || 0),
+            courseDetail: {
+                recognizedTime: parseFloat(userRow['인정시간'] || 0),
+                examScore: examScore,
+                isCompleted: isCompleted,
+                goalTime: GOAL_TIME,
+                goalScore: GOAL_SCORE
+            }
+        };
+        return fullUserData;
+    }
+
+    /**
+     * [!!!] (v0.39) 로그인 처리 함수 (API 호출)
+     */
+    async function handleLogin() {
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
+        
+        if (!name || !email) { showError('이름과 이메일을 모두 입력하세요.'); return; }
+        
+        showButtonLoader(true);
+        loginError.style.display = 'none';
+
+        try {
+            // (v0.39) text/plain으로 API 서버에 POST 요청
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'text/plain', 
+                },
+                body: JSON.stringify({ name: name, email: email }) 
+            });
+
+            if (!response.ok) {
+                throw new Error(`서버 응답 오류: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+
+            if (result.error) {
+                throw new Error(`API 오류: ${result.error}`);
+            }
+
+            const userRows = result.userRows;
+            const dataUpdatedDate = result.dataUpdatedDate;
+
+            if (!userRows || userRows.length === 0) {
+                showError('일치하는 사용자가 없습니다. (이름/이메일 확인)');
+                showButtonLoader(false);
+                return;
+            }
+
+            localStorage.setItem('dataUpdatedDate', dataUpdatedDate);
+            localStorage.setItem('userCourseList', JSON.stringify(userRows));
+            
+            const firstCourseRow = userRows[0];
+            const firstCourseIndex = 0;
+            const firstCourseUserData = buildFullUserData(firstCourseRow);
+
+            localStorage.setItem('loggedInUser', JSON.stringify(firstCourseUserData));
+            localStorage.setItem('selectedCourseIndex', firstCourseIndex);
+            
+            setupCourseSwitcher(userRows, firstCourseIndex);
+            showDashboard(firstCourseUserData);
+            setupMobileNav();
+            
+        } catch (error) {
+            console.error(error);
+            showError(`데이터 로드 오류: ${error.message}`);
+        } finally {
+            showButtonLoader(false);
+        }
+    }
+
+    // --- 나머지 함수 (v0.37과 동일) ---
+
+    function setupCourseSwitcher(userRows, selectedIndex = 0) {
+        if (!userRows || userRows.length === 0) {
+            courseSwitcherWrapper.style.display = 'none'; 
+            document.getElementById('mobile-header-controls').querySelector('.course-switcher-wrapper').style.display = 'none';
+            return;
+        }
+
+        const switchers = [courseSwitcher, courseSwitcherMobile];
+        
+        switchers.forEach(switcher => {
+            if (!switcher) return;
+            
+            const wrapper = switcher.parentElement;
+            
+            if (userRows.length === 1) {
+                wrapper.style.display = 'flex';
+                switcher.disabled = true;
+                wrapper.classList.add('disabled');
+            } else {
+                wrapper.style.display = 'flex';
+                switcher.disabled = false;
+                wrapper.classList.remove('disabled');
+            }
+            
+            switcher.innerHTML = '';
+            userRows.forEach((row, index) => {
+                // [!!!] (v0.45) buildFullUserData 로직과 동일하게 수정
+                const courseName = row['과정명'] || '과정명 없음';
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = courseName;
+                switcher.appendChild(option);
+            });
+            switcher.value = selectedIndex;
+        });
+    }
+
+    function showDashboard(user) {
+        const detail = user.courseDetail;
+        const badge = document.getElementById('status-badge');
+        const skillSetWarning = document.getElementById('skill-set-warning');
+        
+        const timeMetricH4 = document.getElementById('time-metric-h4');
+        const examMetricH4 = document.getElementById('exam-metric-h4');
+        const recognizedTimeLabel = document.getElementById('recognized-time');
+        const examScoreLabel = document.getElementById('exam-score');
+        
+        const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
+        const countText = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
+        
+        if (userRows.length > 0) {
+            if (courseCountNotice) courseCountNotice.innerHTML = countText;
+            if (courseCountNoticeMobile) courseCountNoticeMobile.innerHTML = countText;
+        } else {
+            if (courseCountNotice) courseCountNotice.style.display = 'none';
+            if (courseCountNoticeMobile) courseCountNoticeMobile.style.display = 'none';
+        }
+
+        const dataUpdatedDate = localStorage.getItem('dataUpdatedDate') || "날짜 없음";
+        const dataDateDynamic = document.getElementById('data-date-dynamic');
+        if (dataDateDynamic) {
+            dataDateDynamic.textContent = dataUpdatedDate;
+        }
+
+        document.getElementById('overview-name').textContent = user.name;
+        document.getElementById('overview-dept').textContent = user.department;
+        document.getElementById('overview-course').textContent = user.course; 
+        document.getElementById('overview-goal-time').textContent = `${detail.goalTime.toFixed(1)} H`;
+        document.getElementById('overview-my-time').textContent = `${detail.recognizedTime.toFixed(1)} H`;
+        
+        const statusCell = document.getElementById('overview-status');
+        if (detail.isCompleted) {
+            statusCell.textContent = '이수 완료 🎉';
+            statusCell.className = 'status-cell completed';
+        } else {
+            statusCell.textContent = '학습 중 🏃‍♀️';
+            statusCell.className = 'status-cell in-progress';
+        }
+        const goalScoreRow = document.getElementById('overview-goal-score-row');
+        const myScoreRow = document.getElementById('overview-my-score-row');
+        if (detail.examScore > -1) {
+            document.getElementById('overview-goal-score').textContent = `${detail.goalScore} 점`;
+            document.getElementById('overview-my-score').textContent = `${detail.examScore} 점`;
+            goalScoreRow.classList.remove('hidden-row');
+            myScoreRow.classList.remove('hidden-row');
+        } else {
+            goalScoreRow.classList.add('hidden-row');
+            myScoreRow.classList.add('hidden-row');
+        }
+
+        document.getElementById('course-name').textContent = user.course;
+        if (detail.isCompleted) {
+            badge.textContent = '이수 완료! 🎉';
+            badge.className = 'status-badge completed';
+        } else {
+            badge.textContent = '학습 중 🏃‍♀️';
+            badge.className = 'status-badge in-progress';
+        }
+        const totalTime = user.totalLearningTime.toFixed(1);
+        const courseRecognizedTime = detail.recognizedTime.toFixed(1);
+        let unrecognizedTime = (user.totalLearningTime - detail.recognizedTime).toFixed(1);
+        unrecognizedTime = unrecognizedTime < 0 ? 0 : unrecognizedTime;
+
+        document.getElementById('total-time').textContent = `${totalTime} H`;
+        document.getElementById('recognized-time-detail').textContent = `${courseRecognizedTime} H`;
+        document.getElementById('unrecognized-time').textContent = `${unrecognizedTime} H`;
+
+        const timePercent = Math.min((detail.recognizedTime / detail.goalTime) * 100, 100);
+        
+        animateCountUpWithSuffix(timeMetricH4, detail.recognizedTime, 1, 1000, '', ' H');
+        animateCountUpWithSuffix(recognizedTimeLabel, detail.recognizedTime, 1, 1000, '', ` / ${detail.goalTime.toFixed(1)} H`);
+
+        
+        if (detail.examScore > -1) {
+            examMetric.style.display = 'block';
+            const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
+            
+            animateCountUpWithSuffix(examMetricH4, detail.examScore, 0, 1000, '', ' 점');
+            animateCountUpWithSuffix(examScoreLabel, detail.examScore, 0, 1000, '', ` / ${detail.goalScore} 점`);
+            
+            examProgressBar.style.width = '0%';
+            setTimeout(() => { examProgressBar.style.width = `${scorePercent}%`; }, 100);
+        } else {
+            examMetric.style.display = 'none';
+        }
+
+        timeProgressBar.style.width = '0%';
+        setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
+
+
+        const courseName = user.course.trim();
+        let link = '#';
+        let display = 'none'; 
+        let showWarning = false;
+
+        // [!!!] (v0.45) 'Skill-Set' -> 'Skill-set'으로 수정 (CSV 데이터 기준)
+        if (courseName.includes('Skill-set')) { 
+            display = 'none';
+            showWarning = true;
+        } else if (courseName.includes('IT-정보 보호')) {
+            link = 'https://wooribank.udemy.com/learning-paths/10631499/';
+            display = 'flex';
+        } else if (courseName.includes('디지털 직무 기본')) {
+            link = 'https://wooribank.udemy.com/learning-paths/10631535/';
+            display = 'flex';
+        } else if (courseName.includes('디지털/IT 사이버')) {
+            link = 'https://wooribank.udemy.com/organization/home/category/it/';
+            display = 'flex';
+        }
+        
+        if (goToCourseBtn) {
+            goToCourseBtn.href = link;
+            goToCourseBtn.style.display = display;
+        }
+        if (skillSetWarning) {
+            skillSetWarning.style.display = showWarning ? 'block' : 'none';
+        }
+
+        loginContainer.classList.remove('active');
+        dashboardContainer.classList.add('active');
+        
+        if (detail.isCompleted) {
+            const congratulatedKey = `congrats_${user.email}_${courseName}`;
+            if (!sessionStorage.getItem(congratulatedKey)) {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        zIndex: 9999
+                    });
+                }
+                sessionStorage.setItem(congratulatedKey, 'true');
+            }
+        }
+
+        setTimeout(() => {
+            if (window.innerWidth >= 900) {
+                const overviewCard = document.getElementById('overview');
+                const rightNav = document.getElementById('quick-nav-bar');
+                if (overviewCard && rightNav) {
+                    const overviewHeight = overviewCard.offsetHeight;
+                    rightNav.style.minHeight = `${overviewHeight}px`;
+                }
+            }
+        }, 0);
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('userCourseList');
+        localStorage.removeItem('selectedCourseIndex');
+        localStorage.removeItem('dataUpdatedDate');
+        sessionStorage.clear();
+        
+        window.location.reload();
+    }
+
+    function showLogin() {
+        loginContainer.classList.add('active');
+        dashboardContainer.classList.remove('active');
+        nameInput.value = '';
+        emailInput.value = '';
+        loginError.style.display = 'none';
+    }
+    function showError(message) {
+        loginError.textContent = message;
+        loginError.style.display = 'block';
+        loginError.classList.remove('shake');
+        void loginError.offsetWidth;
+        loginError.classList.add('shake');
+    }
+    function showButtonLoader(isLoading) {
+        if (isLoading) {
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+        } else {
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
+        }
+    }
+
+}); // DOMContentLoaded 리스너 종료
