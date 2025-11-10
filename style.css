@@ -4,7 +4,7 @@
     --color-bg: #f0f2f5;
     --color-card: #ffffff;
     --color-primary: #004a9e;
-    --color-woori-blue: #0099FF; /* 우리은행 스카이블루 */
+    --color-woori-blue: #0099FF;
     --color-accent: #00c73c;
     --color-text: #212529;
     --color-text-muted: #6c757d;
@@ -13,9 +13,9 @@
     --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
     --border-radius: 12px;
     
-    --warning-banner-height-desktop: 44px; 
-    --warning-banner-height-mobile: 60px; 
-    --mobile-header-height: 120px; 
+    --warning-banner-height-desktop: 40px; /* (v0.50) 44px -> 40px */
+    --warning-banner-height-mobile: 44px;  /* (v0.50) 60px -> 44px */
+    --mobile-header-height: 100px; /* (v0.50) 120px -> 100px */
     --desktop-header-height: 80px;
 }
 
@@ -159,17 +159,16 @@ body {
 }
 .status-badge.in-progress { background: linear-gradient(90deg, #fff8e1, #fff0c2); color: #e6a000; box-shadow: 0 2px 8px rgba(230, 160, 0, 0.2); }
 .progress-section { margin-bottom: 20px; }
-/* [!!!] (v0.37) h4 정렬 및 메트릭 스타일 */
 .progress-section h4 { 
     display: flex; 
-    justify-content: space-between; /* 좌우 정렬 */
+    justify-content: space-between;
     align-items: center; 
     gap: 10px; 
     margin: 0 0 10px 0; 
     font-weight: 600; 
     font-size: 1.1em;
 }
-.progress-section h4 > span:first-child { /* (v0.37) 이모지 + 텍스트 */
+.progress-section h4 > span:first-child {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -180,7 +179,7 @@ body {
     color: var(--color-primary);
 }
 #exam-metric .h4-metric {
-    color: var(--color-primary); /* 시험 점수도 동일한 색상 */
+    color: var(--color-primary);
 }
 
 .progress-bar-container { width: 100%; height: 20px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; }
@@ -223,7 +222,6 @@ summary {
     font-size: 1.05em;
 }
 summary:hover { color: var(--color-primary); }
-/* [!!!] (v0.37) FAQ UI 개선 */
 details[open] { 
     background-color: #f8f9fa;
     border-radius: 8px;
@@ -370,9 +368,10 @@ details p {
     width: auto;
     animation: logo-pulse 3s infinite ease-in-out;
 }
+/* [!!!] (v0.50) PC 타이틀 굵게 */
 .dashboard-subtitle {
     font-size: 1.4em;
-    font-weight: 700;
+    font-weight: 800; /* 700 -> 800 */
     color: var(--color-primary);
     text-align: center;
     margin: 0;
@@ -415,11 +414,12 @@ details p {
 }
 
 /* --- 12. (v30) 최상단 경고 배너 --- */
+/* [!!!] (v0.50) 경고 배너 슬림하게 */
 #global-warning-banner {
     background-color: #fff8e1; 
     border: 1px solid #e6a000;
     color: #e6a000; 
-    padding: 10px 15px;
+    padding: 8px 15px; /* 10px -> 8px */
     font-weight: 600;
     text-align: center;
     margin-bottom: 0; 
@@ -579,7 +579,6 @@ details p {
     height: 44px;
     padding: 0 10px;
 }
-/* [!!!] (v0.37) PC 헤더 정렬 및 스타일 통일 */
 .header-controls .data-notice {
     background-color: #f8f9fa;
     border: 1px solid #eee;
@@ -607,7 +606,7 @@ details p {
 
 /* (v33) PC 우측 세로 메뉴 */
 .quick-nav-bar-pc {
-    display: none; /* 모바일에선 숨김 */
+    display: none;
 }
 .quick-nav-title {
     display: none; 
@@ -680,10 +679,10 @@ details p {
     height: 24px;
     width: auto;
 }
-/* [!!!] (v0.37) 모바일 타이틀 강조 */
+/* [!!!] (v0.50) 모바일 타이틀 굵게 */
 .mobile-title {
     font-size: 1.15em;
-    font-weight: 700;
+    font-weight: 800; /* 700 -> 800 */
     color: var(--color-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -709,10 +708,12 @@ details p {
     border-radius: 2px;
     transition: all 0.3s ease;
 }
+/* [!!!] (v0.50) 모바일 컨트롤 1줄로 통합 */
 #mobile-header-controls {
     width: 100%;
     display: flex;
-    flex-direction: column-reverse; 
+    flex-direction: row; /* 1줄로 변경 */
+    align-items: center; /* 세로 중앙 정렬 */
     gap: 10px;
     padding-top: 10px;
 }
@@ -724,20 +725,23 @@ details p {
 #mobile-header-controls .course-switcher-wrapper {
     margin-right: 0;
     display: flex;
-    height: 44px; /* (v0.37) 높이 고정 */
+    height: 44px;
+    flex-grow: 1; /* (v0.50) 드롭다운이 남은 공간 차지 */
+    flex-shrink: 1;
+    min-width: 0;
 }
-/* [!!!] (v0.37) 모바일 컨트롤 스타일 통일 */
 #mobile-header-controls .data-notice {
     margin: 0;
     font-size: 0.95em;
     padding: 0 15px;
     display: flex;
-    /* 스타일 통일 */
     background-color: #f8f9fa;
     border: 1px solid #eee;
     border-radius: var(--border-radius);
     height: 44px;
     box-sizing: border-box;
+    flex-shrink: 0; /* (v0.50) 텍스트는 줄어들지 않음 */
+    white-space: nowrap;
 }
 
 /* (v29) 모바일 오버레이 (숨겨진 메뉴) */
@@ -852,10 +856,12 @@ details p {
         display: none;
     }
     
+    /* [!!!] (v0.50) 모바일 배너 높이 조정 */
     #global-warning-banner {
-        flex-direction: column;
+        flex-direction: row; /* (v0.50) 한 줄로 표시 */
+        justify-content: center;
         gap: 4px;
-        padding: 10px 15px;
+        padding: 8px 15px;
         height: auto;
         min-height: var(--warning-banner-height-mobile);
     }
@@ -878,6 +884,21 @@ details p {
     .anim-slide-in-up {
         animation: none;
         opacity: 1;
+    }
+    
+    /* [!!!] (NEW) v0.50: 모바일 폰트 최적화 */
+    .progress-label {
+        font-size: 1.0em; /* 1.1em -> 1.0em */
+    }
+    .time-card li {
+        font-size: 1.05em; /* 1.1em -> 1.05em */
+    }
+    /* (v0.50) FAQ 등 본문 텍스트는 0.95em 유지 */
+    details p {
+        font-size: 0.95em;
+    }
+    .note {
+        font-size: 0.9em;
     }
 }
 
@@ -931,11 +952,10 @@ details p {
         backdrop-filter: none;
     }
     
-    /* [!!!] (MODIFIED) v0.37: PC 우측 메뉴 (카드 높이 동기화) */
     .quick-nav-bar-pc {
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* 로그아웃 버튼 하단 고정 */
+        justify-content: space-between;
         gap: 10px;
         width: 180px;
         flex-shrink: 0;
@@ -1004,12 +1024,10 @@ details p {
     align-items: center;
     gap: 15px;
 }
-/* [!!!] (v0.37) 로고 크기 조정 */
 .footer-udemy-logo {
     height: 28px;
     opacity: 0.7;
 }
-/* [!!!] (v0.37) 감사 문구 삭제 */
 .footer-thanks, .footer-right p {
     margin: 0;
     font-size: 0.9em;
