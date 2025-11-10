@@ -1,4 +1,4 @@
-/* [!!!] (v0.51) 텍스트 괄호 제거 */
+/* [!!!] (v0.53) '학습 현황' 카드 제목 구조 변경 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
         const selectedCourseRow = userRows[selectedIndex];
         
-        const selectedCourseUserData = buildFullUserData(selectedCourseRow);
+        const selectedCourseUserData = buildFullUserData(selectedCourseRow, JSON.parse(localStorage.getItem('userCourseList')));
         localStorage.setItem('loggedInUser', JSON.stringify(selectedCourseUserData));
         localStorage.setItem('selectedCourseIndex', selectedIndex);
         
@@ -172,15 +172,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (v0.48) '과정명'(H열)만 사용하도록 최종 수정
+     * [!!!] (MODIFIED) v0.52: userRows를 받아 '전체' 정보 추가
      */
-    function buildFullUserData(userRow) {
+    function buildFullUserData(userRow, allUserRows) {
         const GOAL_TIME = 16.0;
         const GOAL_SCORE = 60; 
 
+        // --- (v0.52) '전체' 데이터 계산 ---
+        const firstRow = allUserRows[0];
+        const totalLearningTime = parseFloat(firstRow['전체학습시간'] || 0); // L열
+        const totalRecognizedTime = parseFloat(firstRow['전체인정시간'] || 0); // M열
+        
+        const needsCheck = allUserRows.some(row => (row['확인필요'] || '').trim() === '확인필요');
+
+        // --- (v0.48) '개별 과정' 데이터 계산 ---
         const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
+        // [!!!] (v0.48) V열 삭제에 따라 H열('과정명')만 참조
         const courseName = userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
@@ -188,9 +197,15 @@ document.addEventListener('DOMContentLoaded', () => {
             email: userRow['이메일'],
             department: userRow['소속'],
             course: courseName,
-            totalLearningTime: parseFloat(userRow['전체학습시간'] || 0),
+            
+            // (v0.52) '전체' 정보 추가
+            totalLearningTime: totalLearningTime, // L열
+            totalRecognizedTime: totalRecognizedTime, // M열
+            needsCheck: needsCheck, // P열
+            
+            // (v0.48) '개별 과정' 상세 정보 (R열 등)
             courseDetail: {
-                recognizedTime: parseFloat(userRow['인정시간'] || 0),
+                recognizedTime: parseFloat(userRow['인정시간'] || 0), // R열
                 examScore: examScore,
                 isCompleted: isCompleted,
                 goalTime: GOAL_TIME,
@@ -213,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.style.display = 'none';
 
         try {
-            // (v0.39) text/plain으로 API 서버에 POST 요청
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'cors',
@@ -247,7 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const firstCourseRow = userRows[0];
             const firstCourseIndex = 0;
-            const firstCourseUserData = buildFullUserData(firstCourseRow);
+            
+            const firstCourseUserData = buildFullUserData(firstCourseRow, userRows);
 
             localStorage.setItem('loggedInUser', JSON.stringify(firstCourseUserData));
             localStorage.setItem('selectedCourseIndex', firstCourseIndex);
@@ -263,8 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showButtonLoader(false);
         }
     }
-
-    // --- 나머지 함수 ---
 
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
@@ -302,6 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+    /**
+     * [!!!] (MODIFIED) v0.53: 과정명 표시 ID 변경
+     */
     function showDashboard(user) {
         const detail = user.courseDetail;
         const badge = document.getElementById('status-badge');
@@ -312,9 +329,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const recognizedTimeLabel = document.getElementById('recognized-time');
         const examScoreLabel = document.getElementById('exam-score');
         
+        // [!!!] (v0.53) 과정명 배지 DOM
+        const courseNameBadge = document.getElementById('course-name-badge');
+        
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         
-        // [!!!] (v0.51) 텍스트 괄호 [] 삭제
         const countText = `<strong id="course-count-number">${userRows.length}</strong>과정 학습 중`;
         
         if (userRows.length > 0) {
@@ -331,6 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dataDateDynamic.textContent = dataUpdatedDate;
         }
 
+        // --- 개요 카드 ---
         document.getElementById('overview-name').textContent = user.name;
         document.getElementById('overview-dept').textContent = user.department;
         document.getElementById('overview-course').textContent = user.course; 
@@ -356,8 +376,22 @@ document.addEventListener('DOMContentLoaded', () => {
             goalScoreRow.classList.add('hidden-row');
             myScoreRow.classList.add('hidden-row');
         }
+        
+        const warningRow = document.getElementById('overview-warning-row');
+        if (user.needsCheck) {
+            document.getElementById('overview-warning-status').textContent = '확인 필요';
+            document.getElementById('overview-warning-status').className = 'status-cell warning';
+            warningRow.classList.remove('hidden-row');
+        } else {
+            warningRow.classList.add('hidden-row');
+        }
 
-        document.getElementById('course-name').textContent = user.course;
+        // --- 프로그레스 바 카드 ---
+        // [!!!] (v0.53) h4에서 과정명 분리, 새 배지에 바인딩
+        if (courseNameBadge) {
+            courseNameBadge.textContent = user.course;
+        }
+        
         if (detail.isCompleted) {
             badge.textContent = '이수 완료! 🎉';
             badge.className = 'status-badge completed';
@@ -365,13 +399,14 @@ document.addEventListener('DOMContentLoaded', () => {
             badge.textContent = '학습 중 🏃‍♀️';
             badge.className = 'status-badge in-progress';
         }
+        
         const totalTime = user.totalLearningTime.toFixed(1);
-        const courseRecognizedTime = detail.recognizedTime.toFixed(1);
-        let unrecognizedTime = (user.totalLearningTime - detail.recognizedTime).toFixed(1);
+        const totalRecognizedTime = user.totalRecognizedTime.toFixed(1);
+        let unrecognizedTime = (user.totalLearningTime - user.totalRecognizedTime).toFixed(1);
         unrecognizedTime = unrecognizedTime < 0 ? 0 : unrecognizedTime;
 
         document.getElementById('total-time').textContent = `${totalTime} H`;
-        document.getElementById('recognized-time-detail').textContent = `${courseRecognizedTime} H`;
+        document.getElementById('recognized-time-detail').textContent = `${totalRecognizedTime} H`;
         document.getElementById('unrecognized-time').textContent = `${unrecognizedTime} H`;
 
         const timePercent = Math.min((detail.recognizedTime / detail.goalTime) * 100, 100);
@@ -395,7 +430,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         timeProgressBar.style.width = '0%';
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
-
 
         const courseName = user.course.trim();
         let link = '#';
