@@ -1,4 +1,4 @@
-/* [!!!] (v0.56) V열('과정명.1')이 삭제됨에 따라 H열('과정명')만 사용하도록 최종 수정 */
+/* [!!!] (v0.57) V열('과정명.1')이 삭제됨에 따라 H열('과정명')만 사용하도록 최종 수정 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
@@ -40,9 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const quickNavBarMobile = document.getElementById('quick-nav-bar-mobile'); 
     
     const mainHeader = document.getElementById('main-header'); 
-    const mobileHeaderControls = document.getElementById('mobile-header-controls'); 
+    const mobileHeaderControls = document.getElementById('mobile-header-controls');
+    
+    // (v0.57) 로딩 스피너
+    const mainContentLoader = document.getElementById('main-content-loader');
 
-    // --- [C] 이벤트 리스너 --- (v0.37과 동일)
+    // --- [C] 이벤트 리스너 ---
     if (localStorage.getItem('loggedInUser')) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
@@ -65,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const handleCourseChange = async (event) => {
+        if (mainContentLoader) mainContentLoader.style.display = 'flex';
+        
         const selectedIndex = event.target.value;
         const userRows = JSON.parse(localStorage.getItem('userCourseList'));
         const selectedCourseRow = userRows[selectedIndex];
@@ -172,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.56: '과정명'(H열)만 사용하도록 최종 수정
+     * [!!!] (MODIFIED) v0.57: '과정명'(H열)만 사용하도록 최종 수정
      */
     function buildFullUserData(userRow, allUserRows) {
         const GOAL_TIME = 16.0;
@@ -183,13 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalLearningTime = parseFloat(firstRow['전체학습시간'] || 0); // L열
         const totalRecognizedTime = parseFloat(firstRow['전체인정시간'] || 0); // M열
         
-        const needsCheck = allUserRows.some(row => (row['확인필요'] || '').trim() === '확인필요');
-
-        // --- (v0.56) '개별 과정' 데이터 계산 ---
+        // --- (v0.57) '개별 과정' 데이터 계산 ---
         const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
-        // [!!!] (v0.56) V열을 삭제했으므로 H열('과정명')만 확인
+        // [!!!] (v0.57) V열을 삭제했으므로 H열('과정명')만 확인
         const courseName = userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
@@ -200,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             totalLearningTime: totalLearningTime,
             totalRecognizedTime: totalRecognizedTime,
-            needsCheck: needsCheck,
+            // needsCheck: false, (v0.57) '확인 필요' 삭제
             
             courseDetail: {
                 recognizedTime: parseFloat(userRow['인정시간'] || 0), // R열
@@ -213,9 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return fullUserData;
     }
 
-    /**
-     * [!!!] (v0.39) 로그인 처리 함수 (API 호출)
-     */
     async function handleLogin() {
         const name = nameInput.value.trim();
         const email = emailInput.value.trim().toLowerCase();
@@ -274,11 +274,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showError(`데이터 로드 오류: ${error.message}`);
         } finally {
             showButtonLoader(false);
+            if (mainContentLoader) mainContentLoader.style.display = 'none';
         }
     }
 
     /**
-     * [!!!] (MODIFIED) v0.56: '과정명'(H열)만 사용하도록 최종 수정
+     * [!!!] (MODIFIED) v0.57: '과정명'(H열)만 사용하도록 최종 수정
      */
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
@@ -306,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
-                // [!!!] (v0.56) V열을 삭제했으므로 H열('과정명')만 확인
+                // [!!!] (v0.57) V열을 삭제했으므로 H열('과정명')만 확인
                 const courseName = row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
@@ -319,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * [!!!] (MODIFIED) v0.55: '학습 현황' h4 복원
+     * [!!!] (MODIFIED) v0.57: '확인 필요' 로직 삭제
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -331,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const recognizedTimeLabel = document.getElementById('recognized-time');
         const examScoreLabel = document.getElementById('exam-score');
         
-        // [!!!] (v0.55) h4의 과정명 span
         const courseNameSpan = document.getElementById('course-name');
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
@@ -379,17 +379,13 @@ document.addEventListener('DOMContentLoaded', () => {
             myScoreRow.classList.add('hidden-row');
         }
         
+        // [!!!] (v0.57) '확인 필요' 로직 삭제
         const warningRow = document.getElementById('overview-warning-row');
-        if (user.needsCheck) {
-            document.getElementById('overview-warning-status').textContent = '확인 필요';
-            document.getElementById('overview-warning-status').className = 'status-cell warning';
-            warningRow.classList.remove('hidden-row');
-        } else {
+        if (warningRow) {
             warningRow.classList.add('hidden-row');
         }
 
         // --- 프로그레스 바 카드 ---
-        // [!!!] (v0.55) h4의 과정명 span에 텍스트 바인딩
         if (courseNameSpan) {
             courseNameSpan.textContent = user.course;
         }
@@ -438,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let display = 'none'; 
         let showWarning = false;
 
-        // [!!!] (v0.56) CSV 데이터 기준('Skill-set')으로 수정
         if (courseName.includes('Skill-set')) { 
             display = 'none';
             showWarning = true;
@@ -489,6 +484,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }, 0);
+        
+        if (mainContentLoader) mainContentLoader.style.display = 'none';
     }
 
     function handleLogout() {
