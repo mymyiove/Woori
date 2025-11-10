@@ -1,4 +1,4 @@
-/* [!!!] (v0.53) '학습 현황' 카드 제목 구조 변경 */
+/* [!!!] (v0.56) V열('과정명.1')이 삭제됨에 따라 H열('과정명')만 사용하도록 최종 수정 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.52: userRows를 받아 '전체' 정보 추가
+     * [!!!] (MODIFIED) v0.56: '과정명'(H열)만 사용하도록 최종 수정
      */
     function buildFullUserData(userRow, allUserRows) {
         const GOAL_TIME = 16.0;
@@ -185,11 +185,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const needsCheck = allUserRows.some(row => (row['확인필요'] || '').trim() === '확인필요');
 
-        // --- (v0.48) '개별 과정' 데이터 계산 ---
+        // --- (v0.56) '개별 과정' 데이터 계산 ---
         const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
-        // [!!!] (v0.48) V열 삭제에 따라 H열('과정명')만 참조
+        // [!!!] (v0.56) V열을 삭제했으므로 H열('과정명')만 확인
         const courseName = userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
@@ -198,12 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
             department: userRow['소속'],
             course: courseName,
             
-            // (v0.52) '전체' 정보 추가
-            totalLearningTime: totalLearningTime, // L열
-            totalRecognizedTime: totalRecognizedTime, // M열
-            needsCheck: needsCheck, // P열
+            totalLearningTime: totalLearningTime,
+            totalRecognizedTime: totalRecognizedTime,
+            needsCheck: needsCheck,
             
-            // (v0.48) '개별 과정' 상세 정보 (R열 등)
             courseDetail: {
                 recognizedTime: parseFloat(userRow['인정시간'] || 0), // R열
                 examScore: examScore,
@@ -279,6 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * [!!!] (MODIFIED) v0.56: '과정명'(H열)만 사용하도록 최종 수정
+     */
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
             courseSwitcherWrapper.style.display = 'none'; 
@@ -305,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
+                // [!!!] (v0.56) V열을 삭제했으므로 H열('과정명')만 확인
                 const courseName = row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
@@ -317,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * [!!!] (MODIFIED) v0.53: 과정명 표시 ID 변경
+     * [!!!] (MODIFIED) v0.55: '학습 현황' h4 복원
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -329,8 +331,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const recognizedTimeLabel = document.getElementById('recognized-time');
         const examScoreLabel = document.getElementById('exam-score');
         
-        // [!!!] (v0.53) 과정명 배지 DOM
-        const courseNameBadge = document.getElementById('course-name-badge');
+        // [!!!] (v0.55) h4의 과정명 span
+        const courseNameSpan = document.getElementById('course-name');
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
         
@@ -387,9 +389,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- 프로그레스 바 카드 ---
-        // [!!!] (v0.53) h4에서 과정명 분리, 새 배지에 바인딩
-        if (courseNameBadge) {
-            courseNameBadge.textContent = user.course;
+        // [!!!] (v0.55) h4의 과정명 span에 텍스트 바인딩
+        if (courseNameSpan) {
+            courseNameSpan.textContent = user.course;
         }
         
         if (detail.isCompleted) {
@@ -436,6 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let display = 'none'; 
         let showWarning = false;
 
+        // [!!!] (v0.56) CSV 데이터 기준('Skill-set')으로 수정
         if (courseName.includes('Skill-set')) { 
             display = 'none';
             showWarning = true;
