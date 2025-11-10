@@ -23,6 +23,7 @@ html {
     scroll-behavior: smooth;
 }
 
+/* [!!!] (v0.51) body를 flex 컨테이너로 변경 (푸터 하단 고정용) */
 body {
     font-family: var(--font-main);
     background-color: var(--color-bg);
@@ -54,17 +55,19 @@ body {
     display: none; 
     animation: fadeIn 0.5s ease-out forwards; 
 }
+/* [!!!] (v0.51) 로그인 컨테이너 수정 (푸터 하단 고정용) */
 #login-container.container.active { 
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-grow: 1;
+    flex-grow: 1; /* 남은 공간 모두 차지 */
     padding: 20px;
     box-sizing: border-box;
 }
+/* [!!!] (v0.51) 대시보드 컨테이너 수정 (푸터 하단 고정용) */
 #dashboard-container.container.active { 
     display: block; 
-    flex-grow: 1;
+    flex-grow: 1; /* 남은 공간 모두 차지 */
 }
 .card-content { 
     background-color: var(--color-card); 
@@ -191,6 +194,8 @@ body {
 .progress-label { display: block; text-align: right; font-weight: 600; font-size: 1.1em; margin-top: 8px; color: var(--color-primary); }
 .progress-section.metric-item { display: block; }
 .progress-section.metric-item.hidden { display: none; }
+
+/* (v0.54) '학습 현황' h4 스타일 복원 */
 .card h4 { 
     display: flex; 
     align-items: center; 
@@ -200,36 +205,25 @@ body {
     padding-bottom: 10px; 
     color: var(--color-primary);
     font-size: 1.35em;
+    flex-wrap: nowrap; /* (v0.54) PC에서는 줄바꿈 방지 */
+    overflow: hidden;
+}
+/* (v0.54) 과정명 텍스트 축약 */
+#course-name {
+    font-size: 0.9em;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1; /* 너비가 좁을 때 줄어들도록 */
 }
 
-/* [!!!] (NEW) v0.53: 과정명 배지 스타일 */
-.course-name-badge-wrapper {
-    margin-top: -10px; /* 제목 하단선과 겹치게 */
-    margin-bottom: 20px;
-    display: flex; /* 모바일에서 중앙 정렬을 위해 */
-    justify-content: center;
-}
-.course-name-badge {
-    display: inline-block;
-    font-size: 1.1em;
-    font-weight: 700;
-    color: var(--color-primary);
-    background-color: #f0f2f5;
-    border: 1px solid #e0e5eb;
-    padding: 8px 16px;
-    border-radius: 20px;
-    max-width: 100%;
-    box-sizing: border-box;
-    white-space: normal; /* 텍스트 자동 줄바꿈 */
-    line-height: 1.4;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
+/* (v0.53) 과정명 배지 스타일 삭제 */
 
 .h4-emoji {
     display: inline-block;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    flex-shrink: 0; /* 이모지 찌그러짐 방지 */
 }
 .card:hover h4 .h4-emoji {
     transform: rotate(-10deg) scale(1.15);
@@ -938,22 +932,31 @@ details p {
     .note {
         font-size: 0.9em;
     }
-    /* [!!!] (v0.53) 모바일 h4 텍스트 줄바꿈 수정 */
     .progress-section h4 {
         font-size: 1.0em;
-        flex-wrap: wrap; /* (v0.53) h4가 좁을 때 줄바꿈 허용 */
+        flex-wrap: wrap;
     }
     .h4-metric {
         font-size: 1.0em;
     }
     
-    /* [!!!] (NEW) v0.53: 모바일 헤더 드롭다운 텍스트 크기 수정 */
+    /* [!!!] (v0.54) 모바일 헤더 드롭다운 텍스트 크기 수정 */
     #mobile-header-controls .course-switcher-wrapper {
-         padding: 0 5px; /* (v0.53) 좌우 패딩 축소 */
+         padding: 0 5px;
     }
     #mobile-header-controls #course-switcher-mobile {
-        font-size: 1.0em; /* (v0.53) 1.15em -> 1.0em */
-        padding: 12px 5px; /* (v0.53) 좌우 패딩 축소 */
+        font-size: 1.0em;
+        padding: 12px 5px;
+    }
+    
+    /* [!!!] (v0.54) 모바일 '학습 현황' h4 폰트 크기 조정 */
+    #course-details.card h4 {
+        font-size: 1.2em; /* 1.35em -> 1.2em */
+        flex-wrap: wrap; /* 제목이 길면 줄바꿈 허용 */
+    }
+    #course-details.card h4 #course-name {
+        font-size: 1.0em; /* 0.9em -> 1.0em */
+        white-space: normal; /* 줄바꿈 허용 */
     }
 }
 
