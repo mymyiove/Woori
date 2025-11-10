@@ -1,7 +1,7 @@
-/* [!!!] (v0.39) 백엔드 API (Apps Script)를 사용하도록 수정한 app.js */
+/* [!!!] (v0.45) '과정명.1'(V열)을 무시하고 '과정명'(H열)만 사용하도록 수정 */
 
-// (필수!) 3단계에서 배포하고 복사한 본인의 Apps Script 웹 앱 URL로 변경하세요.
-const WEB_APP_URL = '/api/login'; // (v0.38에서 사용한 URL 그대로 사용)
+// (v0.39와 동일) API URL
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- [D] 핵심 함수 --- (v0.37과 동일)
+    // --- [D] 핵심 함수 ---
 
     function animateCountUpWithSuffix(el, end, decimals = 0, duration = 1000, prefix = '', suffix = '') {
         if (!el) return;
@@ -171,13 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
         window.requestAnimationFrame(step);
     }
 
+    /**
+     * [!!!] (MODIFIED) v0.45: '과정명.1' 무시
+     */
     function buildFullUserData(userRow) {
         const GOAL_TIME = 16.0;
         const GOAL_SCORE = 60; 
 
         const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
-        const courseName = userRow['과정명.1'] || userRow['과정명'] || '과정명 없음';
+        
+        // [!!!] (v0.45) H열('과정명')만 사용하도록 수정
+        const courseName = userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
             name: userRow['성명'],
@@ -197,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.39: Content-Type 변경
+     * [!!!] (v0.39) 로그인 처리 함수 (API 호출)
      */
     async function handleLogin() {
         const name = nameInput.value.trim();
@@ -209,15 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.style.display = 'none';
 
         try {
-            // (v0.39) fetch 요청
+            // (v0.39) text/plain으로 API 서버에 POST 요청
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
-                    // [!!!] (v0.39) preflight를 우회하기 위해 text/plain으로 변경
                     'Content-Type': 'text/plain', 
                 },
-                // body는 JSON 문자열이므로 text/plain으로 보내도 서버가 파싱 가능
                 body: JSON.stringify({ name: name, email: email }) 
             });
 
@@ -290,7 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
-                const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
+                // [!!!] (v0.45) buildFullUserData 로직과 동일하게 수정
+                const courseName = row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
                 option.textContent = courseName;
@@ -398,7 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let display = 'none'; 
         let showWarning = false;
 
-        if (courseName.includes('Skill-Set')) {
+        // [!!!] (v0.45) 'Skill-Set' -> 'Skill-set'으로 수정 (CSV 데이터 기준)
+        if (courseName.includes('Skill-set')) { 
             display = 'none';
             showWarning = true;
         } else if (courseName.includes('IT-정보 보호')) {
