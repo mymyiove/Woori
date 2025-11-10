@@ -13,9 +13,9 @@
     --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.1);
     --border-radius: 12px;
     
-    --warning-banner-height-desktop: 40px; /* (v0.50) 44px -> 40px */
-    --warning-banner-height-mobile: 44px;  /* (v0.50) 60px -> 44px */
-    --mobile-header-height: 100px; /* (v0.50) 120px -> 100px */
+    --warning-banner-height-desktop: 40px; 
+    --warning-banner-height-mobile: 44px;  
+    --mobile-header-height: 100px;
     --desktop-header-height: 80px;
 }
 
@@ -23,6 +23,7 @@ html {
     scroll-behavior: smooth;
 }
 
+/* [!!!] (v0.51) body를 flex 컨테이너로 변경 (푸터 하단 고정용) */
 body {
     font-family: var(--font-main);
     background-color: var(--color-bg);
@@ -33,6 +34,8 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     word-break: keep-all; 
+    display: flex;
+    flex-direction: column;
 }
 
 /* --- 1. 배경 애니메이션 --- */
@@ -52,16 +55,20 @@ body {
     display: none; 
     animation: fadeIn 0.5s ease-out forwards; 
 }
+/* [!!!] (v0.51) 로그인 컨테이너 수정 (푸터 하단 고정용) */
 #login-container.container.active { 
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    /* min-height: 100vh; <-- 삭제 */
+    flex-grow: 1; /* 남은 공간 모두 차지 */
     padding: 20px;
     box-sizing: border-box;
 }
+/* [!!!] (v0.51) 대시보드 컨테이너 수정 (푸터 하단 고정용) */
 #dashboard-container.container.active { 
     display: block; 
+    flex-grow: 1; /* 남은 공간 모두 차지 */
 }
 .card-content { 
     background-color: var(--color-card); 
@@ -368,10 +375,9 @@ details p {
     width: auto;
     animation: logo-pulse 3s infinite ease-in-out;
 }
-/* [!!!] (v0.50) PC 타이틀 굵게 */
 .dashboard-subtitle {
     font-size: 1.4em;
-    font-weight: 800; /* 700 -> 800 */
+    font-weight: 800;
     color: var(--color-primary);
     text-align: center;
     margin: 0;
@@ -414,12 +420,11 @@ details p {
 }
 
 /* --- 12. (v30) 최상단 경고 배너 --- */
-/* [!!!] (v0.50) 경고 배너 슬림하게 */
 #global-warning-banner {
     background-color: #fff8e1; 
     border: 1px solid #e6a000;
     color: #e6a000; 
-    padding: 8px 15px; /* 10px -> 8px */
+    padding: 8px 15px;
     font-weight: 600;
     text-align: center;
     margin-bottom: 0; 
@@ -679,10 +684,9 @@ details p {
     height: 24px;
     width: auto;
 }
-/* [!!!] (v0.50) 모바일 타이틀 굵게 */
 .mobile-title {
     font-size: 1.15em;
-    font-weight: 800; /* 700 -> 800 */
+    font-weight: 800;
     color: var(--color-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -708,12 +712,11 @@ details p {
     border-radius: 2px;
     transition: all 0.3s ease;
 }
-/* [!!!] (v0.50) 모바일 컨트롤 1줄로 통합 */
 #mobile-header-controls {
     width: 100%;
     display: flex;
-    flex-direction: row; /* 1줄로 변경 */
-    align-items: center; /* 세로 중앙 정렬 */
+    flex-direction: row;
+    align-items: center;
     gap: 10px;
     padding-top: 10px;
 }
@@ -726,7 +729,7 @@ details p {
     margin-right: 0;
     display: flex;
     height: 44px;
-    flex-grow: 1; /* (v0.50) 드롭다운이 남은 공간 차지 */
+    flex-grow: 1;
     flex-shrink: 1;
     min-width: 0;
 }
@@ -740,7 +743,7 @@ details p {
     border-radius: var(--border-radius);
     height: 44px;
     box-sizing: border-box;
-    flex-shrink: 0; /* (v0.50) 텍스트는 줄어들지 않음 */
+    flex-shrink: 0;
     white-space: nowrap;
 }
 
@@ -856,9 +859,8 @@ details p {
         display: none;
     }
     
-    /* [!!!] (v0.50) 모바일 배너 높이 조정 */
     #global-warning-banner {
-        flex-direction: row; /* (v0.50) 한 줄로 표시 */
+        flex-direction: row;
         justify-content: center;
         gap: 4px;
         padding: 8px 15px;
@@ -886,19 +888,25 @@ details p {
         opacity: 1;
     }
     
-    /* [!!!] (NEW) v0.50: 모바일 폰트 최적화 */
+    /* [!!!] (v0.51) 모바일 폰트 최적화 */
     .progress-label {
         font-size: 1.0em; /* 1.1em -> 1.0em */
     }
     .time-card li {
         font-size: 1.05em; /* 1.1em -> 1.05em */
     }
-    /* (v0.50) FAQ 등 본문 텍스트는 0.95em 유지 */
     details p {
         font-size: 0.95em;
     }
     .note {
         font-size: 0.9em;
+    }
+    /* (v0.51) '학습 현황' h4가 두 줄로 나오는 문제 수정 */
+    .progress-section h4 {
+        font-size: 1.0em; /* 1.1em -> 1.0em */
+    }
+    .h4-metric {
+        font-size: 1.0em; /* 1.1em -> 1.0em */
     }
 }
 
@@ -1002,6 +1010,7 @@ details p {
 }
 
 /* (v0.34) Footer 개편 */
+/* [!!!] (v0.51) 푸터 하단 고정 (flex-shrink) */
 #main-footer {
     width: 100%;
     padding: 25px 30px;
@@ -1011,6 +1020,7 @@ details p {
     background-color: var(--color-card);
     border-top: 1px solid #eee;
     box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
+    flex-shrink: 0; /* (v0.51) 푸터가 줄어들지 않음 */
 }
 .footer-content-wrapper {
     max-width: 1200px;
