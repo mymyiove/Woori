@@ -109,6 +109,10 @@
 
         <div class="dashboard-body-wrapper">
             
+            <div id="main-content-loader" class="main-loader-overlay">
+                <div class="loader-large"></div>
+            </div>
+
             <main id="main-content">
                 <div class="card overview-card anim-slide-in-up" id="overview">
                     <h4><span class="h4-emoji">🧐</span> 요약</h4>
@@ -122,13 +126,12 @@
                             <tr class="divider"><th>나의 인정 시간</th><td id="overview-my-time" class="metric-value-small">... H</td></tr>
                             <tr id="overview-my-score-row"><th>나의 시험 점수</th><td id="overview-my-score" class="metric-value-small">... 점</td></tr>
                             <tr class="divider"><th>최종 이수 여부</th><td id="overview-status" class="status-cell">...</td></tr>
-                            <tr id="overview-warning-row" class="hidden-row"><th class="warning-header">⚠️ 상태</th><td id="overview-warning-status" class="status-cell">...</td></tr>
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
 
                 <div class="card main-card anim-slide-in-up" id="course-details">
-                    <h4><span class="h4-emoji">🎯</span> 학습 현황: <span id="course-name">...</span></h4>
+                    <h4><span class="h4-emoji">🎯</span> 학습현황(<span id="course-name">...</span>)</h4>
 
                     <div class="status-badge" id="status-badge">...</div>
                     
@@ -142,7 +145,7 @@
                     </div>
                     <div id="exam-metric" class="progress-section metric-item">
                         <h4>
-                            <span><span class="h4-emoji">✍️</span> 시험 점수 (60점 목표)</span>
+                            <span><span class="h4-emoji">✍️</span> 시험 점수 (60점 목표, 최고 점수 인정)</span>
                             <span class="h4-metric" id="exam-metric-h4">... 점</span>
                         </h4>
                         <div class="progress-bar-container"><div id="exam-progress-bar" class="progress-bar exam"></div></div>
@@ -166,7 +169,7 @@
                         <li><span>✅ 인정 시간(전체 과정)</span><strong id="recognized-time-detail">... H</strong></li>
                         <li class="warning"><span>⚠️ 불인정 시간</span><strong id="unrecognized-time">... H</strong></li>
                     </ul>
-                    <p class="note">'불인정 시간'은 '총 학습 시간'에서 '전체 과정의 인정 시간 총합'을 뺀 단순 참고 값입니다. 너무 차이가 크다면 다른 과장을 학습하고 있는 것은 아닌지 확인해보세요.</p>
+                    <p class="note">'불인정 시간'은 '총 학습 시간'에서 '전체 과정의 인정 시간 총합'을 뺀 단순 참고 값입니다. 너무 차이가 크다면 다른 과정을 학습하고 있는 것은 아닌지 확인해보세요.</p>
                 </div>
                 
                 <div class="card course-info-card anim-slide-in-up" id="course-info">
@@ -175,6 +178,7 @@
                     <details>
                         <summary>1. [Skill-Set] 2025 디지털/IT Skill-Set 과정</summary>
                         <p>
+                            <strong>학습 방법:</strong> 카테고리 > [Skill-set]소속 부서 선택 (꼭 소속 부서 에서 학습)<br><br>
                             3개월 단위로 진행되는 과정으로, 총 3,171개의 풀과 64,479시간의 교육 시간을 제공합니다.<br><br>
                             <strong>수료 기준:</strong> 16시간 이상 학습 + 설문 조사 참여(선택)<br>
                             <strong>혜택:</strong> 의무 연수 시간 최대 8시간 인정<br>
@@ -184,6 +188,7 @@
                     <details>
                         <summary>2. [직무 기본] IT-정보 보호 직무 기본 과정</summary>
                         <p>
+                            <strong>학습 방법:</strong> 학습방향 > 학습 과정 확인<br><br>
                             3개월 단위로 진행되며, 14개의 풀과 42.4시간의 교육 시간을 제공합니다.<br><br>
                             <strong>수료 기준:</strong> 16시간 이상 학습 + 평가 60점 이상 + 설문 조사 참여(선택)<br>
                             <strong>혜택:</strong> 직군 전환 시 가점 부여, 의무 연수 시간 16시간 인정<br>
@@ -197,6 +202,7 @@
                     <details>
                         <summary>3. [직무 기본] 디지털 직무 기본 과정</summary>
                         <p>
+                            <strong>학습 방법:</strong> 학습방향 > 학습 과정 확인<br><br>
                             3개월 단위로 진행되며, 13개의 풀과 45.8시간의 교육 시간을 제공합니다.<br><br>
                             <strong>수료 기준:</strong> 16시간 이상 학습 + 평가 60점 이상 + 설문 조사 참여(선택)<br>
                             <strong>혜택:</strong> 직군 전환 시 가점 부여, 의무 연수 시간 16시간 인정<br>
@@ -210,6 +216,7 @@
                     <details>
                         <summary>4. [디지털 상식] 디지털/IT 사이버 과정</summary>
                         <p>
+                            <strong>학습 방법:</strong> 카테고리 > [디지털 상식] 📱 디지털/IT 사이버 과정 (꼭 본 카테고리에서 학습)<br><br>
                             3개월 단위로 진행되며, 22개의 풀과 58.4시간의 교육 시간을 제공합니다.<br><br>
                             <strong>수료 기준:</strong> 16시간 이상 학습 + 설문 조사 참여(선택)<br>
                             <strong>혜택:</strong> 의무 연수 시간 최대 8시간 인정<br>
@@ -350,7 +357,7 @@
                 <img src="udemy-logo-purple.png" alt="Udemy" class="footer-udemy-logo">
             </div>
             <div class="footer-right">
-                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.55)</p>
+                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.57)</p>
             </div>
         </div>
     </footer>
