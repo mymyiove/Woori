@@ -67,7 +67,7 @@
             <div id="mobile-header-controls">
                 <p class="data-notice">
                     <span id="course-count-notice-mobile">
-                        [...] 과정 학습 중
+                        ...과정 학습 중
                     </span>
                 </p>
                 <div class="course-switcher-wrapper">
@@ -93,7 +93,7 @@
                 <div class="header-controls">
                     <p class="data-notice">
                         <span id="course-count-notice">
-                            [...] 과정 학습 중
+                            ...과정 학습 중
                         </span>
                     </p>
                     <div class="course-switcher-wrapper">
@@ -122,12 +122,18 @@
                             <tr class="divider"><th>나의 인정 시간</th><td id="overview-my-time" class="metric-value-small">... H</td></tr>
                             <tr id="overview-my-score-row"><th>나의 시험 점수</th><td id="overview-my-score" class="metric-value-small">... 점</td></tr>
                             <tr class="divider"><th>최종 이수 여부</th><td id="overview-status" class="status-cell">...</td></tr>
+                            <tr id="overview-warning-row" class="hidden-row"><th class="warning-header">⚠️ 상태</th><td id="overview-warning-status" class="status-cell">...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="card main-card anim-slide-in-up" id="course-details">
-                    <h4><span class="h4-emoji">🎯</span> 학습 현황: <span id="course-name">...</span></h4>
+                    <h4><span class="h4-emoji">🎯</span> 학습 현황</h4>
+                    
+                    <div class="course-name-badge-wrapper">
+                        <span id="course-name-badge" class="course-name-badge">...</span>
+                    </div>
+
                     <div class="status-badge" id="status-badge">...</div>
                     
                     <div class="progress-section">
@@ -160,8 +166,8 @@
                 <div class="card time-card anim-slide-in-up" id="comparison"> 
                     <h4><span class="h4-emoji">📊</span> 시간 비교</h4>
                     <ul>
-                        <li><span>Udemy 총 학습 시간</span><strong id="total-time">... H</strong></li>
-                        <li><span>✅ 인정 시간 (이 과정)</span><strong id="recognized-time-detail">... H</strong></li>
+                        <li><span><span class="h4-emoji">⏰</span> Udemy 총 학습시간</span><strong id="total-time">... H</strong></li>
+                        <li><span>✅ 인정 시간(전체 과정)</span><strong id="recognized-time-detail">... H</strong></li>
                         <li class="warning"><span>⚠️ 불인정 시간</span><strong id="unrecognized-time">... H</strong></li>
                     </ul>
                     <p class="note">'불인정 시간'은 '총 학습 시간'에서 '이 과정의 인정 시간'을 뺀 단순 참고 값입니다. 너무 차이가 크다면 다른 과장을 학습하고 있는 것은 아닌지 확인해보세요.</p>
@@ -348,7 +354,7 @@
                 <img src="udemy-logo-purple.png" alt="Udemy" class="footer-udemy-logo">
             </div>
             <div class="footer-right">
-                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.51)</p>
+                <p>© 2025 Jung Hojun. All Rights Reserved. (v0.53)</p>
             </div>
         </div>
     </footer>
