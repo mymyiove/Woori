@@ -1,11 +1,11 @@
-/* [!!!] (v0.57) V열('과정명.1')이 삭제됨에 따라 H열('과정명')만 사용하도록 최종 수정 */
+/* [!!!] (v0.57) '확인 필요' 삭제, 로딩 스피너 추가 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- [A] DOM 요소 선택 --- (v0.37과 동일)
+    // --- [A] DOM 요소 선택 ---
     const loginContainer = document.getElementById('login-container');
     const dashboardContainer = document.getElementById('dashboard-container');
     const loginBtn = document.getElementById('login-btn');
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainHeader = document.getElementById('main-header'); 
     const mobileHeaderControls = document.getElementById('mobile-header-controls');
     
-    // (v0.57) 로딩 스피너
+    // [!!!] (v0.57) 로딩 스피너
     const mainContentLoader = document.getElementById('main-content-loader');
 
     // --- [C] 이벤트 리스너 ---
@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const handleCourseChange = async (event) => {
+        // [!!!] (v0.57) 로더 표시
         if (mainContentLoader) mainContentLoader.style.display = 'flex';
         
         const selectedIndex = event.target.value;
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             courseSwitcher.value = selectedIndex;
         }
         
+        // (v0.57) 새 대시보드를 그릴 때 로더가 숨겨짐
         showDashboard(selectedCourseUserData);
     };
 
@@ -177,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.57: '과정명'(H열)만 사용하도록 최종 수정
+     * [!!!] (MODIFIED) v0.57: '확인 필요' 로직 삭제
      */
     function buildFullUserData(userRow, allUserRows) {
         const GOAL_TIME = 16.0;
@@ -192,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
-        // [!!!] (v0.57) V열을 삭제했으므로 H열('과정명')만 확인
-        const courseName = userRow['과정명'] || '과정명 없음';
+        // [!!!] (v0.57) CSV 원본 데이터에 맞춰 V열('과정명.1')을 먼저 확인
+        const courseName = userRow['과정명.1'] || userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
             name: userRow['성명'],
@@ -279,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.57: '과정명'(H열)만 사용하도록 최종 수정
+     * [!!!] (MODIFIED) v0.57: 과정명 로직 복원
      */
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
@@ -307,8 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
-                // [!!!] (v0.57) V열을 삭제했으므로 H열('과정명')만 확인
-                const courseName = row['과정명'] || '과정명 없음';
+                // [!!!] (v0.57) V열('과정명.1')을 먼저 확인
+                const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
                 option.textContent = courseName;
@@ -485,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 0);
         
+        // [!!!] (v0.57) 로더 숨기기
         if (mainContentLoader) mainContentLoader.style.display = 'none';
     }
 
