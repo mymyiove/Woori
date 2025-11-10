@@ -1,7 +1,7 @@
-/* [!!!] (v0.45) '과정명.1'(V열)을 무시하고 '과정명'(H열)만 사용하도록 수정 */
+/* [!!!] (v0.50) 모바일 헤더 텍스트 축약 */
 
-// (v0.39와 동일) API URL
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec';
+// (v0.39) 프록시 API URL
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.45: '과정명.1' 무시
+     * [!!!] (v0.48) '과정명'(H열)만 사용하도록 최종 수정
      */
     function buildFullUserData(userRow) {
         const GOAL_TIME = 16.0;
@@ -181,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
-        // [!!!] (v0.45) H열('과정명')만 사용하도록 수정
         const courseName = userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
@@ -265,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 나머지 함수 (v0.37과 동일) ---
+    // --- 나머지 함수 ---
 
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
@@ -293,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
-                // [!!!] (v0.45) buildFullUserData 로직과 동일하게 수정
+                // [!!!] (v0.48) buildFullUserData 로직과 동일하게 수정
                 const courseName = row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
@@ -315,7 +314,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const examScoreLabel = document.getElementById('exam-score');
         
         const userRows = JSON.parse(localStorage.getItem('userCourseList') || '[]');
-        const countText = `현재 차수 총 <strong id="course-count-number">${userRows.length}</strong>개 과정 학습 중이에요.`;
+        
+        // [!!!] (v0.50) 텍스트 축약
+        const countText = `[<strong id="course-count-number">${userRows.length}</strong>과정 학습 중]`;
         
         if (userRows.length > 0) {
             if (courseCountNotice) courseCountNotice.innerHTML = countText;
@@ -402,7 +403,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let display = 'none'; 
         let showWarning = false;
 
-        // [!!!] (v0.45) 'Skill-Set' -> 'Skill-set'으로 수정 (CSV 데이터 기준)
         if (courseName.includes('Skill-set')) { 
             display = 'none';
             showWarning = true;
