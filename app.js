@@ -1,7 +1,13 @@
-/* [!!!] (v0.57) '확인 필요' 삭제, 로딩 스피너 추가 */
+/* [!!!] (v0.59) '직무기본' 시험 섹션 "미응시" 표시 로직 수정 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
+
+// [!!!] (NEW) v0.59: 시험이 있는 과정 목록
+const examCourses = [
+  '【직무기본】 IT-정보보호 직무기본 과정',
+  '【직무기본】 디지털 직무기본 과정'
+];
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -42,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainHeader = document.getElementById('main-header'); 
     const mobileHeaderControls = document.getElementById('mobile-header-controls');
     
-    // [!!!] (v0.57) 로딩 스피너
     const mainContentLoader = document.getElementById('main-content-loader');
 
     // --- [C] 이벤트 리스너 ---
@@ -68,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const handleCourseChange = async (event) => {
-        // [!!!] (v0.57) 로더 표시
         if (mainContentLoader) mainContentLoader.style.display = 'flex';
         
         const selectedIndex = event.target.value;
@@ -85,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
             courseSwitcher.value = selectedIndex;
         }
         
-        // (v0.57) 새 대시보드를 그릴 때 로더가 숨겨짐
         showDashboard(selectedCourseUserData);
     };
 
@@ -179,22 +182,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.57: '확인 필요' 로직 삭제
+     * [!!!] (v0.57) V열/H열 로직 복원
      */
     function buildFullUserData(userRow, allUserRows) {
         const GOAL_TIME = 16.0;
         const GOAL_SCORE = 60; 
 
-        // --- (v0.52) '전체' 데이터 계산 ---
         const firstRow = allUserRows[0];
-        const totalLearningTime = parseFloat(firstRow['전체학습시간'] || 0); // L열
-        const totalRecognizedTime = parseFloat(firstRow['전체인정시간'] || 0); // M열
+        const totalLearningTime = parseFloat(firstRow['전체학습시간'] || 0); 
+        const totalRecognizedTime = parseFloat(firstRow['전체인정시간'] || 0); 
         
-        // --- (v0.57) '개별 과정' 데이터 계산 ---
-        const examScore = parseInt(userRow['시험점수'] || -1);
+        const examScore = parseInt(userRow['시험점수'] || -1); // "미대상" -> NaN
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
-        // [!!!] (v0.57) CSV 원본 데이터에 맞춰 V열('과정명.1')을 먼저 확인
         const courseName = userRow['과정명.1'] || userRow['과정명'] || '과정명 없음';
 
         const fullUserData = {
@@ -205,11 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             totalLearningTime: totalLearningTime,
             totalRecognizedTime: totalRecognizedTime,
-            // needsCheck: false, (v0.57) '확인 필요' 삭제
             
             courseDetail: {
-                recognizedTime: parseFloat(userRow['인정시간'] || 0), // R열
-                examScore: examScore,
+                recognizedTime: parseFloat(userRow['인정시간'] || 0), 
+                examScore: examScore, // NaN일 수 있음
                 isCompleted: isCompleted,
                 goalTime: GOAL_TIME,
                 goalScore: GOAL_SCORE
@@ -281,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * [!!!] (MODIFIED) v0.57: 과정명 로직 복원
+     * [!!!] (v0.57) V열/H열 로직 복원
      */
     function setupCourseSwitcher(userRows, selectedIndex = 0) {
         if (!userRows || userRows.length === 0) {
@@ -309,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             switcher.innerHTML = '';
             userRows.forEach((row, index) => {
-                // [!!!] (v0.57) V열('과정명.1')을 먼저 확인
                 const courseName = row['과정명.1'] || row['과정명'] || '과정명 없음';
                 const option = document.createElement('option');
                 option.value = index;
@@ -322,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * [!!!] (MODIFIED) v0.57: '확인 필요' 로직 삭제
+     * [!!!] (MODIFIED) v0.59: 시험 섹션 표시 로직 수정
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -369,25 +367,48 @@ document.addEventListener('DOMContentLoaded', () => {
             statusCell.textContent = '학습 중 🏃‍♀️';
             statusCell.className = 'status-cell in-progress';
         }
+        
+        // [!!!] (v0.59) 시험 섹션 DOM 요소
         const goalScoreRow = document.getElementById('overview-goal-score-row');
         const myScoreRow = document.getElementById('overview-my-score-row');
-        if (detail.examScore > -1) {
-            document.getElementById('overview-goal-score').textContent = `${detail.goalScore} 점`;
-            document.getElementById('overview-my-score').textContent = `${detail.examScore} 점`;
+        
+        // [!!!] (v0.59) "시험 과정"인지 먼저 확인
+        const isExamCourse = examCourses.includes(user.course.trim());
+        
+        if (isExamCourse) {
+            // 시험 과정이면 무조건 섹션 표시
             goalScoreRow.classList.remove('hidden-row');
             myScoreRow.classList.remove('hidden-row');
+            examMetric.style.display = 'block';
+            
+            document.getElementById('overview-goal-score').textContent = `${detail.goalScore} 점`;
+            
+            // 점수가 있는지(NaN이 아닌지) 확인
+            if (detail.examScore > -1) {
+                // 점수가 있으면 표시
+                document.getElementById('overview-my-score').textContent = `${detail.examScore} 점`;
+                
+                const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
+                animateCountUpWithSuffix(examMetricH4, detail.examScore, 0, 1000, '', ' 점');
+                animateCountUpWithSuffix(examScoreLabel, detail.examScore, 0, 1000, '', ` / ${detail.goalScore} 점`);
+                
+                examProgressBar.style.width = '0%';
+                setTimeout(() => { examProgressBar.style.width = `${scorePercent}%`; }, 100);
+            } else {
+                // 점수가 없으면 (미응시)
+                document.getElementById('overview-my-score').textContent = '미응시';
+                examMetricH4.textContent = '미응시';
+                examScoreLabel.textContent = `미응시 / ${detail.goalScore} 점`;
+                examProgressBar.style.width = '0%';
+            }
         } else {
+            // 시험 과정이 아니면 숨김
             goalScoreRow.classList.add('hidden-row');
             myScoreRow.classList.add('hidden-row');
-        }
-        
-        // [!!!] (v0.57) '확인 필요' 로직 삭제
-        const warningRow = document.getElementById('overview-warning-row');
-        if (warningRow) {
-            warningRow.classList.add('hidden-row');
+            examMetric.style.display = 'none';
         }
 
-        // --- 프로그레스 바 카드 ---
+        // --- 프로그레스 바 카드 (학습 현황) ---
         if (courseNameSpan) {
             courseNameSpan.textContent = user.course;
         }
@@ -414,23 +435,10 @@ document.addEventListener('DOMContentLoaded', () => {
         animateCountUpWithSuffix(timeMetricH4, detail.recognizedTime, 1, 1000, '', ' H');
         animateCountUpWithSuffix(recognizedTimeLabel, detail.recognizedTime, 1, 1000, '', ` / ${detail.goalTime.toFixed(1)} H`);
 
-        
-        if (detail.examScore > -1) {
-            examMetric.style.display = 'block';
-            const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
-            
-            animateCountUpWithSuffix(examMetricH4, detail.examScore, 0, 1000, '', ' 점');
-            animateCountUpWithSuffix(examScoreLabel, detail.examScore, 0, 1000, '', ` / ${detail.goalScore} 점`);
-            
-            examProgressBar.style.width = '0%';
-            setTimeout(() => { examProgressBar.style.width = `${scorePercent}%`; }, 100);
-        } else {
-            examMetric.style.display = 'none';
-        }
-
         timeProgressBar.style.width = '0%';
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
+        // --- 학습하러 가기 버튼 ---
         const courseName = user.course.trim();
         let link = '#';
         let display = 'none'; 
@@ -487,7 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 0);
         
-        // [!!!] (v0.57) 로더 숨기기
         if (mainContentLoader) mainContentLoader.style.display = 'none';
     }
 
