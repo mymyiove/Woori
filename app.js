@@ -1,9 +1,9 @@
-/* [!!!] (v0.59) '직무기본' 시험 섹션 "미응시" 표시 로직 수정 */
+/* [!!!] (v0.60) '시험 보러가기' 버튼 로직 추가 */
 
 // (v0.39) 프록시 API URL
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9B7_twYJIky-sQwwjidZItT88OK6HA0Ky7XLHsrMb8rnCTfnbIdqRcc7XKXFEpV99/exec'; 
 
-// [!!!] (NEW) v0.59: 시험이 있는 과정 목록
+// (v0.59) 시험이 있는 과정 목록
 const examCourses = [
   '【직무기본】 IT-정보보호 직무기본 과정',
   '【직무기본】 디지털 직무기본 과정'
@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const examMetric = document.getElementById('exam-metric');
     const copyEmailBtn = document.getElementById('copy-email-btn');
     const goToCourseBtn = document.getElementById('go-to-course-btn');
+    
+    // [!!!] (NEW) v0.60: 시험 보러가기 버튼
+    const goToExamBtn = document.getElementById('go-to-exam-btn');
     
     const mobileHeader = document.getElementById('mobile-header');
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
@@ -192,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalLearningTime = parseFloat(firstRow['전체학습시간'] || 0); 
         const totalRecognizedTime = parseFloat(firstRow['전체인정시간'] || 0); 
         
-        const examScore = parseInt(userRow['시험점수'] || -1); // "미대상" -> NaN
+        const examScore = parseInt(userRow['시험점수'] || -1);
         const isCompleted = (userRow['이수여부'] && userRow['이수여부'].trim() === '충족');
         
         const courseName = userRow['과정명.1'] || userRow['과정명'] || '과정명 없음';
@@ -208,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             courseDetail: {
                 recognizedTime: parseFloat(userRow['인정시간'] || 0), 
-                examScore: examScore, // NaN일 수 있음
+                examScore: examScore,
                 isCompleted: isCompleted,
                 goalTime: GOAL_TIME,
                 goalScore: GOAL_SCORE
@@ -320,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * [!!!] (MODIFIED) v0.59: 시험 섹션 표시 로직 수정
+     * [!!!] (MODIFIED) v0.60: 버튼 표시 로직 수정
      */
     function showDashboard(user) {
         const detail = user.courseDetail;
@@ -368,24 +371,19 @@ document.addEventListener('DOMContentLoaded', () => {
             statusCell.className = 'status-cell in-progress';
         }
         
-        // [!!!] (v0.59) 시험 섹션 DOM 요소
         const goalScoreRow = document.getElementById('overview-goal-score-row');
         const myScoreRow = document.getElementById('overview-my-score-row');
         
-        // [!!!] (v0.59) "시험 과정"인지 먼저 확인
         const isExamCourse = examCourses.includes(user.course.trim());
         
         if (isExamCourse) {
-            // 시험 과정이면 무조건 섹션 표시
             goalScoreRow.classList.remove('hidden-row');
             myScoreRow.classList.remove('hidden-row');
             examMetric.style.display = 'block';
             
             document.getElementById('overview-goal-score').textContent = `${detail.goalScore} 점`;
             
-            // 점수가 있는지(NaN이 아닌지) 확인
             if (detail.examScore > -1) {
-                // 점수가 있으면 표시
                 document.getElementById('overview-my-score').textContent = `${detail.examScore} 점`;
                 
                 const scorePercent = Math.min((detail.examScore / detail.goalScore) * 100, 100);
@@ -395,20 +393,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 examProgressBar.style.width = '0%';
                 setTimeout(() => { examProgressBar.style.width = `${scorePercent}%`; }, 100);
             } else {
-                // 점수가 없으면 (미응시)
                 document.getElementById('overview-my-score').textContent = '미응시';
                 examMetricH4.textContent = '미응시';
                 examScoreLabel.textContent = `미응시 / ${detail.goalScore} 점`;
                 examProgressBar.style.width = '0%';
             }
         } else {
-            // 시험 과정이 아니면 숨김
             goalScoreRow.classList.add('hidden-row');
             myScoreRow.classList.add('hidden-row');
             examMetric.style.display = 'none';
         }
 
-        // --- 프로그레스 바 카드 (학습 현황) ---
+        // --- 프로그레스 바 카드 ---
         if (courseNameSpan) {
             courseNameSpan.textContent = user.course;
         }
@@ -438,29 +434,38 @@ document.addEventListener('DOMContentLoaded', () => {
         timeProgressBar.style.width = '0%';
         setTimeout(() => { timeProgressBar.style.width = `${timePercent}%`; }, 100);
 
-        // --- 학습하러 가기 버튼 ---
+        // [!!!] (MODIFIED) v0.60: 버튼 로직 수정
         const courseName = user.course.trim();
-        let link = '#';
-        let display = 'none'; 
+        let courseLink = '#';
+        let courseDisplay = 'none';
+        let examLink = '#';
+        let examDisplay = 'none'; // 기본값: 시험 버튼 숨김
         let showWarning = false;
 
-        if (courseName.includes('Skill-set')) { 
-            display = 'none';
-            showWarning = true;
-        } else if (courseName.includes('IT-정보 보호')) {
-            link = 'https://wooribank.udemy.com/learning-paths/10631499/';
-            display = 'flex';
-        } else if (courseName.includes('디지털 직무 기본')) {
-            link = 'https://wooribank.udemy.com/learning-paths/10631535/';
-            display = 'flex';
+        if (courseName.includes('【직무기본】 디지털 직무기본 과정')) {
+            courseLink = 'https://wooribank.udemy.com/learning-paths/10631535/';
+            courseDisplay = 'flex';
+            examLink = 'https://wooribank.udemy.com/course/2025-d-3/learn/';
+            examDisplay = 'flex'; // 시험 버튼 표시
+        } else if (courseName.includes('【직무기본】 IT-정보보호 직무기본 과정')) {
+            courseLink = 'https://wooribank.udemy.com/learning-paths/10631499/';
+            courseDisplay = 'flex';
+            examLink = 'https://wooribank.udemy.com/course/2025-it-3/learn/quiz/7241313';
+            examDisplay = 'flex'; // 시험 버튼 표시
         } else if (courseName.includes('디지털/IT 사이버')) {
-            link = 'https://wooribank.udemy.com/organization/home/category/it/';
-            display = 'flex';
+            courseLink = 'https://wooribank.udemy.com/organization/home/category/it/';
+            courseDisplay = 'flex';
+        } else if (courseName.includes('Skill-set')) { 
+            showWarning = true;
         }
         
         if (goToCourseBtn) {
-            goToCourseBtn.href = link;
-            goToCourseBtn.style.display = display;
+            goToCourseBtn.href = courseLink;
+            goToCourseBtn.style.display = courseDisplay;
+        }
+        if (goToExamBtn) {
+            goToExamBtn.href = examLink;
+            goToExamBtn.style.display = examDisplay;
         }
         if (skillSetWarning) {
             skillSetWarning.style.display = showWarning ? 'block' : 'none';
